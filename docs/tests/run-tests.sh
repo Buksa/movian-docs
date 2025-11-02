@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 
 # Script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOCS_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
+DOCS_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Test configuration
 RUN_DEPENDENCY_CHECK=1

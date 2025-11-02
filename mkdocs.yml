@@ -64,70 +64,27 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Architecture:
-    - Overview: architecture/overview.md
-    - Components: architecture/components.md
-    - Lifecycle: architecture/lifecycle.md
-    - Threading: architecture/threading-model.md
-    - Memory: architecture/memory-management.md
+    - Overview: architecture/README.md
   - Installation:
     - Overview: installation/README.md
-    - Requirements: installation/requirements.md
     - Linux: installation/linux.md
-    - Windows: installation/windows.md
     - macOS: installation/macos.md
+    - Build System: installation/build-system.md
     - Troubleshooting: installation/troubleshooting.md
   - Plugin Development:
     - Overview: plugins/README.md
-    - Getting Started: plugins/getting-started.md
-    - Architecture: plugins/architecture.md
-    - Manifest: plugins/manifest-reference.md
-    - Lifecycle: plugins/lifecycle.md
-    - API Reference:
-      - Core API: plugins/api/core-api.md
-      - HTTP API: plugins/api/http-api.md
-      - Storage API: plugins/api/storage-api.md
-      - Page API: plugins/api/page-api.md
-      - SQLite API: plugins/api/sqlite-api.md
     - Examples:
       - Hello World: plugins/examples/hello-world/README.md
-      - Content Provider: plugins/examples/content-provider/README.md
-      - Search Plugin: plugins/examples/search-plugin/README.md
-      - Configurable: plugins/examples/configurable-plugin/README.md
-      - Advanced UI: plugins/examples/advanced-ui-plugin/README.md
-    - Best Practices: plugins/best-practices.md
   - UI System:
     - Overview: ui/README.md
-    - GLW Architecture: ui/glw-architecture.md
-    - Rendering Pipeline: ui/rendering-pipeline.md
-    - View Files:
-      - Syntax Reference: ui/view-files/syntax-reference.md
-      - Elements: ui/view-files/elements-reference.md
-      - Attributes: ui/view-files/attributes-reference.md
-      - Expressions: ui/view-files/expressions.md
-      - Preprocessor: ui/view-files/preprocessor.md
-    - Source Analysis:
-      - Overview: ui/source-analysis/README.md
-      - Summary: ui/source-analysis/summary.md
-    - Theming:
-      - Skin Structure: ui/theming/skin-structure.md
-      - Creating Skins: ui/theming/creating-skins.md
-      - Theme Variables: ui/theming/theme-variables.md
-    - Widgets:
-      - Containers: ui/widgets/container.md
-      - Text: ui/widgets/text.md
-      - Images: ui/widgets/image.md
-      - Lists: ui/widgets/list.md
-      - Grids: ui/widgets/grid.md
+    - Examples: ui/examples/README.md
+    - Source Analysis: ui/source-analysis/README.md
   - Reference:
-    - Glossary: reference/glossary.md
-    - FAQ: reference/faq.md
-    - API Index: reference/api-index.md
-    - Element Index: reference/element-index.md
-    - Troubleshooting: reference/troubleshooting.md
+    - Overview: reference/README.md
+  - Guides:
+    - Overview: guides/README.md
   - Testing:
     - Overview: tests/README.md
-    - Build Validation: tests/build-validation.sh
-    - Dependency Check: tests/dependency-check.py
 
 extra:
   social:
