@@ -1,0 +1,353 @@
+name: Build Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'docs/installation/**'
+      - 'docs/tests/**'
+      - '.github/workflows/build-validation.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/installation/**'
+      - 'docs/tests/**'
+      - '.github/workflows/build-validation.yml'
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      run_performance_tests:
+        description: 'Run performance benchmarks'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  # Ubuntu/Debian testing
+  ubuntu-build:
+    name: Ubuntu ${{ matrix.ubuntu-version }}
+    runs-on: ubuntu-${{ matrix.ubuntu-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ubuntu-version: ['20.04', '22.04']
+    
+    steps:
+    - name: Checkout documentation
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Check dependencies
+      run: |
+        chmod +x docs/tests/dependency-check.py
+        python3 docs/tests/dependency-check.py --json dependency-results.json
+    
+    - name: Install dependencies (Ubuntu)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          git build-essential pkg-config \
+          libfreetype6-dev libfontconfig1-dev \
+          libxext-dev libgl1-mesa-dev \
+          libasound2-dev libpulse-dev \
+          libgtk2.0-dev libxss-dev \
+          libxxf86vm-dev libxv-dev libvdpau-dev \
+          yasm libssl-dev curl \
+          libwebkit2gtk-4.0-dev libsqlite3-dev \
+          libavahi-client-dev
+    
+    - name: Run build validation
+      run: |
+        chmod +x docs/tests/build-validation.sh
+        if [ "${{ github.event.inputs.run_performance_tests }}" = "true" ]; then
+          docs/tests/build-validation.sh --performance
+        else
+          docs/tests/build-validation.sh
+        fi
+      env:
+        DISPLAY: :99
+    
+    - name: Upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ubuntu-${{ matrix.ubuntu-version }}-results
+        path: |
+          /tmp/movian-build-test-*/build-test.log
+          dependency-results.json
+        retention-days: 7
+
+  # Fedora testing
+  fedora-build:
+    name: Fedora Latest
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    
+    steps:
+    - name: Install Git and Python
+      run: |
+        dnf update -y
+        dnf install -y git python3 python3-pip
+    
+    - name: Checkout documentation
+      uses: actions/checkout@v4
+    
+    - name: Check dependencies
+      run: |
+        chmod +x docs/tests/dependency-check.py
+        python3 docs/tests/dependency-check.py --json dependency-results.json
+    
+    - name: Install dependencies (Fedora)
+      run: |
+        dnf install -y \
+          git gcc gcc-c++ make pkg-config \
+          freetype-devel fontconfig-devel \
+          libXext-devel mesa-libGL-devel \
+          alsa-lib-devel pulseaudio-libs-devel \
+          gtk2-devel libXScrnSaver-devel \
+          libXxf86vm-devel libXv-devel \
+          libvdpau-devel yasm openssl-devel \
+          curl-devel sqlite-devel avahi-devel
+    
+    - name: Run build validation
+      run: |
+        chmod +x docs/tests/build-validation.sh
+        docs/tests/build-validation.sh
+    
+    - name: Upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: fedora-results
+        path: |
+          /tmp/movian-build-test-*/build-test.log
+          dependency-results.json
+        retention-days: 7
+
+  # macOS testing
+  macos-build:
+    name: macOS ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['macos-11', 'macos-12', 'macos-13']
+    
+    steps:
+    - name: Checkout documentation
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install Homebrew dependencies
+      run: |
+        brew update
+        brew install yasm openssl
+    
+    - name: Check dependencies
+      run: |
+        chmod +x docs/tests/dependency-check.py
+        python3 docs/tests/dependency-check.py --json dependency-results.json
+    
+    - name: Run build validation
+      run: |
+        chmod +x docs/tests/build-validation.sh
+        if [ "${{ github.event.inputs.run_performance_tests }}" = "true" ]; then
+          docs/tests/build-validation.sh --performance
+        else
+          docs/tests/build-validation.sh
+        fi
+    
+    - name: Upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.os }}-results
+        path: |
+          /tmp/movian-build-test-*/build-test.log
+          dependency-results.json
+        retention-days: 7
+
+  # Cross-compilation testing (limited)
+  cross-compile-test:
+    name: Cross-compilation Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout documentation
+      uses: actions/checkout@v4
+    
+    - name: Install cross-compilation tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          git build-essential \
+          gcc-arm-linux-gnueabihf \
+          g++-arm-linux-gnueabihf
+    
+    - name: Clone Movian repository
+      run: |
+        git clone --depth 1 https://github.com/andoma/movian.git
+        cd movian
+    
+    - name: Test ARM cross-compilation configure
+      run: |
+        cd movian
+        # Test that configure accepts cross-compilation options
+        ./configure --arch=arm --cpu=cortex-a7 --help
+        echo "Cross-compilation configure test passed"
+
+  # Documentation validation
+  docs-validation:
+    name: Documentation Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout documentation
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install documentation tools
+      run: |
+        pip install mkdocs mkdocs-material
+    
+    - name: Validate Markdown syntax
+      run: |
+        # Check for common Markdown issues
+        find docs -name "*.md" -exec python3 -c "
+        import sys
+        with open(sys.argv[1], 'r') as f:
+            content = f.read()
+            # Check for common issues
+            if ']((' in content:
+                print(f'Warning: Possible malformed link in {sys.argv[1]}')
+            if content.count('```') % 2 != 0:
+                print(f'Error: Unmatched code blocks in {sys.argv[1]}')
+                sys.exit(1)
+        " {} \;
+    
+    - name: Check internal links
+      run: |
+        # Simple internal link checker
+        python3 -c "
+        import os
+        import re
+        from pathlib import Path
+        
+        def check_internal_links():
+            errors = []
+            for md_file in Path('docs').rglob('*.md'):
+                with open(md_file, 'r') as f:
+                    content = f.read()
+                
+                # Find markdown links
+                links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content)
+                for text, link in links:
+                    if link.startswith('http'):
+                        continue  # Skip external links
+                    
+                    # Check if internal file exists
+                    if link.startswith('/'):
+                        target = Path('docs' + link)
+                    else:
+                        target = md_file.parent / link
+                    
+                    # Remove anchor
+                    if '#' in str(target):
+                        target = Path(str(target).split('#')[0])
+                    
+                    if not target.exists():
+                        errors.append(f'{md_file}: Broken link to {link}')
+            
+            if errors:
+                for error in errors:
+                    print(f'Error: {error}')
+                return False
+            return True
+        
+        if not check_internal_links():
+            exit(1)
+        print('All internal links are valid')
+        "
+    
+    - name: Test MkDocs build
+      run: |
+        # Test that documentation can be built
+        mkdocs build --strict
+
+  # Results summary
+  build-summary:
+    name: Build Summary
+    runs-on: ubuntu-latest
+    needs: [ubuntu-build, fedora-build, macos-build, cross-compile-test, docs-validation]
+    if: always()
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+    
+    - name: Generate summary report
+      run: |
+        echo "# Build Validation Summary" > summary.md
+        echo "" >> summary.md
+        echo "## Test Results" >> summary.md
+        echo "" >> summary.md
+        
+        # Check job results
+        if [ "${{ needs.ubuntu-build.result }}" = "success" ]; then
+          echo "✅ Ubuntu builds: PASSED" >> summary.md
+        else
+          echo "❌ Ubuntu builds: FAILED" >> summary.md
+        fi
+        
+        if [ "${{ needs.fedora-build.result }}" = "success" ]; then
+          echo "✅ Fedora build: PASSED" >> summary.md
+        else
+          echo "❌ Fedora build: FAILED" >> summary.md
+        fi
+        
+        if [ "${{ needs.macos-build.result }}" = "success" ]; then
+          echo "✅ macOS builds: PASSED" >> summary.md
+        else
+          echo "❌ macOS builds: FAILED" >> summary.md
+        fi
+        
+        if [ "${{ needs.cross-compile-test.result }}" = "success" ]; then
+          echo "✅ Cross-compilation test: PASSED" >> summary.md
+        else
+          echo "❌ Cross-compilation test: FAILED" >> summary.md
+        fi
+        
+        if [ "${{ needs.docs-validation.result }}" = "success" ]; then
+          echo "✅ Documentation validation: PASSED" >> summary.md
+        else
+          echo "❌ Documentation validation: FAILED" >> summary.md
+        fi
+        
+        echo "" >> summary.md
+        echo "## Artifacts" >> summary.md
+        echo "" >> summary.md
+        echo "Build logs and dependency reports are available in the artifacts section." >> summary.md
+        
+        cat summary.md
+    
+    - name: Upload summary
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-summary
+        path: summary.md
+        retention-days: 30

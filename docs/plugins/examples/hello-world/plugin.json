@@ -1,0 +1,14 @@
+{
+  "type": "ecmascript",
+  "apiversion": 2,
+  "id": "hello-world-example",
+  "file": "main.js",
+  "version": "1.0.0",
+  "author": "Movian Documentation Team",
+  "title": "Hello World Plugin",
+  "synopsis": "A simple example plugin demonstrating basic Movian API 2 usage",
+  "description": "This plugin shows how to create a basic content provider using the modern Movian ECMAScript API 2. It demonstrates service creation, page routing, and content management.",
+  "homepage": "https://movian-docs.github.io/",
+  "category": "other",
+  "icon": "logo.png"
+}

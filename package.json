@@ -1,0 +1,42 @@
+{
+  "name": "movian-documentation",
+  "version": "1.0.0",
+  "description": "Comprehensive documentation for Movian media player architecture",
+  "scripts": {
+    "install": "pip install -r requirements.txt",
+    "dev": "mkdocs serve",
+    "build": "mkdocs build",
+    "deploy": "mkdocs gh-deploy",
+    "test": "npm run test:examples && npm run validate:references && npm run check:links",
+    "test:examples": "node tools/test-examples.js",
+    "validate:references": "node tools/validate-references.js",
+    "check:links": "node tools/check-links.js",
+    "analyze:source": "node tools/analyze-source.js",
+    "generate:api": "node tools/generate-api-docs.js"
+  },
+  "keywords": [
+    "movian",
+    "media-player",
+    "documentation",
+    "plugin-development",
+    "ui-theming"
+  ],
+  "author": "Movian Documentation Team",
+  "license": "MIT",
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "fs-extra": "^11.1.0",
+    "glob": "^10.3.0",
+    "markdown-it": "^13.0.0",
+    "node-fetch": "^3.3.0",
+    "yargs": "^17.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/movian-docs/movian-docs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/movian-docs/movian-docs/issues"
+  },
+  "homepage": "https://movian-docs.github.io/"
+}
