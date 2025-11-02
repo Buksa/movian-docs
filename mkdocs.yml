@@ -124,6 +124,10 @@ nav:
     - API Index: reference/api-index.md
     - Element Index: reference/element-index.md
     - Troubleshooting: reference/troubleshooting.md
+  - Testing:
+    - Overview: tests/README.md
+    - Build Validation: tests/build-validation.sh
+    - Dependency Check: tests/dependency-check.py
 
 extra:
   social:
