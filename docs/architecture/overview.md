@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Movian is a cross-platform media player built with a modular architecture that separates core functionality, plugin system, and user interface rendering. The application is primarily written in C/C++ with JavaScript plugin support and a custom OpenGL-based UI system called GLW (OpenGL Widget).
+Movian is a cross-platform media player built with a modular architecture that separates core functionality, [plugin system](../reference/glossary.md#plugin-system), and user interface rendering. The application is primarily written in C/C++ with JavaScript plugin support and a custom [OpenGL](../reference/glossary.md#opengl)-based [UI system](../reference/glossary.md#ui-system) called [GLW](../reference/glossary.md#glw-opengl-widget) ([OpenGL](../reference/glossary.md#opengl) [Widget](../reference/glossary.md#widget)).
 
 ## High-Level Architecture
 
@@ -82,7 +82,7 @@ graph TB
 - Custom OpenGL-based widget system
 - View file parsing and compilation
 - Layout engine and event handling
-- Animation and transition system
+- Animation an[navigator](../reference/glossary.md#navigator)ion system
 
 **Skin System** (`glwskins/`)
 - Theme and appearance management
@@ -104,7 +104,7 @@ graph TB
 1. **Initialization Groups**: Components are initialized in dependency order
 2. **Property Tree Setup**: Global property hierarchy established
 3. **Service Registration**: Core services register with the service manager
-4. **Plugin Loading**: Installed plugins are discovered and loaded
+4. **[glw](../reference/glossary.md#glw-opengl-widget)gin Loading**: Installed plugins are discovered and loaded
 5. **UI Initialization**: GLW system starts and loads default skin
 6. **Navigation Ready**: Navigator becomes available for page requests
 
@@ -231,4 +231,4 @@ sequenceDiagram
 - **Layout Caching**: Pre-computed layout information
 - **Animation Optimization**: Smooth transitions and effects
 
-This architecture provides a solid foundation for media playback while maintaining extensibility through plugins and customization through the skin system. The modular design allows for platform-specific optimizations while keeping the core functionality consistent across all supported platforms.
+This architecture provides a solid foundation for media playback while maintaining extensibility through plugins and customization through the skin system. The modular design allows for platform-specific optimizations while keeping the core functionality consistent across all supported platforms.[skin system](../reference/glossary.md#skin-system)[OpenGL](../reference/glossary.md#opengl)[Property system](../reference/glossary.md#property-system)[Reference Counting](../reference/glossary.md#reference-counting)

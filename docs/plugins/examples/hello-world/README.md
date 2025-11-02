@@ -1,10 +1,10 @@
 # Hello World Plugin Example
 
-A comprehensive example plugin demonstrating Movian API 2 (ECMAScript) features.
+A comprehensive example plugin demonstrating Movian [API](../../../reference/glossary.md#api-application-programming-interface) 2 (ECMAScript) features.
 
 ## Overview
 
-This plugin showcases the fundamental concepts of Movian plugin development using the modern API 2:
+This plugin showcases the fundamental concepts of Movian plugin development using the modern [API](../../../reference/glossary.md#api-application-programming-interface) 2:
 
 - **Service Creation**: How to register your plugin in Movian's interface
 - **Page Routing**: Handling different URLs and navigation
@@ -15,7 +15,7 @@ This plugin showcases the fundamental concepts of Movian plugin development usin
 ## Features Demonstrated
 
 ### 🔧 Plugin Configuration
-- Modern `plugin.json` with API version 2
+- Modern `plugin.json` with [API](../../../reference/glossary.md#api-application-programming-interface) version 2
 - Proper metadata and categorization
 - Icon and branding setup
 

@@ -1,12 +1,12 @@
-# GLW View File Examples
+# [GLW](../../reference/glossary.md#glw-opengl-widget) View File Examples
 
-This directory contains working examples of Movian's GLW (OpenGL Widget) view files.
+This directory contains working examples of Movian's [GLW](../../reference/glossary.md#glw-opengl-widget) ([OpenGL](../../reference/glossary.md#opengl) [Widget](../../reference/glossary.md#widget)) [view files](../../reference/glossary.md#view-files).
 
 ## Important Note
 
-**Movian view files use JavaScript-like syntax, NOT XML!** 
+**Movian [view files](../../reference/glossary.md#view-files) use JavaScript-like syntax, NOT XML!** 
 
-The GLW system uses a functional approach with `widget()` calls and property objects, similar to JavaScript frameworks like React or Vue.
+The [GLW](../../reference/glossary.md#glw-opengl-widget) system uses a functional approach with `widget()` calls and property objects, similar to JavaScript frameworks like React or Vue.
 
 ## Basic Syntax
 
@@ -78,10 +78,10 @@ widget(container_z, {
     
     widget(quad, {
         // Dynamic alpha based on interaction state
-        alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+        alpha: 0.6 + 0.4 * iir(isNavFocus[components](../../reference/glossary.md#component)ressed() + isHovered(), 4, true);
     });
     
-    onEvent(activate, navOpen("some:url"));
+    onEvent[Widget](../../reference/glossary.md#widget)ate, navOpen("some:url"));
 });
 ```
 
@@ -217,4 +217,4 @@ plugin/
 - [GLW Architecture](../glw-architecture.md)
 - [Widget Reference](../widgets/README.md)
 - [Theming Guide](../theming/README.md)
-- [Source Analysis](../source-analysis/README.md)
+- [Source Analysis](../source-analysis/README.md)[View Files](../../reference/glossary.md#view-files)[widgets](../../reference/glossary.md#widget)

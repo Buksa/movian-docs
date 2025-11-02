@@ -1,8 +1,8 @@
-# Application Lifecycle and Startup Flow
+# Application [Lifecycle](../reference/glossary.md#lifecycle) and Startup Flow
 
 ## Overview
 
-Movian follows a carefully orchestrated startup sequence that initializes components in dependency order, loads plugins, and prepares the user interface. This document details the complete application lifecycle from startup to shutdown.
+Movian follows a carefully orchestrated startup sequence that initializes [components](../reference/glossary.md#component) in dependency order, loads plugins, and prepares the user interface. This document details the complete application [lifecycle](../reference/glossary.md#lifecycle) from startup to shutdown.
 
 ## Startup Sequence
 
@@ -398,7 +398,7 @@ Movian uses initialization groups to manage component dependencies:
 - Protocol handlers
 
 ### INIT_GROUP_GRAPHICS (Graphics System)
-- OpenGL context setup
+- O[navigator](../reference/glossary.md#navigator)text setup
 - GLW initialization
 - Platform-specific graphics
 
@@ -440,4 +440,4 @@ Movian uses initialization groups to manage component dependencies:
 - **Cache Limits**: Bounded cache sizes with LRU eviction
 - **Plugin Isolation**: Separate memory spaces for plugins
 
-This lifecycle ensures reliable startup, stable operation, and clean shutdown while maintaining the flexibility to handle various error conditions and platform-specific requirements.
+This lifecycle ensures reliable startup, stable operation, and clean shutdown while maintaining the flexibility to handle various error conditions and platform-specific requirements.[lifecycle](../reference/glossary.md#lifecycle)[Property system](../reference/glossary.md#property-system)[Reference Counting](../reference/glossary.md#reference-counting)[components](../reference/glossary.md#component)[API](../reference/glossary.md#api-application-programming-interface)[APIs](../reference/glossary.md#api-application-programming-interface)[API](../reference/glossary.md#api-application-programming-interface)[GLW](../reference/glossary.md#glw-opengl-widget)[OpenGL](../reference/glossary.md#opengl)[component](../reference/glossary.md#component)[initialization groups](../reference/glossary.md#initialization-group)[Initialization Groups](../reference/glossary.md#initialization-group)

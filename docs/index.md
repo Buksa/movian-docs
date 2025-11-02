@@ -11,19 +11,18 @@ Movian is a powerful, extensible media player that combines:
 
 - **Native Performance**: Written in C/C++ for optimal performance on resource-constrained devices
 - **Plugin Architecture**: JavaScript-based plugin system for content providers and extensions  
-- **Custom UI Engine**: GLW (OpenGL Widget) system for creating responsive, themeable interfaces
-- **Cross-Platform**: Runs on Linux, macOS, Windows, Android, PlayStation 3, and Raspberry Pi
+- **Custom UI Engine**: GLW (OpenGL Widget) system for creating responsive, themeable inter[plugin system](reference/glossary.md#plugin-system)ss-Platform**: Runs on Linux, macOS, Windows, Android, PlayStati[GLW](reference/glossary.md#glw-opengl-widget)3,[OpenGL](reference/glossary.md#opengl)a[Widget](reference/glossary.md#widget)y Pi
 - **Media Focus**: Optimized for video playback with support for numerous codecs and formats
 
 ### Target Audiences
 
 This documentation serves four primary developer audiences:
 
-| Audience | Primary Goals | Key Documentation |
+| Audience | Primary Goals | Key Document[codecs](reference/glossary.md#codec)|
 |----------|---------------|-------------------|
 | **Plugin Developers** | Create content providers, scrapers, and extensions | [Plugin Development Guide](plugins/README.md) |
 | **UI Designers** | Customize themes, skins, and user interfaces | [UI & Theming Guide](ui/README.md) |
-| **Core Contributors** | Modify core functionality and add features | [Architecture Overview](architecture/overview.md) |
+| **Core Contributors** | Modify core functionality and add features |[themes](reference/glossary.md#theme)itecture Overview](architecture/overview.md) |
 | **System Integrators** | Embed Movian in other applications | [Installation & Build Guide](installation/README.md) |
 
 ## 🏗️ Architecture Overview
@@ -253,7 +252,7 @@ This documentation is licensed under [Creative Commons Attribution 4.0 Internati
 ## 🔗 Links
 
 - **Official Website**: [https://movian.tv/](https://movian.tv/)
-- **Source Code**: [https://github.com/andoma/movian](https://github.com/andoma/movian)
+- **Source Code**: [https://github.com/andoma/movian](https://github[themes](reference/glossary.md#theme)ndoma/movian)
 - **Issue Tracker**: [https://github.com/andoma/movian/issues](https://github.com/andoma/movian/issues)
 - **Community Forum**: [Movian Community](https://movian.tv/forum)
 
@@ -264,4 +263,4 @@ This documentation is licensed under [Creative Commons Attribution 4.0 Internati
 **Movian Version Compatibility**: 4.8+  
 **Accuracy Status**: 🟢 Verified from source code analysis
 
-*This documentation is actively maintained and updated with each Movian release. For the most current information, always refer to the latest version.*
+*This documentation is actively maintained and updated with each Movian release. For the most current information, always refer to the latest version.*[APIs](reference/glossary.md#api-application-programming-interface)[widgets](reference/glossary.md#widget)[widgets](reference/glossary.md#widget)[components](reference/glossary.md#component)[GLW](reference/glossary.md#glw-opengl-widget)[Widget](reference/glossary.md#widget)[OpenGL](reference/glossary.md#opengl)[GLW](referenc[component](reference/glossary.md#component)y.md#glw-opengl-widget)[SQLite](reference/glossary.md#sqlite)[API](reference/glossary.md#api-application-programming-interface)[manifest](reference/glossary.md#manifest-plugin)[Lifecycle](reference/glossary.md#lifecycle)

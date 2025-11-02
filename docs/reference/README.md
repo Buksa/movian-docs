@@ -2,9 +2,9 @@
 
 Quick reference materials for Movian development.
 
-## API References
+## [API](glossary.md#api-application-programming-interface) References
 
-- [Complete API Index](api-index.md) - All APIs organized by category
+- [Complete API Index](api-index.md) - All [APIs](glossary.md#api-application-programming-interface) organized [by category](glossary.md#by-category)
 - [Element Reference](element-reference.md) - All view file elements
 - [Attribute Reference](attribute-reference.md) - All element attributes
 
@@ -16,8 +16,8 @@ Quick reference materials for Movian development.
 
 ## Quick Lookup Tables
 
-### Plugin APIs
-| API | Purpose | Documentation |
+### Plugin [APIs](glossary.md#api-application-programming-interface)
+| [API](glossary.md#api-application-programming-interface) | Purpose | Documentation |
 |-----|---------|---------------|
 | `http` | Network requests | [HTTP API](../plugins/api/http-api.md) |
 | `page` | UI pages | [Page API](../plugins/api/page-api.md) |
@@ -35,7 +35,7 @@ Quick reference materials for Movian development.
 ### Common File Locations
 | Type | Location | Purpose |
 |------|----------|---------|
-| Plugin manifest | `plugin.json` | Plugin configuration |
+| Plugin [manifest](glossary.md#manifest-plugin) | `plugin.json` | Plugin configuration |
 | Main plugin file | `*.js` | Plugin implementation |
-| View files | `*.view` | UI layout definitions |
-| Skin directory | `glwskins/*/` | Theme files |
+| [View files](glossary.md#view-files) | `*.view` | UI layout definitions |
+| Skin directory | `glwskins/*/` | [Theme](glossary.md#theme) files |

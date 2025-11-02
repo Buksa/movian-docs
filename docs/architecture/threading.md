@@ -1,8 +1,8 @@
-# Threading Model and Concurrency
+# [Threading Model](../reference/glossary.md#threading-model) and Concurrency
 
 ## Overview
 
-Movian employs a multi-threaded architecture designed for responsive user interfaces and efficient media processing. The threading model is built on platform-specific threading primitives (POSIX threads on Unix-like systems) with a consistent abstraction layer that provides thread-safe communication between components.
+Movian employs a multi-threaded architecture designed for responsive user interfaces and efficient media processing. The [threading model](../reference/glossary.md#threading-model) is built on platform-specific threading primitives (POSIX threads on Unix-like systems) with a consistent abstraction layer that provides thread-safe communication between [components](../reference/glossary.md#component).
 
 ## Threading Architecture
 
@@ -444,4 +444,4 @@ void prop_print_trace(prop_t *p);
 #endif
 ```
 
-This threading model provides Movian with responsive user interfaces, efficient media processing, and robust plugin execution while maintaining system stability through careful synchronization and resource management.
+This threading model provides Movian with responsive user interfaces, efficient media processing, and robust plugin execution while maintaining system stability through careful synchronization and resource management.[threading model](../reference/glossary.md#threading-model)

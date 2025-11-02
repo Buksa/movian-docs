@@ -1,10 +1,10 @@
-# Component Interaction and Architecture
+# [Component](../reference/glossary.md#component) Interaction and Architecture
 
 ## Overview
 
-Movian's architecture is built around a modular component system where different subsystems communicate through well-defined interfaces. The core architecture follows a layered approach with clear separation of concerns between the native C/C++ core, the JavaScript plugin runtime, and the UI rendering system.
+Movian's architecture is built around a modular [component](../reference/glossary.md#component) system where different subsystems communicate through well-defined interfaces. The core architecture follows a layered approach with clear separation of concerns between the native C/C++ core, the JavaScript plugin runtime, and the UI rendering system.
 
-## Core Component Architecture
+## Core [Component](../reference/glossary.md#component) Architecture
 
 ```mermaid
 graph TB
@@ -283,8 +283,7 @@ Shutdown follows reverse initialization order:
 sequenceDiagram
     participant M as Main
     participant U as UI System
-    participant PS as Plugin System
-    participant N as Navigator
+    participant PS as Plugin [navigator](../reference/glossary.md#navigator)  participant N as Navigator
     participant P as Property System
     
     M->>U: UI shutdown

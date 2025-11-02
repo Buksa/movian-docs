@@ -199,4 +199,4 @@ For detailed information about Movian's build system:
 3. Test your installation with a simple media file
 4. Explore [plugin development](../plugins/getting-started.md) or [UI customization](../ui/getting-started.md)
 
-**Need Help?** Check the [troubleshooting guide](troubleshooting.md) or ask for help in the community forum.
+**Need Help?** Check the [troubleshooting guide](troubleshooting.md) or ask for help in the community forum.[API](../reference/glossary.md#api-application-programming-interface)

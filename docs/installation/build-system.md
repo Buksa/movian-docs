@@ -309,7 +309,7 @@ export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH"
 
 ### Library Versions
 
-| Library | Minimum Version | Recommended |
+| Library | Minimum Version |[glw](../reference/glossary.md#glw-opengl-widget)commended |
 |---------|----------------|-------------|
 | **FFmpeg** | 2.8+ | 4.0+ |
 | **OpenSSL** | 1.0.2+ | 1.1.1+ |

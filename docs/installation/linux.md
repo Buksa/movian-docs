@@ -475,7 +475,7 @@ update-desktop-database ~/.local/share/applications
 
 #### File Associations
 ```bash
-# Associate video files with Movian
+# Associate vi[glw](../reference/glossary.md#glw-opengl-widget) files with Movian
 xdg-mime default movian.desktop video/mp4
 xdg-mime default movian.desktop video/x-matroska
 xdg-mime default movian.desktop video/x-msvideo

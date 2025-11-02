@@ -9,7 +9,7 @@ Complete guide for developing Movian plugins using JavaScript.
 - [Manifest Reference](manifest-reference.md) - plugin.json specification
 - [Plugin Lifecycle](lifecycle.md) - Loading, initialization, and cleanup
 
-## API Documentation
+## [API](../reference/glossary.md#api-application-programming-interface) Documentation
 
 - [Core API](api/core-api.md) - Essential plugin functions
 - [HTTP API](api/http-api.md) - Network requests and responses
