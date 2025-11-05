@@ -4,7 +4,7 @@ site_author: Movian Documentation Team
 site_url: https://movian-docs.github.io/
 
 # Default docs_dir: docs
-docs_dir: .
+
 repo_name: movian/movian
 repo_url: https://github.com/andoma/movian
 edit_uri: ""
@@ -81,6 +81,7 @@ nav:
     - Source Analysis: ui/source-analysis/README.md
   - Reference:
     - Overview: reference/README.md
+    - Glossary: reference/glossary.md
   - Guides:
     - Overview: guides/README.md
   - Testing:
