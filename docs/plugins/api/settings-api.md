@@ -1,1201 +1,723 @@
-# Settings and Configuration API Reference
+# Settings and Configuration Management API
 
-This document provides comprehensive reference for Movian's settings and configuration management system for plugins.
+## Overview
 
-## Table of Contents
+Movian provides a comprehensive settings and configuration management system that allows plugins to:
 
-- [Settings Module](#settings-module)
-- [Global Settings](#global-settings)
-- [KVStore Settings](#kvstore-settings)
-- [Setting Types](#setting-types)
-- [Setting Groups](#setting-groups)
-- [Error Handling](#error-handling)
-- [Examples](#examples)
+- Create user-configurable settings with automatic UI generation
+- Store persistent data using key-value storage
+- Manage plugin configuration with different storage backends
+- Handle different data types (strings, integers, booleans, multi-options)
 
----
+The system consists of three main components:
 
-## Settings Module
+1. **Settings API** (`movian/settings`) - High-level settings creation and management
+2. **Store API** (`movian/store`) - File-based persistent storage
+3. **KVStore API** (`native/kvstore`) - Low-level key-value storage with URL-based scoping
 
-The Settings module provides a high-level interface for creating and managing plugin configuration options that appear in Movian's settings interface.
+## Settings API (`movian/settings`)
 
-### Module: `movian/settings`
+The settings module provides a high-level interface for creating plugin configuration interfaces that automatically appear in Movian's settings UI.
 
-**Source References:**
-- JavaScript implementation: `movian/res/ecmascript/modules/movian/settings.js`
-- Uses KVStore: `movian/src/ecmascript/es_kvstore.c`
-- Uses Store: `movian/res/ecmascript/modules/movian/store.js`
+### Global Settings
 
----
+Create a settings group that appears in the main Movian settings under "Applications":
 
-## Global Settings
-
-Global settings appear in Movian's main settings interface and are stored persistently.
-
-### Constructor
-
-#### `new settings.globalSettings(id, title, icon, description)`
-
-Creates a new global settings group for the plugin.
-
-**Parameters:**
-- `id` (string): Unique identifier for the settings group
-- `title` (string): Display title in settings interface
-- `icon` (string): Path to settings icon
-- `description` (string): Brief description of the plugin
-
-**Returns:**
-- `SettingsGroup`: Settings group object
-
-**Example:**
 ```javascript
 var settings = require('movian/settings');
 
-var mySettings = new settings.globalSettings(
-  'myplugin',
-  'My Video Plugin',
-  Plugin.path + 'icon.png',
-  'Settings for My Video Plugin'
+// Create global settings group
+settings.globalSettings(pluginId, title, icon, description);
+
+// Example
+settings.globalSettings('myplugin', 'My Plugin', Plugin.path + 'logo.png', 
+                       'Configuration for My Plugin');
+```
+
+**Parameters:**
+- `pluginId` (string) - Unique identifier for the plugin
+- `title` (string) - Display name in settings UI
+- `icon` (string) - Path to plugin icon
+- `description` (string) - Brief description of the plugin
+
+### URL-based Settings (kvstoreSettings)
+
+Create settings that are scoped to a specific URL using the kvstore backend:
+
+```javascript
+// Create URL-scoped settings
+var urlSettings = new settings.kvstoreSettings(nodes, url, domain);
+
+// Example for service-specific settings
+var serviceSettings = new settings.kvstoreSettings(
+    page.model.nodes, 
+    'myservice://config', 
+    'plugin'
 );
 ```
 
-**Source Reference:** `exports.globalSettings` in `movian/res/ecmascript/modules/movian/settings.js:180-205`
-
-### Settings Group Methods
-
-#### `group.createBool(id, title, defaultValue, callback, persistent)`
-
-Creates a boolean (checkbox) setting.
-
 **Parameters:**
-- `id` (string): Setting identifier
-- `title` (string): Display title
-- `defaultValue` (boolean): Default value
-- `callback` (function): Called when value changes
-- `persistent` (boolean, optional): Whether to persist value (default: true)
+- `nodes` - Property nodes container for the settings
+- `url` (string) - URL to scope the settings to
+- `domain` (string) - Storage domain ('plugin', 'sys', etc.)
 
-**Returns:**
-- `Setting`: Setting object with `value` and `enabled` properties
+### Setting Types
 
-**Example:**
+#### Boolean Settings
+
 ```javascript
-var enableNotifications = mySettings.createBool(
-  'notifications',
-  'Enable Notifications',
-  true,
-  function(value) {
-    console.log('Notifications enabled:', value);
+var boolSetting = settings.createBool(id, title, defaultValue, callback, persistent);
+
+// Example
+var enableFeature = settings.createBool('enableFeature', 'Enable Advanced Features', 
+                                       false, function(value) {
+    console.log('Feature enabled:', value);
     // Update plugin behavior based on setting
-  }
-);
+}, true);
 
 // Access current value
-console.log('Current setting:', enableNotifications.value);
+console.log('Current value:', enableFeature.value);
 
-// Disable the setting temporarily
-enableNotifications.enabled = false;
+// Programmatically change value
+enableFeature.value = true;
+
+// Enable/disable the setting
+enableFeature.enabled = false;
 ```
-
-**Source Reference:** `sp.createBool` in `movian/res/ecmascript/modules/movian/settings.js:45-65`
-
-#### `group.createString(id, title, defaultValue, callback, persistent)`
-
-Creates a string (text input) setting.
 
 **Parameters:**
-- `id` (string): Setting identifier
-- `title` (string): Display title
-- `defaultValue` (string): Default value
-- `callback` (function): Called when value changes
-- `persistent` (boolean, optional): Whether to persist value
+- `id` (string) - Unique identifier for the setting
+- `title` (string) - Display name in UI
+- `defaultValue` (boolean) - Default value
+- `callback` (function) - Called when value changes
+- `persistent` (boolean) - Whether to persist the value (default: true)
 
-**Returns:**
-- `Setting`: Setting object
+#### String Settings
 
-**Example:**
 ```javascript
-var apiKey = mySettings.createString(
-  'apiKey',
-  'API Key',
-  '',
-  function(value) {
-    console.log('API Key updated:', value ? '***' : 'not set');
-    // Validate and store API key
-    if (value && value.length < 10) {
-      console.log('Warning: API key seems too short');
-    }
-  }
-);
+var stringSetting = settings.createString(id, title, defaultValue, callback, persistent);
+
+// Example
+var apiUrl = settings.createString('apiUrl', 'API Server URL', 
+                                  'https://api.example.com', function(value) {
+    console.log('API URL changed to:', value);
+    // Update API client configuration
+}, true);
 ```
 
-**Source Reference:** `sp.createString` in `movian/res/ecmascript/modules/movian/settings.js:70-90`
-
-#### `group.createInt(id, title, defaultValue, min, max, step, unit, callback, persistent)`
-
-Creates an integer (number input) setting.
-
-**Parameters:**
-- `id` (string): Setting identifier
-- `title` (string): Display title
-- `defaultValue` (number): Default value
-- `min` (number): Minimum allowed value
-- `max` (number): Maximum allowed value
-- `step` (number): Step increment
-- `unit` (string): Unit label (e.g., 'seconds', 'MB')
-- `callback` (function): Called when value changes
-- `persistent` (boolean, optional): Whether to persist value
-
-**Returns:**
-- `Setting`: Setting object
-
-**Example:**
-```javascript
-var maxResults = mySettings.createInt(
-  'maxResults',
-  'Maximum Results',
-  20,        // default
-  1,         // min
-  100,       // max
-  5,         // step
-  'items',   // unit
-  function(value) {
-    console.log('Max results set to:', value);
-    // Update search behavior
-  }
-);
-```
-
-**Source Reference:** `sp.createInt` in `movian/res/ecmascript/modules/movian/settings.js:95-125`
-
-#### `group.createMultiOpt(id, title, options, callback, persistent)`
-
-Creates a multiple choice (dropdown/radio) setting.
-
-**Parameters:**
-- `id` (string): Setting identifier
-- `title` (string): Display title
-- `options` (Array): Array of [value, label, isDefault] arrays
-- `callback` (function): Called when selection changes
-- `persistent` (boolean, optional): Whether to persist value
-
-**Returns:**
-- `Setting`: Setting object
-
-**Example:**
-```javascript
-var quality = mySettings.createMultiOpt(
-  'videoQuality',
-  'Video Quality',
-  [
-    ['720p', '720p HD', false],
-    ['1080p', '1080p Full HD', true],  // default
-    ['4k', '4K Ultra HD', false]
-  ],
-  function(value) {
-    console.log('Video quality set to:', value);
-    // Update video streaming quality
-  }
-);
-```
-
-**Source Reference:** `sp.createMultiOpt` in `movian/res/ecmascript/modules/movian/settings.js:140-175`
-
-#### `group.createAction(id, title, callback)`
-
-Creates an action button setting.
-
-**Parameters:**
-- `id` (string): Setting identifier
-- `title` (string): Button label
-- `callback` (function): Called when button is pressed
-
-**Returns:**
-- `Setting`: Setting object
-
-**Example:**
-```javascript
-var clearCache = mySettings.createAction(
-  'clearCache',
-  'Clear Cache',
-  function() {
-    console.log('Clearing cache...');
-    // Clear plugin cache
-    var store = require('movian/store');
-    var cache = store.create('cache');
-    
-    // Clear all cache data
-    for (var key in cache) {
-      delete cache[key];
-    }
-    
-    console.log('Cache cleared');
-  }
-);
-```
-
-**Source Reference:** `sp.createAction` in `movian/res/ecmascript/modules/movian/settings.js:130-140`
-
-#### `group.createDivider(title)`
-
-Creates a visual divider/separator in the settings interface.
-
-**Parameters:**
-- `title` (string): Divider label
-
-**Example:**
-```javascript
-mySettings.createDivider('Advanced Settings');
-
-// Settings below this will be visually separated
-var debugMode = mySettings.createBool('debug', 'Debug Mode', false, function(value) {
-  console.log('Debug mode:', value);
-});
-```
-
-**Source Reference:** `sp.createDivider` in `movian/res/ecmascript/modules/movian/settings.js:125-130`
-
-#### `group.createInfo(id, icon, description)`
-
-Creates an informational display element.
-
-**Parameters:**
-- `id` (string): Element identifier
-- `icon` (string): Path to info icon
-- `description` (string): Information text
-
-**Example:**
-```javascript
-mySettings.createInfo(
-  'about',
-  Plugin.path + 'info-icon.png',
-  'This plugin provides access to video content from Example.com. ' +
-  'Please configure your API key above to get started.'
-);
-```
-
-**Source Reference:** `sp.createInfo` in `movian/res/ecmascript/modules/movian/settings.js:135-145`
-
-#### `group.destroy()`
-
-Removes the settings group from Movian's interface.
-
-**Example:**
-```javascript
-// Clean up settings when plugin is unloaded
-mySettings.destroy();
-```
-
-**Source Reference:** `sp.destroy` in `movian/res/ecmascript/modules/movian/settings.js:25-30`
-
-#### `group.dump()`
-
-Dumps the settings group structure to console for debugging.
-
-**Example:**
-```javascript
-mySettings.dump(); // Print settings structure
-```
-
-**Source Reference:** `sp.dump` in `movian/res/ecmascript/modules/movian/settings.js:35-40`
-
----
-
-## KVStore Settings
-
-KVStore settings provide URL-scoped configuration storage, commonly used for page-specific or content-specific settings.
-
-### Constructor
-
-#### `new settings.kvstoreSettings(nodes, url, domain)`
-
-Creates a settings group backed by KVStore.
-
-**Parameters:**
-- `nodes` (Object): Property nodes container
-- `url` (string): URL scope for the settings
-- `domain` (string): Domain identifier ('plugin', 'app', etc.)
-
-**Returns:**
-- `SettingsGroup`: KVStore-backed settings group
-
-**Example:**
-```javascript
-var settings = require('movian/settings');
-
-// Create page-specific settings
-var pageSettings = new settings.kvstoreSettings(
-  page.model.options,
-  page.root.url,
-  'plugin'
-);
-
-var sortOrder = pageSettings.createMultiOpt(
-  'sortOrder',
-  'Sort Order',
-  [
-    ['date', 'By Date', true],
-    ['title', 'By Title', false],
-    ['rating', 'By Rating', false]
-  ],
-  function(value) {
-    console.log('Sort order changed to:', value);
-    // Re-sort page content
-    sortPageContent(value);
-  },
-  true  // persistent
-);
-```
-
-**Source Reference:** `exports.kvstoreSettings` in `movian/res/ecmascript/modules/movian/settings.js:210-230`
-
-### KVStore vs Global Settings
-
-| Feature | Global Settings | KVStore Settings |
-|---------|----------------|------------------|
-| **Scope** | Plugin-wide | URL-specific |
-| **Storage** | File-based store | KVStore database |
-| **UI Location** | Main settings menu | Page/context-specific |
-| **Persistence** | Always persistent | Configurable per setting |
-| **Use Case** | Plugin configuration | Page/content preferences |
-
----
-
-## Setting Types
-
-### Boolean Settings
-
-Boolean settings appear as checkboxes in the interface.
+#### Integer Settings
 
 ```javascript
-var setting = group.createBool('enabled', 'Enable Feature', true, function(value) {
-  if (value) {
-    enableFeature();
-  } else {
-    disableFeature();
-  }
-});
+var intSetting = settings.createInt(id, title, defaultValue, min, max, step, unit, callback, persistent);
 
-// Programmatic access
-if (setting.value) {
-  console.log('Feature is enabled');
-}
-```
-
-### String Settings
-
-String settings appear as text input fields.
-
-```javascript
-var setting = group.createString('username', 'Username', '', function(value) {
-  if (value.length > 0) {
-    console.log('Username set to:', value);
-  } else {
-    console.log('Username cleared');
-  }
-});
-
-// Validation example
-var emailSetting = group.createString('email', 'Email Address', '', function(value) {
-  if (value && !value.includes('@')) {
-    console.log('Warning: Invalid email format');
-  }
-});
-```
-
-### Integer Settings
-
-Integer settings appear as number inputs with optional constraints.
-
-```javascript
-var setting = group.createInt(
-  'timeout',
-  'Request Timeout',
-  30,        // default: 30 seconds
-  5,         // min: 5 seconds
-  300,       // max: 5 minutes
-  5,         // step: 5 second increments
-  'seconds', // unit label
-  function(value) {
+// Example
+var timeout = settings.createInt('timeout', 'Request Timeout', 30, 5, 300, 5, 'seconds', 
+                                function(value) {
     console.log('Timeout set to:', value, 'seconds');
-    updateRequestTimeout(value * 1000); // Convert to milliseconds
-  }
-);
+}, true);
 ```
 
-### Multiple Choice Settings
+**Parameters:**
+- `min` (number) - Minimum allowed value
+- `max` (number) - Maximum allowed value  
+- `step` (number) - Step size for UI controls
+- `unit` (string) - Unit label for display
 
-Multiple choice settings appear as dropdowns or radio button groups.
+#### Multi-Option Settings
 
 ```javascript
-var setting = group.createMultiOpt(
-  'theme',
-  'Interface Theme',
-  [
-    ['auto', 'Auto (System)', true],
-    ['light', 'Light Theme', false],
-    ['dark', 'Dark Theme', false]
-  ],
-  function(value) {
-    console.log('Theme changed to:', value);
-    applyTheme(value);
-  }
-);
+var multiSetting = settings.createMultiOpt(id, title, options, callback, persistent);
+
+// Example
+var quality = settings.createMultiOpt('quality', 'Video Quality', [
+    ['480', '480p', false],      // [value, display_name, is_default]
+    ['720', '720p', true],       // This option is default
+    ['1080', '1080p', false]
+], function(selectedValue) {
+    console.log('Quality selected:', selectedValue);
+}, true);
 ```
 
-### Action Settings
+**Options Array Format:**
+- `[0]` - Internal value (string)
+- `[1]` - Display name (string)  
+- `[2]` - Is default option (boolean)
 
-Action settings appear as buttons that execute functions when pressed.
+#### Action Settings
 
 ```javascript
-var setting = group.createAction('reset', 'Reset to Defaults', function() {
-  // Reset all settings to default values
-  console.log('Resetting settings...');
-  
-  // You would typically reset other settings here
-  otherSetting.value = defaultValue;
-  
-  console.log('Settings reset complete');
+var actionSetting = settings.createAction(id, title, callback);
+
+// Example
+var clearCache = settings.createAction('clearCache', 'Clear Cache', function() {
+    console.log('Clearing cache...');
+    // Perform cache clearing operation
 });
 ```
 
----
+### UI Elements
 
-## Setting Groups
+#### Dividers
 
-### Organization Strategies
-
-#### Logical Grouping
 ```javascript
-var settings = require('movian/settings');
-var mySettings = new settings.globalSettings('myplugin', 'My Plugin', icon, desc);
+settings.createDivider(title);
 
-// Connection settings
-mySettings.createDivider('Connection Settings');
-mySettings.createString('apiUrl', 'API URL', 'https://api.example.com');
-mySettings.createString('apiKey', 'API Key', '');
-mySettings.createInt('timeout', 'Timeout', 30, 5, 300, 5, 'seconds', timeoutCallback);
-
-// Display settings
-mySettings.createDivider('Display Settings');
-mySettings.createMultiOpt('quality', 'Video Quality', qualityOptions, qualityCallback);
-mySettings.createBool('showThumbnails', 'Show Thumbnails', true, thumbnailCallback);
-
-// Advanced settings
-mySettings.createDivider('Advanced');
-mySettings.createBool('debug', 'Debug Mode', false, debugCallback);
-mySettings.createAction('clearCache', 'Clear Cache', clearCacheCallback);
+// Example
+settings.createDivider('Network Settings');
 ```
 
-#### Conditional Settings
+#### Information Displays
+
 ```javascript
-var debugEnabled = false;
+settings.createInfo(id, icon, description);
 
-var debugSetting = mySettings.createBool('debug', 'Debug Mode', false, function(value) {
-  debugEnabled = value;
-  
-  // Enable/disable debug-related settings
-  verboseSetting.enabled = value;
-  logLevelSetting.enabled = value;
-});
-
-var verboseSetting = mySettings.createBool('verbose', 'Verbose Logging', false, function(value) {
-  // Only active when debug mode is enabled
-});
-
-var logLevelSetting = mySettings.createMultiOpt('logLevel', 'Log Level', [
-  ['error', 'Errors Only', true],
-  ['warn', 'Warnings', false],
-  ['info', 'Information', false],
-  ['debug', 'Debug', false]
-], function(value) {
-  // Only active when debug mode is enabled
-});
-
-// Initially disable debug-related settings
-verboseSetting.enabled = false;
-logLevelSetting.enabled = false;
+// Example  
+settings.createInfo('version', Plugin.path + 'logo.png', 
+                   'Plugin version: ' + plugin.version + '\nAuthor: ' + plugin.author);
 ```
 
-### Setting Dependencies
+### Complete Settings Example
 
 ```javascript
 var settings = require('movian/settings');
-var mySettings = new settings.globalSettings('myplugin', 'My Plugin', icon, desc);
+var plugin = JSON.parse(Plugin.manifest);
 
-var authMethod = mySettings.createMultiOpt('authMethod', 'Authentication', [
-  ['none', 'No Authentication', true],
-  ['apikey', 'API Key', false],
-  ['oauth', 'OAuth', false]
-], function(value) {
-  // Enable/disable related settings based on auth method
-  apiKeySetting.enabled = (value === 'apikey');
-  oauthClientSetting.enabled = (value === 'oauth');
-  oauthSecretSetting.enabled = (value === 'oauth');
-});
+// Create global settings
+settings.globalSettings(plugin.id, plugin.title, Plugin.path + plugin.icon, plugin.synopsis);
 
-var apiKeySetting = mySettings.createString('apiKey', 'API Key', '', function(value) {
-  console.log('API Key updated');
-});
+// Plugin information
+settings.createInfo('info', Plugin.path + plugin.icon, 
+                   'Plugin developed by ' + plugin.author + '\nVersion: ' + plugin.version);
 
-var oauthClientSetting = mySettings.createString('oauthClient', 'OAuth Client ID', '', function(value) {
-  console.log('OAuth Client ID updated');
-});
+// Network settings section
+settings.createDivider('Network Settings');
 
-var oauthSecretSetting = mySettings.createString('oauthSecret', 'OAuth Secret', '', function(value) {
-  console.log('OAuth Secret updated');
-});
+var apiUrl = settings.createString('apiUrl', 'API Server URL', 'https://api.example.com', 
+                                  function(v) { config.apiUrl = v; });
 
-// Initially disable auth-specific settings
-apiKeySetting.enabled = false;
-oauthClientSetting.enabled = false;
-oauthSecretSetting.enabled = false;
-```
+var timeout = settings.createInt('timeout', 'Request Timeout', 30, 5, 300, 5, 'seconds',
+                                function(v) { config.timeout = v; });
 
----
+// Feature settings section  
+settings.createDivider('Features');
 
-## Error Handling
+var enableCache = settings.createBool('enableCache', 'Enable Caching', true,
+                                     function(v) { config.enableCache = v; });
 
-### Setting Validation
+var quality = settings.createMultiOpt('defaultQuality', 'Default Video Quality', [
+    ['480', '480p', false],
+    ['720', '720p', true], 
+    ['1080', '1080p', false]
+], function(v) { config.defaultQuality = v; });
 
-```javascript
-var settings = require('movian/settings');
-var mySettings = new settings.globalSettings('myplugin', 'My Plugin', icon, desc);
+// Actions section
+settings.createDivider('Actions');
 
-var urlSetting = mySettings.createString('serverUrl', 'Server URL', '', function(value) {
-  try {
-    if (value) {
-      // Validate URL format
-      if (!value.startsWith('http://') && !value.startsWith('https://')) {
-        throw new Error('URL must start with http:// or https://');
-      }
-      
-      // Test connection
-      var http = require('movian/http');
-      var response = http.request(value + '/api/status', {
-        timeout: 5000,
-        noFail: true
-      });
-      
-      if (response.statuscode !== 200) {
-        throw new Error('Server not reachable (HTTP ' + response.statuscode + ')');
-      }
-      
-      console.log('Server URL validated successfully');
-      
-    }
-  } catch (e) {
-    console.log('Server URL validation failed:', e.message);
-    // You might want to show an error to the user
-    // or revert to a previous valid value
-  }
+settings.createAction('clearCache', 'Clear Cache', function() {
+    // Clear cache implementation
+    console.log('Cache cleared');
 });
 ```
 
-### Setting Recovery
+## Store API (`movian/store`)
+
+The store module provides file-based persistent storage using JSON serialization with automatic saving and loading.
+
+### Creating Stores
+
+#### Named Store (Automatic Path)
 
 ```javascript
-var settings = require('movian/settings');
 var store = require('movian/store');
 
-function createSettingsWithBackup() {
-  var mySettings = new settings.globalSettings('myplugin', 'My Plugin', icon, desc);
-  var backupStore = store.create('settings-backup');
-  
-  var apiKeySetting = mySettings.createString('apiKey', 'API Key', '', function(value) {
-    try {
-      if (value) {
-        // Validate API key
-        validateApiKey(value);
+// Creates store at: Core.storagePath + '/store/' + name
+var myStore = store.create('mydata');
+```
+
+#### Custom Path Store
+
+```javascript
+var store = require('movian/store');
+
+// Create store at specific path
+var customStore = store.createFromPath('/path/to/my/store.json');
+```
+
+### Using Stores
+
+Stores act like JavaScript objects with automatic persistence:
+
+```javascript
+var store = require('movian/store').create('userdata');
+
+// Set values (automatically saved after 5 second delay)
+store.username = 'john_doe';
+store.preferences = {
+    theme: 'dark',
+    language: 'en'
+};
+store.watchedMovies = ['movie1', 'movie2'];
+
+// Read values
+console.log('Username:', store.username);
+console.log('Theme:', store.preferences.theme);
+
+// Check if key exists
+if ('username' in store) {
+    console.log('User is logged in');
+}
+
+// Delete values
+delete store.username;
+```
+
+### Store Features
+
+- **Automatic Saving**: Changes are saved to disk after a 5-second delay
+- **JSON Serialization**: All data is stored as JSON
+- **Proxy-based**: Uses JavaScript Proxy for transparent object access
+- **Finalizer**: Ensures data is saved when store is garbage collected
+- **Error Handling**: Gracefully handles file read/write errors
+
+### Store Implementation Details
+
+```javascript
+// Store object structure (internal)
+var storeObject = {
+    filename: '/path/to/store.json',
+    keys: {},           // Actual data storage
+    timer: null         // Delayed save timer
+};
+
+// Proxy handlers provide transparent access
+var storeProxy = {
+    get: function(obj, name) {
+        return obj.keys[name];
+    },
+    
+    set: function(obj, name, value) {
+        if (obj.keys[name] === value) return;
         
-        // Store backup of working key
-        backupStore.lastWorkingApiKey = value;
-        backupStore.lastValidated = Date.now();
-      }
-    } catch (e) {
-      console.log('API Key validation failed:', e.message);
-      
-      // Offer to restore last working key
-      if (backupStore.lastWorkingApiKey) {
-        console.log('Restoring last working API key');
-        apiKeySetting.value = backupStore.lastWorkingApiKey;
-      }
-    }
-  });
-  
-  return mySettings;
-}
-
-function validateApiKey(key) {
-  var http = require('movian/http');
-  
-  var response = http.request('https://api.example.com/validate', {
-    headers: {
-      'Authorization': 'Bearer ' + key
+        obj.keys[name] = value;
+        
+        // Schedule save after 5 seconds
+        if (obj.timer) clearTimeout(obj.timer);
+        obj.timer = setTimeout(function() {
+            fs.writeFileSync(obj.filename, JSON.stringify(obj.keys));
+            delete obj.timer;
+        }, 5000);
     },
-    timeout: 10000
-  });
-  
-  if (response.statuscode !== 200) {
-    throw new Error('Invalid API key');
-  }
-}
+    
+    has: function(obj, name) {
+        return name in obj.keys;
+    }
+};
 ```
 
-### Graceful Degradation
+## KVStore API (`native/kvstore`)
+
+The kvstore module provides low-level key-value storage with URL-based scoping and multiple storage domains.
+
+### Storage Domains
+
+KVStore organizes data into different domains:
+
+- `'plugin'` - Plugin-specific data (KVSTORE_DOMAIN_PLUGIN = 3)
+- `'sys'` - System-level data (KVSTORE_DOMAIN_SYS = 1)  
+- `'prop'` - Property-related data (KVSTORE_DOMAIN_PROP = 2)
+- `'setting'` - Settings data (KVSTORE_DOMAIN_SETTING = 4)
+
+### Basic Operations
+
+```javascript
+var kvstore = require('native/kvstore');
+
+// Store values
+kvstore.set(url, domain, key, value);
+
+// Retrieve values with defaults
+var stringValue = kvstore.getString(url, domain, key) || defaultValue;
+var intValue = kvstore.getInteger(url, domain, key, defaultValue);
+var boolValue = kvstore.getBoolean(url, domain, key, defaultValue);
+```
+
+### URL-based Scoping
+
+KVStore uses URLs to scope data, allowing different contexts to have separate storage:
+
+```javascript
+var kvstore = require('native/kvstore');
+
+// Plugin-specific settings for different services
+kvstore.set('myservice://config', 'plugin', 'apiKey', 'abc123');
+kvstore.set('otherservice://config', 'plugin', 'apiKey', 'xyz789');
+
+// Retrieve service-specific settings
+var myApiKey = kvstore.getString('myservice://config', 'plugin', 'apiKey');
+var otherApiKey = kvstore.getString('otherservice://config', 'plugin', 'apiKey');
+```
+
+### Data Types
+
+#### String Storage
+
+```javascript
+// Store string
+kvstore.set('myapp://config', 'plugin', 'username', 'john_doe');
+
+// Retrieve string (returns null if not found)
+var username = kvstore.getString('myapp://config', 'plugin', 'username');
+if (username) {
+    console.log('Username:', username);
+} else {
+    console.log('No username stored');
+}
+
+// With default value
+var theme = kvstore.getString('myapp://config', 'plugin', 'theme') || 'default';
+```
+
+#### Integer Storage
+
+```javascript
+// Store integer
+kvstore.set('myapp://config', 'plugin', 'timeout', 30);
+
+// Retrieve with default
+var timeout = kvstore.getInteger('myapp://config', 'plugin', 'timeout', 10);
+console.log('Timeout:', timeout, 'seconds');
+```
+
+#### Boolean Storage
+
+```javascript
+// Store boolean
+kvstore.set('myapp://config', 'plugin', 'enabled', true);
+
+// Retrieve with default
+var enabled = kvstore.getBoolean('myapp://config', 'plugin', 'enabled', false);
+console.log('Feature enabled:', enabled);
+```
+
+#### Deleting Values
+
+```javascript
+// Delete by setting to undefined/null
+kvstore.set('myapp://config', 'plugin', 'oldSetting', null);
+```
+
+### KVStore Integration with Settings
+
+The settings system uses kvstore internally when using `kvstoreSettings`:
 
 ```javascript
 var settings = require('movian/settings');
 
-function createRobustSettings() {
-  try {
-    var mySettings = new settings.globalSettings('myplugin', 'My Plugin', icon, desc);
+// This creates a kvstore-backed settings group
+var pageSettings = new settings.kvstoreSettings(
+    page.model.nodes,           // UI nodes container
+    'myservice://page:' + pageId,  // URL scope
+    'plugin'                    // Storage domain
+);
+
+// Settings created on this group will be stored in kvstore
+var autoplay = pageSettings.createBool('autoplay', 'Auto-play videos', false, 
+                                       function(v) { /* callback */ }, true);
+
+// Internally this calls:
+// kvstore.set('myservice://page:' + pageId, 'plugin', 'autoplay', value);
+```
+
+## Configuration Patterns and Best Practices
+
+### Plugin Configuration Structure
+
+```javascript
+// config.js - Centralized configuration
+var plugin = JSON.parse(Plugin.manifest);
+
+var config = {
+    // Static configuration
+    PREFIX: plugin.id,
+    LOGO: Plugin.path + plugin.icon,
     
-    // Create settings with error handling
-    var qualitySetting = mySettings.createMultiOpt('quality', 'Quality', [
-      ['low', 'Low Quality', false],
-      ['medium', 'Medium Quality', true],
-      ['high', 'High Quality', false]
-    ], function(value) {
-      try {
-        applyQualitySetting(value);
-      } catch (e) {
-        console.log('Failed to apply quality setting:', e.message);
-        // Fall back to medium quality
-        if (value !== 'medium') {
-          console.log('Falling back to medium quality');
-          qualitySetting.value = 'medium';
-        }
-      }
-    });
+    // Default values for settings
+    apiUrl: 'https://api.example.com',
+    timeout: 30,
+    enableCache: true,
+    quality: '720',
     
-    return mySettings;
-    
-  } catch (e) {
-    console.log('Failed to create settings interface:', e.message);
-    
-    // Return a mock settings object that doesn't crash
-    return {
-      destroy: function() {},
-      dump: function() {}
+    // Runtime configuration (updated by settings)
+    debug: false
+};
+
+module.exports = config;
+```
+
+```javascript
+// main.js - Settings integration
+var settings = require('movian/settings');
+var config = require('./config');
+
+settings.globalSettings(config.PREFIX, plugin.title, config.LOGO, plugin.synopsis);
+
+// Create settings that update config object
+settings.createString('apiUrl', 'API URL', config.apiUrl, function(v) {
+    config.apiUrl = v;
+});
+
+settings.createInt('timeout', 'Timeout', config.timeout, 5, 300, 5, 'sec', function(v) {
+    config.timeout = v;
+});
+
+settings.createBool('enableCache', 'Enable Cache', config.enableCache, function(v) {
+    config.enableCache = v;
+});
+```
+
+### User Data Storage
+
+```javascript
+// User-specific data storage
+var store = require('movian/store').create('userdata');
+
+// Store user preferences
+store.favorites = store.favorites || [];
+store.watchHistory = store.watchHistory || {};
+store.lastLogin = new Date().toISOString();
+
+// Helper functions
+function addToFavorites(itemId) {
+    if (store.favorites.indexOf(itemId) === -1) {
+        store.favorites.push(itemId);
+    }
+}
+
+function markAsWatched(itemId, position) {
+    store.watchHistory[itemId] = {
+        position: position,
+        timestamp: new Date().toISOString(),
+        completed: position > 0.9
     };
-  }
 }
 ```
 
----
-
-## Examples
-
-### Complete Plugin Settings Example
+### Service-specific Configuration
 
 ```javascript
-// settings-example.js - Complete plugin settings implementation
+// Per-service configuration using kvstore
+var kvstore = require('native/kvstore');
 
-var settings = require('movian/settings');
-var store = require('movian/store');
-var http = require('movian/http');
-
-function PluginSettings(pluginId, pluginTitle) {
-  this.pluginId = pluginId;
-  this.store = store.create('settings');
-  
-  // Create global settings interface
-  this.settings = new settings.globalSettings(
-    pluginId,
-    pluginTitle + ' Settings',
-    Plugin.path + 'icon.png',
-    'Configure ' + pluginTitle + ' plugin options'
-  );
-  
-  this.initializeSettings();
+function ServiceConfig(serviceUrl) {
+    this.url = serviceUrl;
+    this.domain = 'plugin';
 }
 
-PluginSettings.prototype.initializeSettings = function() {
-  var self = this;
-  
-  // Connection Settings
-  this.settings.createDivider('Connection Settings');
-  
-  this.apiUrlSetting = this.settings.createString(
-    'apiUrl',
-    'API Server URL',
-    'https://api.example.com',
-    function(value) {
-      self.onApiUrlChanged(value);
-    }
-  );
-  
-  this.apiKeySetting = this.settings.createString(
-    'apiKey',
-    'API Key',
-    '',
-    function(value) {
-      self.onApiKeyChanged(value);
-    }
-  );
-  
-  this.timeoutSetting = this.settings.createInt(
-    'timeout',
-    'Request Timeout',
-    30,
-    5,
-    300,
-    5,
-    'seconds',
-    function(value) {
-      self.onTimeoutChanged(value);
-    }
-  );
-  
-  // Display Settings
-  this.settings.createDivider('Display Settings');
-  
-  this.qualitySetting = this.settings.createMultiOpt(
-    'videoQuality',
-    'Default Video Quality',
-    [
-      ['480p', '480p (SD)', false],
-      ['720p', '720p (HD)', true],
-      ['1080p', '1080p (Full HD)', false],
-      ['4k', '4K (Ultra HD)', false]
-    ],
-    function(value) {
-      self.onQualityChanged(value);
-    }
-  );
-  
-  this.thumbnailsSetting = this.settings.createBool(
-    'showThumbnails',
-    'Show Video Thumbnails',
-    true,
-    function(value) {
-      self.onThumbnailsChanged(value);
-    }
-  );
-  
-  this.itemsPerPageSetting = this.settings.createInt(
-    'itemsPerPage',
-    'Items Per Page',
-    20,
-    5,
-    100,
-    5,
-    'items',
-    function(value) {
-      self.onItemsPerPageChanged(value);
-    }
-  );
-  
-  // Advanced Settings
-  this.settings.createDivider('Advanced Settings');
-  
-  this.cachingSetting = this.settings.createBool(
-    'enableCaching',
-    'Enable Response Caching',
-    true,
-    function(value) {
-      self.onCachingChanged(value);
-    }
-  );
-  
-  this.debugSetting = this.settings.createBool(
-    'debugMode',
-    'Debug Mode',
-    false,
-    function(value) {
-      self.onDebugChanged(value);
-    }
-  );
-  
-  // Actions
-  this.settings.createDivider('Actions');
-  
-  this.settings.createAction(
-    'testConnection',
-    'Test API Connection',
-    function() {
-      self.testConnection();
-    }
-  );
-  
-  this.settings.createAction(
-    'clearCache',
-    'Clear Cache',
-    function() {
-      self.clearCache();
-    }
-  );
-  
-  this.settings.createAction(
-    'resetSettings',
-    'Reset to Defaults',
-    function() {
-      self.resetToDefaults();
-    }
-  );
-  
-  // Information
-  this.settings.createDivider('Information');
-  
-  this.settings.createInfo(
-    'about',
-    Plugin.path + 'info-icon.png',
-    'Plugin Version: ' + Plugin.version + '\n' +
-    'For support, visit: https://example.com/support'
-  );
-};
-
-PluginSettings.prototype.onApiUrlChanged = function(value) {
-  console.log('API URL changed to:', value);
-  this.store.apiUrl = value;
-  
-  // Validate URL format
-  if (value && !value.match(/^https?:\/\/.+/)) {
-    console.log('Warning: API URL should start with http:// or https://');
-  }
-};
-
-PluginSettings.prototype.onApiKeyChanged = function(value) {
-  console.log('API Key changed:', value ? '***' : 'cleared');
-  this.store.apiKey = value;
-  
-  // Clear any cached authentication
-  this.clearAuthCache();
-};
-
-PluginSettings.prototype.onTimeoutChanged = function(value) {
-  console.log('Timeout changed to:', value, 'seconds');
-  this.store.timeout = value;
-};
-
-PluginSettings.prototype.onQualityChanged = function(value) {
-  console.log('Default quality changed to:', value);
-  this.store.videoQuality = value;
-};
-
-PluginSettings.prototype.onThumbnailsChanged = function(value) {
-  console.log('Show thumbnails:', value);
-  this.store.showThumbnails = value;
-};
-
-PluginSettings.prototype.onItemsPerPageChanged = function(value) {
-  console.log('Items per page changed to:', value);
-  this.store.itemsPerPage = value;
-};
-
-PluginSettings.prototype.onCachingChanged = function(value) {
-  console.log('Caching enabled:', value);
-  this.store.enableCaching = value;
-  
-  if (!value) {
-    this.clearCache();
-  }
-};
-
-PluginSettings.prototype.onDebugChanged = function(value) {
-  console.log('Debug mode:', value);
-  this.store.debugMode = value;
-  
-  // You might enable/disable additional logging here
-};
-
-PluginSettings.prototype.testConnection = function() {
-  console.log('Testing API connection...');
-  
-  var apiUrl = this.store.apiUrl || 'https://api.example.com';
-  var apiKey = this.store.apiKey;
-  var timeout = (this.store.timeout || 30) * 1000;
-  
-  try {
-    var response = http.request(apiUrl + '/status', {
-      headers: apiKey ? {'Authorization': 'Bearer ' + apiKey} : {},
-      timeout: timeout,
-      noFail: true
-    });
+ServiceConfig.prototype.get = function(key, defaultValue, type) {
+    type = type || 'string';
     
-    if (response.statuscode === 200) {
-      console.log('✓ Connection successful');
-      
-      // Parse response for additional info
-      try {
-        var data = JSON.parse(response.toString());
-        if (data.version) {
-          console.log('API Version:', data.version);
+    if (type === 'string') {
+        return kvstore.getString(this.url, this.domain, key) || defaultValue;
+    } else if (type === 'int') {
+        return kvstore.getInteger(this.url, this.domain, key, defaultValue);
+    } else if (type === 'bool') {
+        return kvstore.getBoolean(this.url, this.domain, key, defaultValue);
+    }
+};
+
+ServiceConfig.prototype.set = function(key, value) {
+    kvstore.set(this.url, this.domain, key, value);
+};
+
+// Usage
+var movieService = new ServiceConfig('moviedb://config');
+movieService.set('apiKey', 'abc123');
+movieService.set('language', 'en');
+
+var apiKey = movieService.get('apiKey');
+var language = movieService.get('language', 'en');
+```
+
+### Temporary vs Persistent Settings
+
+```javascript
+// Settings with persistence control
+var settings = require('movian/settings');
+
+// Persistent setting (saved across sessions)
+var persistentSetting = settings.createBool('saveLogin', 'Remember Login', false, 
+                                           function(v) { config.saveLogin = v; }, 
+                                           true);  // persistent = true
+
+// Temporary setting (session only)
+var tempSetting = settings.createBool('debugMode', 'Debug This Session', false,
+                                     function(v) { config.debug = v; },
+                                     false);  // persistent = false
+```
+
+### Migration and Versioning
+
+```javascript
+// Configuration migration example
+var store = require('movian/store').create('config');
+
+// Check and migrate configuration version
+var configVersion = store.version || 1;
+
+if (configVersion < 2) {
+    // Migrate from version 1 to 2
+    if (store.oldApiUrl) {
+        store.apiUrl = store.oldApiUrl;
+        delete store.oldApiUrl;
+    }
+    store.version = 2;
+}
+
+if (configVersion < 3) {
+    // Migrate from version 2 to 3
+    if (typeof store.quality === 'number') {
+        store.quality = store.quality + 'p';  // Convert 720 to '720p'
+    }
+    store.version = 3;
+}
+```
+
+## Error Handling and Validation
+
+### Settings Validation
+
+```javascript
+// Input validation in settings callbacks
+var settings = require('movian/settings');
+
+var apiUrl = settings.createString('apiUrl', 'API URL', 'https://api.example.com', 
+                                  function(value) {
+    // Validate URL format
+    try {
+        new URL(value);  // This will throw if invalid
+        config.apiUrl = value;
+        console.log('API URL updated:', value);
+    } catch (e) {
+        console.error('Invalid URL format:', value);
+        // Could show popup or reset to default
+    }
+});
+
+var port = settings.createInt('port', 'Port', 8080, 1, 65535, 1, '', function(value) {
+    // Validation is automatic for integers (min/max)
+    config.port = value;
+});
+```
+
+### Store Error Handling
+
+```javascript
+// Graceful store error handling
+var store;
+try {
+    store = require('movian/store').create('mydata');
+} catch (e) {
+    console.error('Failed to create store:', e);
+    // Fallback to memory-only storage
+    store = {};
+}
+
+// Safe store access
+function safeStoreGet(key, defaultValue) {
+    try {
+        return store[key] !== undefined ? store[key] : defaultValue;
+    } catch (e) {
+        console.error('Store read error:', e);
+        return defaultValue;
+    }
+}
+
+function safeStoreSet(key, value) {
+    try {
+        store[key] = value;
+    } catch (e) {
+        console.error('Store write error:', e);
+    }
+}
+```
+
+### KVStore Error Handling
+
+```javascript
+// Safe kvstore operations
+var kvstore = require('native/kvstore');
+
+function safeKVGet(url, domain, key, defaultValue, type) {
+    try {
+        if (type === 'string') {
+            return kvstore.getString(url, domain, key) || defaultValue;
+        } else if (type === 'int') {
+            return kvstore.getInteger(url, domain, key, defaultValue);
+        } else if (type === 'bool') {
+            return kvstore.getBoolean(url, domain, key, defaultValue);
         }
-      } catch (e) {
-        // Ignore JSON parsing errors
-      }
-      
-    } else {
-      console.log('✗ Connection failed: HTTP', response.statuscode);
+    } catch (e) {
+        console.error('KVStore read error:', e);
+        return defaultValue;
     }
-    
-  } catch (e) {
-    console.log('✗ Connection error:', e.message);
-  }
-};
-
-PluginSettings.prototype.clearCache = function() {
-  console.log('Clearing cache...');
-  
-  var cache = store.create('cache');
-  var count = 0;
-  
-  for (var key in cache) {
-    delete cache[key];
-    count++;
-  }
-  
-  console.log('Cleared', count, 'cache entries');
-};
-
-PluginSettings.prototype.clearAuthCache = function() {
-  var cache = store.create('cache');
-  
-  // Clear authentication-related cache entries
-  delete cache.authToken;
-  delete cache.userInfo;
-  delete cache.permissions;
-  
-  console.log('Authentication cache cleared');
-};
-
-PluginSettings.prototype.resetToDefaults = function() {
-  console.log('Resetting settings to defaults...');
-  
-  // Reset to default values
-  this.apiUrlSetting.value = 'https://api.example.com';
-  this.apiKeySetting.value = '';
-  this.timeoutSetting.value = 30;
-  this.qualitySetting.value = '720p';
-  this.thumbnailsSetting.value = true;
-  this.itemsPerPageSetting.value = 20;
-  this.cachingSetting.value = true;
-  this.debugSetting.value = false;
-  
-  console.log('Settings reset complete');
-};
-
-PluginSettings.prototype.getApiUrl = function() {
-  return this.store.apiUrl || 'https://api.example.com';
-};
-
-PluginSettings.prototype.getApiKey = function() {
-  return this.store.apiKey || '';
-};
-
-PluginSettings.prototype.getTimeout = function() {
-  return (this.store.timeout || 30) * 1000; // Convert to milliseconds
-};
-
-PluginSettings.prototype.getVideoQuality = function() {
-  return this.store.videoQuality || '720p';
-};
-
-PluginSettings.prototype.shouldShowThumbnails = function() {
-  return this.store.showThumbnails !== false; // Default to true
-};
-
-PluginSettings.prototype.getItemsPerPage = function() {
-  return this.store.itemsPerPage || 20;
-};
-
-PluginSettings.prototype.isCachingEnabled = function() {
-  return this.store.enableCaching !== false; // Default to true
-};
-
-PluginSettings.prototype.isDebugMode = function() {
-  return this.store.debugMode === true; // Default to false
-};
-
-PluginSettings.prototype.destroy = function() {
-  if (this.settings) {
-    this.settings.destroy();
-  }
-};
-
-// Usage example
-var pluginSettings = new PluginSettings('myplugin', 'My Video Plugin');
-
-// Access settings values
-console.log('API URL:', pluginSettings.getApiUrl());
-console.log('Debug mode:', pluginSettings.isDebugMode());
-
-// Use settings in HTTP requests
-var http = require('movian/http');
-
-function makeApiRequest(endpoint) {
-  return http.request(pluginSettings.getApiUrl() + endpoint, {
-    headers: {
-      'Authorization': 'Bearer ' + pluginSettings.getApiKey()
-    },
-    timeout: pluginSettings.getTimeout(),
-    compression: true,
-    caching: pluginSettings.isCachingEnabled()
-  });
 }
 
-// Clean up on plugin unload
-Plugin.addURI("plugin:myplugin:cleanup", function() {
-  pluginSettings.destroy();
-});
+function safeKVSet(url, domain, key, value) {
+    try {
+        kvstore.set(url, domain, key, value);
+    } catch (e) {
+        console.error('KVStore write error:', e);
+    }
+}
 ```
 
-### Page-Specific Settings Example
+## Source Code References
 
-```javascript
-// page-settings-example.js - Page-specific settings using KVStore
+### ECMAScript KVStore Implementation
+- **File**: `movian/src/ecmascript/es_kvstore.c`
+- **Functions**:
+  - `es_kvstore_get_string()` - String retrieval (lines 35-45)
+  - `es_kvstore_get_int()` - Integer retrieval (lines 51-61)  
+  - `es_kvstore_get_bool()` - Boolean retrieval (lines 67-77)
+  - `es_kvstore_set()` - Value storage with type detection (lines 83-103)
+  - `es_kvstore_get_domain()` - Domain validation (lines 25-32)
 
-var settings = require('movian/settings');
-var page = require('movian/page');
+### Settings JavaScript Module
+- **File**: `movian/res/ecmascript/modules/movian/settings.js`
+- **Key Functions**:
+  - `createSetting()` - Base setting creation (lines 6-35)
+  - `createBool()` - Boolean settings (lines 55-75)
+  - `createString()` - String settings (lines 81-101)
+  - `createInt()` - Integer settings (lines 107-135)
+  - `createMultiOpt()` - Multi-option settings (lines 175-215)
+  - `globalSettings()` - Global settings group (lines 225-255)
+  - `kvstoreSettings()` - URL-scoped settings (lines 261-285)
 
-function createBrowsePage(pageRoot, category) {
-  var browsePage = new page.Page(pageRoot, false, false);
-  
-  // Create page-specific settings
-  var pageSettings = new settings.kvstoreSettings(
-    browsePage.model.options,
-    pageRoot.url,
-    'plugin'
-  );
-  
-  // Sort order setting
-  var sortSetting = pageSettings.createMultiOpt(
-    'sortOrder',
-    'Sort Order',
-    [
-      ['date_desc', 'Newest First', true],
-      ['date_asc', 'Oldest First', false],
-      ['title_asc', 'Title A-Z', false],
-      ['title_desc', 'Title Z-A', false],
-      ['rating_desc', 'Highest Rated', false]
-    ],
-    function(value) {
-      console.log('Sort order changed to:', value);
-      refreshPageContent(browsePage, category, value);
-    },
-    true // persistent
-  );
-  
-  // View mode setting
-  var viewSetting = pageSettings.createMultiOpt(
-    'viewMode',
-    'View Mode',
-    [
-      ['grid', 'Grid View', true],
-      ['list', 'List View', false],
-      ['detailed', 'Detailed View', false]
-    ],
-    function(value) {
-      console.log('View mode changed to:', value);
-      updateViewMode(browsePage, value);
-    },
-    true // persistent
-  );
-  
-  // Items per page setting
-  var itemsSetting = pageSettings.createInt(
-    'itemsPerPage',
-    'Items Per Page',
-    20,
-    5,
-    100,
-    5,
-    'items',
-    function(value) {
-      console.log('Items per page changed to:', value);
-      refreshPageContent(browsePage, category, sortSetting.value, value);
-    },
-    true // persistent
-  );
-  
-  // Filter settings
-  pageSettings.createDivider('Filters');
-  
-  var genreFilter = pageSettings.createMultiOpt(
-    'genreFilter',
-    'Genre Filter',
-    [
-      ['all', 'All Genres', true],
-      ['action', 'Action', false],
-      ['comedy', 'Comedy', false],
-      ['drama', 'Drama', false],
-      ['horror', 'Horror', false]
-    ],
-    function(value) {
-      console.log('Genre filter changed to:', value);
-      refreshPageContent(browsePage, category, sortSetting.value, itemsSetting.value, value);
-    },
-    true // persistent
-  );
-  
-  // Load initial content
-  refreshPageContent(browsePage, category, sortSetting.value, itemsSetting.value, genreFilter.value);
-  
-  return browsePage;
-}
+### Store JavaScript Module  
+- **File**: `movian/res/ecmascript/modules/movian/store.js`
+- **Key Components**:
+  - `storeproxy` - Proxy handlers for transparent access (lines 4-30)
+  - `createFromPath()` - Store creation with custom path (lines 32-50)
+  - `create()` - Named store creation (lines 53-60)
 
-function refreshPageContent(page, category, sortOrder, itemsPerPage, genreFilter) {
-  page.loading = true;
-  page.flush();
-  
-  try {
-    // Fetch content based on settings
-    var content = fetchContent({
-      category: category,
-      sort: sortOrder,
-      limit: itemsPerPage,
-      genre: genreFilter === 'all' ? null : genreFilter
-    });
-    
-    content.forEach(function(item) {
-      page.appendItem(item.url, item.type, item.metadata);
-    });
-    
-    page.loading = false;
-    
-  } catch (e) {
-    page.error('Failed to load content: ' + e.message);
-  }
-}
-
-function updateViewMode(page, viewMode) {
-  // Update page properties based on view mode
-  switch (viewMode) {
-    case 'grid':
-      page.model.itemsPerRow = 4;
-      page.model.showDetails = false;
-      break;
-    case 'list':
-      page.model.itemsPerRow = 1;
-      page.model.showDetails = false;
-      break;
-    case 'detailed':
-      page.model.itemsPerRow = 1;
-      page.model.showDetails = true;
-      break;
-  }
-}
-
-// Register route with page-specific settings
-var browseRoute = new page.Route('^plugin:myplugin:browse:(.*)$', function(page, category) {
-  page.type = 'directory';
-  page.metadata.title = 'Browse ' + category;
-  
-  createBrowsePage(page.root, category);
-});
-```
-
----
+### KVStore Native Implementation
+- **File**: `movian/src/db/kvstore.h`
+- **Storage Domains**:
+  - `KVSTORE_DOMAIN_SYS = 1` - System storage
+  - `KVSTORE_DOMAIN_PROP = 2` - Property storage  
+  - `KVSTORE_DOMAIN_PLUGIN = 3` - Plugin storage
+  - `KVSTORE_DOMAIN_SETTING = 4` - Settings storage
 
 ## Version Compatibility
 
-- **Movian 4.8+**: All documented APIs available
-- **Movian 4.6-4.7**: Core settings functionality available, some advanced features may be missing
-- **Earlier versions**: Basic settings support, limited KVStore integration
+- **Settings API**: Available in all Movian versions with ECMAScript support
+- **Store API**: Available in Movian 4.8+
+- **KVStore API**: Available in all versions, domain system added in 4.6+
+- **Proxy Support**: Requires Movian 4.8+ (Duktape 2.0+)
 
 ## See Also
 
-- [Core API Reference](core-api.md) - Service, page, and property APIs
-- [Storage API Reference](storage-api.md) - Data persistence and storage
-- [HTTP API Reference](http-api.md) - Network and HTTP functionality
-- [Plugin Development Guide](../getting-started.md) - Getting started with plugins
+- [Plugin API Overview](core-api.md) - Core plugin APIs
+- [HTTP API](http-api.md) - Network requests and data fetching
+- [Plugin Examples](../examples/) - Working examples with settings
+- [Property System](../advanced/properties.md) - Advanced property binding

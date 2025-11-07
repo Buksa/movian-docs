@@ -1,340 +1,243 @@
 # Configurable Plugin Example
 
-This plugin demonstrates comprehensive settings and configuration management for Movian plugins, showcasing all available setting types and advanced configuration patterns.
+This example demonstrates comprehensive settings and configuration management in Movian plugins, showcasing all available setting types, persistent storage patterns, and configuration best practices.
 
 ## Features Demonstrated
 
-### 🔧 Setting Types
-- **String Settings**: Text input fields with validation
-- **Boolean Settings**: Toggle switches for on/off options
-- **Integer Settings**: Numeric inputs with min/max ranges and units
-- **Multi-Option Settings**: Dropdown selections with predefined choices
-- **Action Settings**: Buttons that trigger specific functions
+### Settings Types
+- **Boolean Settings** - Feature toggles and preferences
+- **String Settings** - URLs, API keys, and text configuration
+- **Integer Settings** - Numeric values with validation and units
+- **Multi-Option Settings** - Dropdown selections with multiple choices
+- **Action Settings** - Buttons that trigger functions
+- **UI Elements** - Dividers and information displays
 
-### ⚙️ Configuration Categories
-- **Basic Configuration**: Core plugin settings
-- **Network Configuration**: API endpoints and connection settings
-- **Content Preferences**: User content and quality preferences
-- **Display Options**: UI customization settings
-- **Cache Configuration**: Performance and storage settings
-- **Advanced Options**: Experimental and developer features
+### Storage Systems
+- **Global Settings** - Plugin-wide configuration in Movian settings
+- **Store API** - File-based persistent storage for user data
+- **KVStore API** - URL-scoped key-value storage
+- **Session Settings** - Temporary settings that don't persist
 
-### 🔄 Dynamic Behavior
-- **Settings Callbacks**: Real-time response to setting changes
-- **Conditional Logic**: Settings that affect plugin behavior
-- **Validation**: Input validation and error handling
-- **Persistence**: Automatic settings storage and retrieval
+### Configuration Patterns
+- **Centralized Configuration** - Single config object pattern
+- **User Data Management** - Favorites, watch history, statistics
+- **Page-specific Settings** - URL-scoped configuration
+- **Settings Validation** - Input validation and error handling
+- **Migration Support** - Configuration versioning and updates
 
-## Technical Implementation
+## Installation
 
-### Settings Structure
+1. Copy the entire `configurable-plugin` directory to your Movian plugins folder
+2. Restart Movian or reload plugins
+3. The plugin will appear in your video sources as "Configurable Plugin Example"
 
+## Usage
+
+### Accessing Settings
+
+1. Go to Movian Settings → Applications → "Configurable Plugin Example"
+2. Explore the different setting types and sections:
+   - **API Configuration** - Server settings and connection parameters
+   - **Features** - Toggle various plugin features
+   - **User Preferences** - Quality, language, and theme settings
+   - **Advanced Settings** - Cache and update configurations
+   - **Actions** - Buttons to perform various operations
+
+### Testing Features
+
+1. Launch the plugin from your video sources
+2. View current configuration and user statistics
+3. Use the demo actions to test:
+   - Adding items to favorites
+   - Marking items as watched
+   - Page-specific settings
+
+### Configuration Examples
+
+The plugin demonstrates several configuration patterns:
+
+#### Global Plugin Settings
 ```javascript
-// Global settings initialization
-settings.globalSettings(PLUGIN_PREFIX, "Configurable Plugin", "logo.png", "Plugin Configuration");
+// Create global settings group
+settings.globalSettings(plugin.id, plugin.title, Plugin.path + plugin.icon, plugin.synopsis);
 
-// Setting creation with callbacks
-settings.createString("apiKey", "API Key", "", function(value) {
-    console.log("API key " + (value ? "configured" : "cleared"));
-    storage.apiKey = value;
+// Boolean setting with callback
+var cacheSetting = settings.createBool('enableCache', 'Enable Caching', true, function(value) {
+    config.enableCache = value;
+    if (!value) clearCache();
 });
 
-settings.createBool("enablePlugin", "Enable Plugin", true, function(value) {
-    storage.enabled = value;
-    if (!value) {
-        console.log("Plugin functionality disabled by user");
+// Multi-option setting
+var qualitySetting = settings.createMultiOpt('defaultQuality', 'Default Video Quality', [
+    ['480p', '480p (SD)', false],
+    ['720p', '720p (HD)', true],      // Default option
+    ['1080p', '1080p (Full HD)', false]
+], function(value) {
+    config.defaultQuality = value;
+});
+```
+
+#### Persistent User Data
+```javascript
+// Create persistent store
+var userStore = store.create('userdata');
+
+// Initialize data structure
+userStore.favorites = userStore.favorites || [];
+userStore.watchHistory = userStore.watchHistory || {};
+
+// Helper functions
+function addToFavorites(itemId, itemTitle) {
+    if (userStore.favorites.indexOf(itemId) === -1) {
+        userStore.favorites.push(itemId);
     }
-});
-```
+}
 
-### Multi-Option Settings
-
-```javascript
-settings.createMultiOpt("contentType", "Preferred Content Type", [
-    ["movies", "Movies"],
-    ["tvshows", "TV Shows"], 
-    ["music", "Music"],
-    ["all", "All Content"]
-], "all", function(value) {
-    storage.contentType = value;
-});
-```
-
-### Integer Settings with Validation
-
-```javascript
-settings.createInt("requestTimeout", "Request Timeout (seconds)", 30, 5, 300, 5, "sec", function(value) {
-    storage.requestTimeout = value;
-});
-```
-
-### Action Settings
-
-```javascript
-settings.createAction("clearCache", "Clear Cache", function() {
-    clearCache();
-    console.log("Cache cleared successfully");
-});
-
-settings.createAction("testConnection", "Test API Connection", function() {
-    testApiConnection();
-});
-```
-
-## Configuration Categories
-
-### Basic Configuration
-- **Plugin Display Name**: Customizable plugin title
-- **Enable Plugin**: Master on/off switch
-- **Enable Debug Logging**: Development and troubleshooting mode
-
-### Network Configuration
-- **API Endpoint URL**: Configurable service endpoint
-- **API Key**: Secure authentication credential storage
-- **Request Timeout**: Connection timeout settings
-- **Max Retry Attempts**: Error recovery configuration
-
-### Content Preferences
-- **Preferred Content Type**: Movies, TV Shows, Music, or All
-- **Preferred Video Quality**: 480p, 720p, 1080p, 4K, or Auto
-- **Preferred Language**: Multi-language support
-
-### Display Options
-- **Items Per Page**: Pagination configuration
-- **Show Thumbnails**: Toggle image display
-- **Show Ratings**: Toggle rating information
-- **Show Descriptions**: Toggle detailed descriptions
-
-### Cache Configuration
-- **Enable Caching**: Performance optimization toggle
-- **Cache Size**: Memory usage limits
-- **Cache Expiry**: Data freshness settings
-
-### Advanced Options
-- **Enable Experimental Features**: Beta functionality access
-- **Custom User Agent**: HTTP request customization
-- **Log Level**: Debugging verbosity control
-
-## Settings Integration Patterns
-
-### HTTP Request Configuration
-
-```javascript
-function makeRequest(url, options) {
-    var requestOptions = {
-        timeout: (storage.requestTimeout || 30) * 1000,
-        headers: {
-            'User-Agent': storage.customUserAgent || 'Movian Configurable Plugin 1.0',
-            'Accept-Language': storage.language || 'en'
-        }
+function markAsWatched(itemId, position, duration) {
+    userStore.watchHistory[itemId] = {
+        position: position,
+        duration: duration,
+        timestamp: new Date().toISOString(),
+        completed: position / duration > 0.9
     };
-    
-    if (storage.apiKey) {
-        requestOptions.headers['Authorization'] = 'Bearer ' + storage.apiKey;
-    }
-    
-    return http.request(url, requestOptions);
 }
 ```
 
-### Cache Management
-
+#### URL-Scoped Settings
 ```javascript
-function getCachedData(key) {
-    if (!storage.cacheEnabled) return null;
+// Create page-specific settings using kvstore
+function createPageSettings(pageUrl) {
+    var kvstore = require('native/kvstore');
     
-    var cached = storage[cacheKey];
-    if (!cached) return null;
-    
-    var expiryTime = (storage.cacheExpiry || 24) * 60 * 60 * 1000;
-    var isExpired = (Date.now() - cached.timestamp) > expiryTime;
-    
-    if (isExpired) {
-        delete storage[cacheKey];
-        return null;
-    }
-    
-    return cached.data;
-}
-```
-
-### Content Filtering
-
-```javascript
-function loadContent(page) {
-    var itemsPerPage = storage.itemsPerPage || 25;
-    var contentType = storage.contentType || "all";
-    var showThumbnails = storage.showThumbnails !== false;
-    
-    // Generate content based on user preferences
-    for (var i = 1; i <= itemsPerPage; i++) {
-        var itemType = getItemTypeForContent(contentType, i);
-        
-        page.appendItem("", itemType, {
-            title: getItemTitle(contentType, i),
-            description: storage.showDescriptions ? getItemDescription(i) : "",
-            icon: showThumbnails ? getItemThumbnail(i) : "",
-            rating: storage.showRatings ? getItemRating(i) : undefined
-        });
-    }
-}
-```
-
-## Utility Functions
-
-### Settings Validation
-
-```javascript
-function isValidUrl(string) {
-    try {
-        new URL(string);
-        return true;
-    } catch (_) {
-        return false;
-    }
-}
-
-function validateApiKey(key) {
-    return key && typeof key === 'string' && key.length >= 10;
-}
-```
-
-### Settings Export/Import
-
-```javascript
-function exportSettings() {
-    var settingsExport = {
-        pluginName: storage.displayName,
-        enablePlugin: storage.enabled,
-        apiEndpoint: storage.apiEndpoint,
-        contentType: storage.contentType,
-        videoQuality: storage.videoQuality,
-        language: storage.language,
-        exportDate: new Date().toISOString()
-    };
-    
-    console.log("Settings export:");
-    console.log(JSON.stringify(settingsExport, null, 2));
-}
-```
-
-### Connection Testing
-
-```javascript
-function testApiConnection() {
-    var endpoint = storage.apiEndpoint || "https://api.example.com";
-    var timeout = (storage.requestTimeout || 30) * 1000;
-    
-    try {
-        var requestOptions = {
-            timeout: timeout,
-            headers: {
-                'User-Agent': storage.customUserAgent || 'Movian Configurable Plugin 1.0'
+    return {
+        get: function(key, defaultValue, type) {
+            if (type === 'string') {
+                return kvstore.getString(pageUrl, 'plugin', key) || defaultValue;
+            } else if (type === 'bool') {
+                return kvstore.getBoolean(pageUrl, 'plugin', key, defaultValue);
             }
-        };
+        },
         
-        if (storage.apiKey) {
-            requestOptions.headers['Authorization'] = 'Bearer ' + storage.apiKey;
+        set: function(key, value) {
+            kvstore.set(pageUrl, 'plugin', key, value);
         }
-        
-        console.log("✓ Connection test successful");
-        console.log("  - Endpoint: " + endpoint);
-        console.log("  - Timeout: " + timeout + "ms");
-        
-    } catch (error) {
-        console.error("✗ Connection test failed: " + error.message);
-    }
+    };
 }
+
+// Usage
+var pageSettings = createPageSettings('demo://page:settings');
+pageSettings.set('viewMode', 'grid');
+var viewMode = pageSettings.get('viewMode', 'list');
 ```
 
-## Plugin Structure
+## File Structure
 
 ```
 configurable-plugin/
 ├── plugin.json          # Plugin manifest
-├── main.js             # Main plugin code with settings
-├── README.md           # This documentation
-└── logo.png            # Plugin icon (optional)
+├── main.js              # Main plugin code with all examples
+├── README.md            # This documentation
+└── logo.png             # Plugin icon (optional)
 ```
 
-## Usage Examples
+## Key Learning Points
 
-### Basic Setup
+### 1. Settings Architecture
+- Use `settings.globalSettings()` for plugin-wide configuration
+- Organize settings into logical sections with `createDivider()`
+- Provide informational context with `createInfo()`
+- Use appropriate setting types for different data
 
-1. Install the plugin in Movian
-2. Navigate to plugin settings
-3. Configure basic settings:
-   - Set plugin display name
-   - Enable/disable plugin functionality
-   - Configure API endpoint and key
+### 2. Data Persistence
+- **Store API** for user data (favorites, history, preferences)
+- **KVStore API** for URL-scoped or service-specific settings
+- **Settings callbacks** for real-time configuration updates
+- **Session-only settings** for temporary debugging options
 
-### Advanced Configuration
+### 3. Configuration Management
+- Centralize configuration in a single object
+- Use setting callbacks to update configuration in real-time
+- Implement validation in setting callbacks
+- Provide reset and export functionality
 
-1. Set content preferences:
-   - Choose preferred content types
-   - Select video quality preferences
-   - Set language preferences
+### 4. User Experience
+- Group related settings with dividers
+- Provide clear titles and descriptions
+- Use appropriate units and ranges for numeric settings
+- Implement action buttons for common operations
 
-2. Optimize performance:
-   - Enable caching for faster loading
-   - Adjust cache size and expiry
-   - Set appropriate timeout values
+### 5. Error Handling
+- Validate user input in setting callbacks
+- Provide graceful fallbacks for storage errors
+- Use try-catch blocks for critical operations
+- Log errors appropriately for debugging
 
-3. Customize display:
-   - Configure items per page
-   - Toggle thumbnails and ratings
-   - Enable/disable descriptions
+## Advanced Patterns
 
-### Testing Configuration
+### Configuration Migration
+```javascript
+// Check and migrate configuration version
+var configVersion = store.version || 1;
 
-1. Use "Test API Connection" action to verify network settings
-2. Use "Clear Cache" action to reset cached data
-3. Use "Export Settings" to backup configuration
-4. Use "Reset to Defaults" to restore original settings
+if (configVersion < 2) {
+    // Migrate from version 1 to 2
+    if (store.oldApiUrl) {
+        store.apiUrl = store.oldApiUrl;
+        delete store.oldApiUrl;
+    }
+    store.version = 2;
+}
+```
 
-## Learning Objectives
+### Settings Validation
+```javascript
+var apiUrl = settings.createString('apiUrl', 'API URL', 'https://api.example.com', 
+    function(value) {
+        try {
+            new URL(value);  // Validate URL format
+            config.apiUrl = value;
+        } catch (e) {
+            console.error('Invalid URL format:', value);
+        }
+    }
+);
+```
 
-After studying this example, developers will understand:
-
-- How to create comprehensive settings interfaces
-- All available Movian setting types and their usage
-- Settings validation and error handling
-- Dynamic behavior based on user preferences
-- Settings persistence and storage management
-- Action settings for utility functions
-- Best practices for settings organization
-- User-friendly configuration workflows
-
-## Configuration Best Practices
-
-1. **Logical Grouping**: Organize settings into logical sections with dividers
-2. **Sensible Defaults**: Provide reasonable default values for all settings
-3. **Validation**: Validate user inputs and provide feedback
-4. **Documentation**: Use clear labels and descriptions
-5. **Callbacks**: Respond to setting changes immediately
-6. **Persistence**: Store settings in plugin storage for persistence
-7. **Testing**: Provide actions to test configuration
-8. **Recovery**: Offer reset options for problematic configurations
+### Conditional Settings
+```javascript
+// Enable/disable settings based on other settings
+var advancedMode = settings.createBool('advancedMode', 'Advanced Mode', false, 
+    function(value) {
+        config.advancedMode = value;
+        // Enable/disable other settings
+        debugSetting.enabled = value;
+        cacheSizeSetting.enabled = value;
+    }
+);
+```
 
 ## Related Documentation
 
-- [Settings API Reference](../../api/settings-api.md)
-- [Storage API Reference](../../api/storage-api.md)
-- [Plugin Best Practices](../../best-practices.md)
-- [Hello World Example](../hello-world/README.md)
-- [Content Provider Example](../content-provider/README.md)
+- [Settings API Reference](../../api/settings-api.md) - Complete API documentation
+- [Plugin Development Guide](../../getting-started.md) - Basic plugin development
+- [Storage Best Practices](../../best-practices.md) - Data storage recommendations
+- [Property System](../../advanced/properties.md) - Advanced property binding
 
-## Installation
+## Troubleshooting
 
-1. Copy the plugin directory to your Movian plugins folder
-2. Enable the plugin in Movian settings
-3. Navigate to the plugin settings to configure options
-4. Explore different configuration combinations
-5. Test the plugin functionality with various settings
+### Settings Not Persisting
+- Check that `persistent` parameter is `true` (default)
+- Verify plugin has write permissions to storage directory
+- Check console for storage-related errors
 
-## Compatibility
+### Store Data Lost
+- Ensure proper error handling around store operations
+- Check that store path is writable
+- Verify JSON serialization compatibility of stored data
 
-- **Movian Version**: 5.0+
-- **API Version**: 2
-- **Platform**: All supported Movian platforms
-- **Dependencies**: None (uses only built-in Movian APIs)
+### KVStore Issues
+- Verify URL format is consistent
+- Check domain parameter is correct ('plugin', 'sys', etc.)
+- Ensure key names don't contain special characters
+
+This example provides a comprehensive foundation for implementing settings and configuration management in your own Movian plugins.
