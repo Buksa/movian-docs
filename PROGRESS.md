@@ -138,15 +138,19 @@ This document tracks the progress of the comprehensive Movian documentation proj
 
 ### Task 4.4 - HTTP and Networking Documentation ✅
 - **Completed**: 2025-01-27
-- **Duration**: ~2 hours
+- **Duration**: ~3 hours
 - **Deliverables**:
-  - `docs/plugins/api/http-api.md` - Comprehensive HTTP and networking API documentation (800+ lines)
+  - `docs/plugins/api/http-api.md` - Comprehensive HTTP and networking API documentation (1200+ lines)
+  - `docs/plugins/api/html-modules-comparison.md` - Detailed comparison of HTML parsing modules
   - Complete analysis of native HTTP implementation in `es_io.c`
-  - Documentation of movian/http, http, and websocket modules
+  - Documentation of movian/http, http, websocket, xml, and xmlrpc modules
+  - Analysis of built-in vs enhanced HTML parsing modules
   - Real-world examples based on Anilibria plugin implementation
   - HTTP inspector system documentation
   - WebSocket API reference with W3C compatibility
-  - Content parsing examples (JSON, HTML, XML)
+  - XML and XML-RPC client documentation
+  - Content parsing examples (JSON, HTML, XML) with native module support
+  - Identification and documentation of API naming inconsistencies
   - Best practices for error handling, caching, and rate limiting
 - **Report**: [Task 4.4 Report](task-reports/task-4.4-report.md)
 
