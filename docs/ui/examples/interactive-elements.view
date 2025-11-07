@@ -1,0 +1,669 @@
+// Interactive Elements Example
+// Demonstrates focusable widgets, event handling, and user interaction
+
+widget(container_y, {
+    spacing: 2em;
+    padding: 2em;
+    
+    // Title
+    widget(label, {
+        caption: "Interactive Elements Examples";
+        sizeScale: 2.0;
+        bold: true;
+    });
+    
+    // Basic focusable button
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Focusable Buttons";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            
+            // Button 1
+            widget(container_z, {
+                focusable: true;
+                width: 10em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: "Button 1";
+                    align: center;
+                    color: 0.9 + 0.1 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                widget(border, {
+                    border: 0.1em;
+                    color: "#FFFFFF";
+                    alpha: 0.8 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                onEvent(activate, navOpen("page:button1"));
+            });
+            
+            // Button 2
+            widget(container_z, {
+                focusable: true;
+                width: 10em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#0066FF";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: "Button 2";
+                    align: center;
+                    color: 0.9 + 0.1 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                widget(border, {
+                    border: 0.1em;
+                    color: "#FFFFFF";
+                    alpha: 0.8 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                onEvent(activate, navOpen("page:button2"));
+            });
+            
+            // Button 3
+            widget(container_z, {
+                focusable: true;
+                width: 10em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#00CC66";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: "Button 3";
+                    align: center;
+                    color: 0.9 + 0.1 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                widget(border, {
+                    border: 0.1em;
+                    color: "#FFFFFF";
+                    alpha: 0.8 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                onEvent(activate, navOpen("page:button3"));
+            });
+        });
+        
+        widget(label, {
+            caption: "Buttons with focus, hover, and press states";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Icon buttons
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Icon Buttons";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            
+            // Play button
+            widget(container_z, {
+                focusable: true;
+                width: 4em;
+                height: 4em;
+                
+                widget(quad, {
+                    color: "#333333";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                });
+                
+                widget(image, {
+                    source: "dataroot://resources/svg/Play.svg";
+                    margin: [0.8em, 0.8em];
+                    color: 0.8 + 0.2 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                widget(border, {
+                    border: 0.1em;
+                    color: "#FFFFFF";
+                    alpha: 0.8 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                onEvent(activate, navOpen("action:play"));
+            });
+            
+            // Pause button
+            widget(container_z, {
+                focusable: true;
+                width: 4em;
+                height: 4em;
+                
+                widget(quad, {
+                    color: "#333333";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                });
+                
+                widget(image, {
+                    source: "dataroot://resources/svg/Pause.svg";
+                    margin: [0.8em, 0.8em];
+                    color: 0.8 + 0.2 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                widget(border, {
+                    border: 0.1em;
+                    color: "#FFFFFF";
+                    alpha: 0.8 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                onEvent(activate, navOpen("action:pause"));
+            });
+            
+            // Settings button
+            widget(container_z, {
+                focusable: true;
+                width: 4em;
+                height: 4em;
+                
+                widget(quad, {
+                    color: "#333333";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                });
+                
+                widget(image, {
+                    source: "dataroot://resources/svg/Settings.svg";
+                    margin: [0.8em, 0.8em];
+                    color: 0.8 + 0.2 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                widget(border, {
+                    border: 0.1em;
+                    color: "#FFFFFF";
+                    alpha: 0.8 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                onEvent(activate, navOpen("settings:start"));
+            });
+        });
+        
+        widget(label, {
+            caption: "Icon-based buttons with visual feedback";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Toggle buttons
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Toggle Buttons";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            
+            // Toggle 1 (simulated with property)
+            widget(container_z, {
+                focusable: true;
+                width: 12em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: $page.model.toggle1 ? "#00CC00" : "#CC0000";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: $page.model.toggle1 ? "Enabled" : "Disabled";
+                    align: center;
+                });
+                
+                widget(border, {
+                    border: 0.1em;
+                    color: "#FFFFFF";
+                    alpha: 0.8 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                onEvent(activate, {
+                    $page.model.toggle1 = !$page.model.toggle1;
+                });
+            });
+            
+            // Toggle 2
+            widget(container_z, {
+                focusable: true;
+                width: 12em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: $page.model.toggle2 ? "#0066FF" : "#666666";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: $page.model.toggle2 ? "Active" : "Inactive";
+                    align: center;
+                });
+                
+                widget(border, {
+                    border: 0.1em;
+                    color: "#FFFFFF";
+                    alpha: 0.8 * (isHovered() + isNavFocused() + isPressed());
+                });
+                
+                onEvent(activate, {
+                    $page.model.toggle2 = !$page.model.toggle2;
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Buttons that toggle state on activation";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Interactive list items
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Interactive List Items";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            height: 15em;
+            
+            widget(quad, {
+                color: "#222222";
+            });
+            
+            widget(list_y, {
+                spacing: 0.5em;
+                padding: 0.5em;
+                
+                // List item 1
+                widget(container_z, {
+                    height: 4em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                    });
+                    
+                    widget(container_x, {
+                        padding: [0, 1em];
+                        spacing: 1em;
+                        
+                        widget(image, {
+                            source: "dataroot://resources/svg/Movie.svg";
+                            width: 3em;
+                            height: 3em;
+                            color: 0.8 + 0.2 * (isHovered() + isNavFocused() + isPressed());
+                        });
+                        
+                        widget(container_y, {
+                            spacing: 0.2em;
+                            
+                            widget(label, {
+                                caption: "Movie Title 1";
+                                bold: true;
+                            });
+                            
+                            widget(label, {
+                                caption: "Click to open";
+                                sizeScale: 0.9;
+                                color: 0.7;
+                            });
+                        });
+                    });
+                    
+                    widget(border, {
+                        border: 0.1em;
+                        color: "#FFFFFF";
+                        alpha: 0.6 * (isHovered() + isNavFocused() + isPressed());
+                    });
+                    
+                    onEvent(activate, navOpen("movie:1"));
+                });
+                
+                // List item 2
+                widget(container_z, {
+                    height: 4em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                    });
+                    
+                    widget(container_x, {
+                        padding: [0, 1em];
+                        spacing: 1em;
+                        
+                        widget(image, {
+                            source: "dataroot://resources/svg/Movie.svg";
+                            width: 3em;
+                            height: 3em;
+                            color: 0.8 + 0.2 * (isHovered() + isNavFocused() + isPressed());
+                        });
+                        
+                        widget(container_y, {
+                            spacing: 0.2em;
+                            
+                            widget(label, {
+                                caption: "Movie Title 2";
+                                bold: true;
+                            });
+                            
+                            widget(label, {
+                                caption: "Click to open";
+                                sizeScale: 0.9;
+                                color: 0.7;
+                            });
+                        });
+                    });
+                    
+                    widget(border, {
+                        border: 0.1em;
+                        color: "#FFFFFF";
+                        alpha: 0.6 * (isHovered() + isNavFocused() + isPressed());
+                    });
+                    
+                    onEvent(activate, navOpen("movie:2"));
+                });
+                
+                // List item 3
+                widget(container_z, {
+                    height: 4em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed() + isHovered(), 4, true);
+                    });
+                    
+                    widget(container_x, {
+                        padding: [0, 1em];
+                        spacing: 1em;
+                        
+                        widget(image, {
+                            source: "dataroot://resources/svg/Movie.svg";
+                            width: 3em;
+                            height: 3em;
+                            color: 0.8 + 0.2 * (isHovered() + isNavFocused() + isPressed());
+                        });
+                        
+                        widget(container_y, {
+                            spacing: 0.2em;
+                            
+                            widget(label, {
+                                caption: "Movie Title 3";
+                                bold: true;
+                            });
+                            
+                            widget(label, {
+                                caption: "Click to open";
+                                sizeScale: 0.9;
+                                color: 0.7;
+                            });
+                        });
+                    });
+                    
+                    widget(border, {
+                        border: 0.1em;
+                        color: "#FFFFFF";
+                        alpha: 0.6 * (isHovered() + isNavFocused() + isPressed());
+                    });
+                    
+                    onEvent(activate, navOpen("movie:3"));
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "List items with focus states and click handlers";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Event types demonstration
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Event Types";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            
+            // Activate event
+            widget(container_z, {
+                focusable: true;
+                width: 10em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: "Activate";
+                    align: center;
+                });
+                
+                onEvent(activate, navOpen("event:activate"));
+            });
+            
+            // Cancel event
+            widget(container_z, {
+                focusable: true;
+                width: 10em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#CC0000";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: "Cancel";
+                    align: center;
+                });
+                
+                onEvent(cancel, navOpen("event:cancel"));
+            });
+        });
+        
+        widget(label, {
+            caption: "Different event types: activate (Enter/Click), cancel (Back/Escape)";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Disabled state
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Disabled State";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            
+            // Enabled button
+            widget(container_z, {
+                focusable: true;
+                width: 10em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#00CC00";
+                    alpha: 0.6 + 0.4 * iir(isNavFocused() + isPressed(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: "Enabled";
+                    align: center;
+                });
+                
+                onEvent(activate, navOpen("action:enabled"));
+            });
+            
+            // Disabled button (not focusable)
+            widget(container_z, {
+                focusable: false;
+                width: 10em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#666666";
+                    alpha: 0.3;
+                });
+                
+                widget(label, {
+                    caption: "Disabled";
+                    align: center;
+                    color: 0.5;
+                });
+            });
+            
+            // Conditionally enabled
+            widget(container_z, {
+                focusable: $page.model.allowAction;
+                width: 10em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: $page.model.allowAction ? "#0066FF" : "#666666";
+                    alpha: $page.model.allowAction ? (0.6 + 0.4 * iir(isNavFocused() + isPressed(), 4, true)) : 0.3;
+                });
+                
+                widget(label, {
+                    caption: "Conditional";
+                    align: center;
+                    color: $page.model.allowAction ? 1.0 : 0.5;
+                });
+                
+                onEvent(activate, navOpen("action:conditional"));
+            });
+        });
+        
+        widget(label, {
+            caption: "Buttons can be enabled, disabled, or conditionally enabled";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Focus indicators
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Focus Indicators";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            
+            // Border highlight
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#444444";
+                });
+                
+                widget(label, {
+                    caption: "Border";
+                    align: center;
+                });
+                
+                widget(border, {
+                    border: 0.2em;
+                    color: "#FFFFFF";
+                    alpha: isNavFocused();
+                });
+            });
+            
+            // Background highlight
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#444444";
+                    alpha: 0.5 + 0.5 * isNavFocused();
+                });
+                
+                widget(label, {
+                    caption: "Background";
+                    align: center;
+                });
+            });
+            
+            // Scale effect
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                height: 3em;
+                
+                widget(quad, {
+                    color: "#444444";
+                });
+                
+                widget(label, {
+                    caption: "Scale";
+                    align: center;
+                    sizeScale: 1.0 + 0.2 * iir(isNavFocused(), 4, true);
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Different visual feedback methods for focused elements";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+});

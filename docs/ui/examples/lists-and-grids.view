@@ -1,0 +1,599 @@
+// Lists and Grids Example
+// Demonstrates list_x, list_y, and cloner for data presentation
+
+widget(container_y, {
+    spacing: 2em;
+    padding: 2em;
+    
+    // Title
+    widget(label, {
+        caption: "Lists and Grids Examples";
+        sizeScale: 2.0;
+        bold: true;
+    });
+    
+    // Vertical list example
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Vertical List (list_y)";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            height: 15em;
+            
+            widget(quad, {
+                color: "#222222";
+            });
+            
+            widget(list_y, {
+                id: "verticalList";
+                spacing: 0.5em;
+                padding: 0.5em;
+                
+                // Static list items
+                widget(container_z, {
+                    height: 3em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "List Item 1";
+                        padding: [0, 1em];
+                        align: left;
+                    });
+                });
+                
+                widget(container_z, {
+                    height: 3em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "List Item 2";
+                        padding: [0, 1em];
+                        align: left;
+                    });
+                });
+                
+                widget(container_z, {
+                    height: 3em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "List Item 3";
+                        padding: [0, 1em];
+                        align: left;
+                    });
+                });
+                
+                widget(container_z, {
+                    height: 3em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "List Item 4";
+                        padding: [0, 1em];
+                        align: left;
+                    });
+                });
+                
+                widget(container_z, {
+                    height: 3em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "List Item 5";
+                        padding: [0, 1em];
+                        align: left;
+                    });
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Scrollable vertical list with focusable items";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Horizontal list example
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Horizontal List (list_x)";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            height: 8em;
+            
+            widget(quad, {
+                color: "#222222";
+            });
+            
+            widget(list_x, {
+                id: "horizontalList";
+                spacing: 1em;
+                padding: 1em;
+                
+                // Static horizontal items
+                widget(container_z, {
+                    width: 6em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#FF6600";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "Item 1";
+                        align: center;
+                    });
+                });
+                
+                widget(container_z, {
+                    width: 6em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#FF6600";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "Item 2";
+                        align: center;
+                    });
+                });
+                
+                widget(container_z, {
+                    width: 6em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#FF6600";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "Item 3";
+                        align: center;
+                    });
+                });
+                
+                widget(container_z, {
+                    width: 6em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#FF6600";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "Item 4";
+                        align: center;
+                    });
+                });
+                
+                widget(container_z, {
+                    width: 6em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: "#FF6600";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(label, {
+                        caption: "Item 5";
+                        align: center;
+                    });
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Scrollable horizontal list with focusable items";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Cloner example with dynamic data
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Dynamic List with Cloner";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            height: 15em;
+            
+            widget(quad, {
+                color: "#222222";
+            });
+            
+            widget(list_y, {
+                id: "dynamicList";
+                spacing: 0.5em;
+                padding: 0.5em;
+                
+                // Cloner creates items from data source
+                cloner($page.model.items, container_z, {
+                    height: 4em;
+                    focusable: true;
+                    
+                    widget(quad, {
+                        color: $self.color || "#444444";
+                        alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                    });
+                    
+                    widget(container_x, {
+                        padding: [0, 1em];
+                        spacing: 1em;
+                        
+                        widget(image, {
+                            source: $self.icon || "dataroot://resources/svg/Movie.svg";
+                            width: 3em;
+                            height: 3em;
+                        });
+                        
+                        widget(container_y, {
+                            spacing: 0.2em;
+                            
+                            widget(label, {
+                                caption: $self.title || "Untitled";
+                                bold: true;
+                            });
+                            
+                            widget(label, {
+                                caption: $self.subtitle || "";
+                                sizeScale: 0.9;
+                                color: 0.7;
+                                hidden: !$self.subtitle;
+                            });
+                        });
+                    });
+                    
+                    onEvent(activate, navOpen($self.url));
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "List items generated from $page.model.items using cloner";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Grid layout example
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Grid Layout";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            height: 20em;
+            
+            widget(quad, {
+                color: "#222222";
+            });
+            
+            widget(container_y, {
+                padding: 1em;
+                spacing: 1em;
+                
+                // Row 1
+                widget(container_x, {
+                    spacing: 1em;
+                    
+                    widget(container_z, {
+                        focusable: true;
+                        
+                        widget(quad, {
+                            color: "#FF0000";
+                            alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                        });
+                        
+                        widget(container_y, {
+                            padding: 0.5em;
+                            spacing: 0.3em;
+                            
+                            widget(image, {
+                                source: "dataroot://resources/svg/Movie.svg";
+                                height: 3em;
+                                aspectConstraint: true;
+                                align: center;
+                            });
+                            
+                            widget(label, {
+                                caption: "Grid 1";
+                                align: center;
+                                sizeScale: 0.9;
+                            });
+                        });
+                    });
+                    
+                    widget(container_z, {
+                        focusable: true;
+                        
+                        widget(quad, {
+                            color: "#00FF00";
+                            alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                        });
+                        
+                        widget(container_y, {
+                            padding: 0.5em;
+                            spacing: 0.3em;
+                            
+                            widget(image, {
+                                source: "dataroot://resources/svg/Movie.svg";
+                                height: 3em;
+                                aspectConstraint: true;
+                                align: center;
+                            });
+                            
+                            widget(label, {
+                                caption: "Grid 2";
+                                align: center;
+                                sizeScale: 0.9;
+                            });
+                        });
+                    });
+                    
+                    widget(container_z, {
+                        focusable: true;
+                        
+                        widget(quad, {
+                            color: "#0000FF";
+                            alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                        });
+                        
+                        widget(container_y, {
+                            padding: 0.5em;
+                            spacing: 0.3em;
+                            
+                            widget(image, {
+                                source: "dataroot://resources/svg/Movie.svg";
+                                height: 3em;
+                                aspectConstraint: true;
+                                align: center;
+                            });
+                            
+                            widget(label, {
+                                caption: "Grid 3";
+                                align: center;
+                                sizeScale: 0.9;
+                            });
+                        });
+                    });
+                });
+                
+                // Row 2
+                widget(container_x, {
+                    spacing: 1em;
+                    
+                    widget(container_z, {
+                        focusable: true;
+                        
+                        widget(quad, {
+                            color: "#FFFF00";
+                            alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                        });
+                        
+                        widget(container_y, {
+                            padding: 0.5em;
+                            spacing: 0.3em;
+                            
+                            widget(image, {
+                                source: "dataroot://resources/svg/Settings.svg";
+                                height: 3em;
+                                aspectConstraint: true;
+                                align: center;
+                            });
+                            
+                            widget(label, {
+                                caption: "Grid 4";
+                                align: center;
+                                sizeScale: 0.9;
+                            });
+                        });
+                    });
+                    
+                    widget(container_z, {
+                        focusable: true;
+                        
+                        widget(quad, {
+                            color: "#FF00FF";
+                            alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                        });
+                        
+                        widget(container_y, {
+                            padding: 0.5em;
+                            spacing: 0.3em;
+                            
+                            widget(image, {
+                                source: "dataroot://resources/svg/Settings.svg";
+                                height: 3em;
+                                aspectConstraint: true;
+                                align: center;
+                            });
+                            
+                            widget(label, {
+                                caption: "Grid 5";
+                                align: center;
+                                sizeScale: 0.9;
+                            });
+                        });
+                    });
+                    
+                    widget(container_z, {
+                        focusable: true;
+                        
+                        widget(quad, {
+                            color: "#00FFFF";
+                            alpha: 0.6 + 0.4 * iir(isNavFocused() + isHovered(), 4, true);
+                        });
+                        
+                        widget(container_y, {
+                            padding: 0.5em;
+                            spacing: 0.3em;
+                            
+                            widget(image, {
+                                source: "dataroot://resources/svg/Settings.svg";
+                                height: 3em;
+                                aspectConstraint: true;
+                                align: center;
+                            });
+                            
+                            widget(label, {
+                                caption: "Grid 6";
+                                align: center;
+                                sizeScale: 0.9;
+                            });
+                        });
+                    });
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Grid layout using nested containers";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // List with scrollbar
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "List with Scrollbar";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            height: 15em;
+            
+            widget(container_z, {
+                
+                widget(quad, {
+                    color: "#222222";
+                });
+                
+                widget(list_y, {
+                    id: "scrollableList";
+                    spacing: 0.5em;
+                    padding: 0.5em;
+                    
+                    // Many items to demonstrate scrolling
+                    widget(container_z, {
+                        height: 3em;
+                        focusable: true;
+                        widget(quad, { color: "#444444"; alpha: 0.6 + 0.4 * iir(isNavFocused(), 4, true); });
+                        widget(label, { caption: "Scrollable Item 1"; padding: [0, 1em]; });
+                    });
+                    
+                    widget(container_z, {
+                        height: 3em;
+                        focusable: true;
+                        widget(quad, { color: "#444444"; alpha: 0.6 + 0.4 * iir(isNavFocused(), 4, true); });
+                        widget(label, { caption: "Scrollable Item 2"; padding: [0, 1em]; });
+                    });
+                    
+                    widget(container_z, {
+                        height: 3em;
+                        focusable: true;
+                        widget(quad, { color: "#444444"; alpha: 0.6 + 0.4 * iir(isNavFocused(), 4, true); });
+                        widget(label, { caption: "Scrollable Item 3"; padding: [0, 1em]; });
+                    });
+                    
+                    widget(container_z, {
+                        height: 3em;
+                        focusable: true;
+                        widget(quad, { color: "#444444"; alpha: 0.6 + 0.4 * iir(isNavFocused(), 4, true); });
+                        widget(label, { caption: "Scrollable Item 4"; padding: [0, 1em]; });
+                    });
+                    
+                    widget(container_z, {
+                        height: 3em;
+                        focusable: true;
+                        widget(quad, { color: "#444444"; alpha: 0.6 + 0.4 * iir(isNavFocused(), 4, true); });
+                        widget(label, { caption: "Scrollable Item 5"; padding: [0, 1em]; });
+                    });
+                    
+                    widget(container_z, {
+                        height: 3em;
+                        focusable: true;
+                        widget(quad, { color: "#444444"; alpha: 0.6 + 0.4 * iir(isNavFocused(), 4, true); });
+                        widget(label, { caption: "Scrollable Item 6"; padding: [0, 1em]; });
+                    });
+                });
+            });
+            
+            // Scrollbar
+            widget(slider_y, {
+                bind: "scrollableList";
+                width: 24;
+                focusable: 0.2 * canScroll();
+                alpha: iir(canScroll(), 16);
+                
+                widget(container_x, {
+                    padding: [0.2em, 0, 0.2em, 0];
+                    widget(quad, {
+                        alpha: 0.6 + (isHovered() + isPressed());
+                        color: "#FFFFFF";
+                    });
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "List with visible scrollbar indicator";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+});

@@ -1,0 +1,498 @@
+// Text and Images Example
+// Demonstrates label, image, and quad widgets
+
+widget(container_y, {
+    spacing: 2em;
+    padding: 2em;
+    
+    // Title
+    widget(label, {
+        caption: "Text and Image Examples";
+        sizeScale: 2.0;
+        bold: true;
+        color: 1.0;
+    });
+    
+    // Basic text labels
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Text Labels";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(label, {
+            caption: "Normal text label";
+            sizeScale: 1.0;
+        });
+        
+        widget(label, {
+            caption: "Bold text label";
+            bold: true;
+        });
+        
+        widget(label, {
+            caption: "Italic text label";
+            italic: true;
+        });
+        
+        widget(label, {
+            caption: "Large text label";
+            sizeScale: 1.5;
+        });
+        
+        widget(label, {
+            caption: "Small text label";
+            sizeScale: 0.8;
+        });
+        
+        widget(label, {
+            caption: "Colored text label";
+            color: "#FF6600";
+        });
+        
+        widget(label, {
+            caption: "Text with outline";
+            outline: true;
+            sizeScale: 1.3;
+        });
+    });
+    
+    // Text alignment
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Text Alignment";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            height: 2em;
+            
+            widget(quad, {
+                color: "#333333";
+            });
+            
+            widget(label, {
+                caption: "Left aligned text";
+                align: left;
+                padding: [0, 0.5em];
+            });
+        });
+        
+        widget(container_z, {
+            height: 2em;
+            
+            widget(quad, {
+                color: "#333333";
+            });
+            
+            widget(label, {
+                caption: "Center aligned text";
+                align: center;
+            });
+        });
+        
+        widget(container_z, {
+            height: 2em;
+            
+            widget(quad, {
+                color: "#333333";
+            });
+            
+            widget(label, {
+                caption: "Right aligned text";
+                align: right;
+                padding: [0, 0.5em];
+            });
+        });
+    });
+    
+    // Multi-line text
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Multi-line Text";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            width: 30em;
+            
+            widget(quad, {
+                color: "#333333";
+            });
+            
+            widget(label, {
+                caption: "This is a long text that will wrap to multiple lines when it exceeds the container width. The maxlines attribute controls how many lines are displayed.";
+                maxlines: 3;
+                padding: 0.5em;
+            });
+        });
+        
+        widget(container_z, {
+            width: 30em;
+            
+            widget(quad, {
+                color: "#333333";
+            });
+            
+            widget(label, {
+                caption: "This text will be truncated with ellipsis if it's too long to fit in the available space...";
+                maxlines: 1;
+                ellipsize: true;
+                padding: 0.5em;
+            });
+        });
+    });
+    
+    // Rich text (single-quoted strings)
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Rich Text Formatting";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(label, {
+            caption: '<b>Bold</b>, <i>Italic</i>, and <b><i>Bold Italic</i></b>';
+        });
+        
+        widget(label, {
+            caption: 'Text with <font color="#FF0000">colored</font> words';
+        });
+        
+        widget(label, {
+            caption: '<font size="20">Large</font> and <font size="12">small</font> text';
+        });
+    });
+    
+    // Images
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Images";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            height: 8em;
+            
+            // Basic image
+            widget(container_y, {
+                spacing: 0.3em;
+                
+                widget(image, {
+                    source: "dataroot://resources/svg/Movie.svg";
+                    width: 6em;
+                    height: 6em;
+                });
+                
+                widget(label, {
+                    caption: "Basic image";
+                    sizeScale: 0.8;
+                    align: center;
+                });
+            });
+            
+            // Image with aspect constraint
+            widget(container_y, {
+                spacing: 0.3em;
+                
+                widget(image, {
+                    source: "dataroot://resources/svg/Movie.svg";
+                    width: 6em;
+                    height: 6em;
+                    aspectConstraint: true;
+                });
+                
+                widget(label, {
+                    caption: "Aspect ratio";
+                    sizeScale: 0.8;
+                    align: center;
+                });
+            });
+            
+            // Tinted image
+            widget(container_y, {
+                spacing: 0.3em;
+                
+                widget(image, {
+                    source: "dataroot://resources/svg/Movie.svg";
+                    width: 6em;
+                    height: 6em;
+                    color: "#FF6600";
+                });
+                
+                widget(label, {
+                    caption: "Tinted";
+                    sizeScale: 0.8;
+                    align: center;
+                });
+            });
+            
+            // Semi-transparent image
+            widget(container_y, {
+                spacing: 0.3em;
+                
+                widget(image, {
+                    source: "dataroot://resources/svg/Movie.svg";
+                    width: 6em;
+                    height: 6em;
+                    alpha: 0.5;
+                });
+                
+                widget(label, {
+                    caption: "Transparent";
+                    sizeScale: 0.8;
+                    align: center;
+                });
+            });
+        });
+    });
+    
+    // Colored quads (rectangles)
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Colored Rectangles (Quads)";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            height: 4em;
+            
+            widget(quad, {
+                color: "#FF0000";
+                width: 4em;
+            });
+            
+            widget(quad, {
+                color: "#00FF00";
+                width: 4em;
+            });
+            
+            widget(quad, {
+                color: "#0000FF";
+                width: 4em;
+            });
+            
+            widget(quad, {
+                color: "#FFFF00";
+                width: 4em;
+            });
+            
+            widget(quad, {
+                color: "#FF00FF";
+                width: 4em;
+            });
+            
+            widget(quad, {
+                color: "#00FFFF";
+                width: 4em;
+            });
+        });
+        
+        widget(label, {
+            caption: "Solid color rectangles using quad widget";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Quads with transparency
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Transparency Levels";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            height: 6em;
+            
+            // Background pattern
+            widget(container_x, {
+                widget(quad, { color: "#FFFFFF"; });
+                widget(quad, { color: "#CCCCCC"; });
+                widget(quad, { color: "#FFFFFF"; });
+                widget(quad, { color: "#CCCCCC"; });
+                widget(quad, { color: "#FFFFFF"; });
+            });
+            
+            // Overlays with different alpha values
+            widget(container_x, {
+                spacing: 0.5em;
+                padding: 0.5em;
+                
+                widget(container_y, {
+                    spacing: 0.3em;
+                    
+                    widget(quad, {
+                        color: "#FF0000";
+                        alpha: 1.0;
+                        height: 4em;
+                        width: 4em;
+                    });
+                    
+                    widget(label, {
+                        caption: "100%";
+                        sizeScale: 0.7;
+                        align: center;
+                    });
+                });
+                
+                widget(container_y, {
+                    spacing: 0.3em;
+                    
+                    widget(quad, {
+                        color: "#FF0000";
+                        alpha: 0.75;
+                        height: 4em;
+                        width: 4em;
+                    });
+                    
+                    widget(label, {
+                        caption: "75%";
+                        sizeScale: 0.7;
+                        align: center;
+                    });
+                });
+                
+                widget(container_y, {
+                    spacing: 0.3em;
+                    
+                    widget(quad, {
+                        color: "#FF0000";
+                        alpha: 0.5;
+                        height: 4em;
+                        width: 4em;
+                    });
+                    
+                    widget(label, {
+                        caption: "50%";
+                        sizeScale: 0.7;
+                        align: center;
+                    });
+                });
+                
+                widget(container_y, {
+                    spacing: 0.3em;
+                    
+                    widget(quad, {
+                        color: "#FF0000";
+                        alpha: 0.25;
+                        height: 4em;
+                        width: 4em;
+                    });
+                    
+                    widget(label, {
+                        caption: "25%";
+                        sizeScale: 0.7;
+                        align: center;
+                    });
+                });
+            });
+        });
+    });
+    
+    // Combined text and images
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Combined Text and Images";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            
+            // Card 1
+            widget(container_z, {
+                width: 12em;
+                
+                widget(quad, {
+                    color: "#333333";
+                });
+                
+                widget(container_y, {
+                    padding: 1em;
+                    spacing: 0.5em;
+                    
+                    widget(image, {
+                        source: "dataroot://resources/svg/Movie.svg";
+                        height: 4em;
+                        aspectConstraint: true;
+                        align: center;
+                    });
+                    
+                    widget(label, {
+                        caption: "Movie Title";
+                        bold: true;
+                        align: center;
+                    });
+                    
+                    widget(label, {
+                        caption: "Description text";
+                        sizeScale: 0.9;
+                        color: 0.7;
+                        align: center;
+                    });
+                });
+            });
+            
+            // Card 2
+            widget(container_z, {
+                width: 12em;
+                
+                widget(quad, {
+                    color: "#444444";
+                });
+                
+                widget(container_y, {
+                    padding: 1em;
+                    spacing: 0.5em;
+                    
+                    widget(image, {
+                        source: "dataroot://resources/svg/Settings.svg";
+                        height: 4em;
+                        aspectConstraint: true;
+                        align: center;
+                        color: "#FF6600";
+                    });
+                    
+                    widget(label, {
+                        caption: "Settings";
+                        bold: true;
+                        align: center;
+                    });
+                    
+                    widget(label, {
+                        caption: "Configure app";
+                        sizeScale: 0.9;
+                        color: 0.7;
+                        align: center;
+                    });
+                });
+            });
+        });
+    });
+});

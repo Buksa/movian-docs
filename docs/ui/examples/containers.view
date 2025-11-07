@@ -1,0 +1,351 @@
+// Container Widgets Example
+// Demonstrates container_x, container_y, container_z usage
+
+// Example 1: Horizontal Container (container_x)
+widget(container_y, {
+    spacing: 2em;
+    padding: 2em;
+    
+    // Title
+    widget(label, {
+        caption: "Container Examples";
+        sizeScale: 2.0;
+        bold: true;
+    });
+    
+    // Horizontal container example
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Horizontal Container (container_x)";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            height: 4em;
+            
+            widget(quad, {
+                color: "#FF0000";
+                width: 4em;
+            });
+            
+            widget(quad, {
+                color: "#00FF00";
+                width: 4em;
+            });
+            
+            widget(quad, {
+                color: "#0000FF";
+                width: 4em;
+            });
+        });
+        
+        widget(label, {
+            caption: "Three colored boxes arranged horizontally";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Vertical container example
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Vertical Container (container_y)";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_y, {
+            spacing: 0.5em;
+            width: 10em;
+            
+            widget(quad, {
+                color: "#FF0000";
+                height: 2em;
+            });
+            
+            widget(quad, {
+                color: "#00FF00";
+                height: 2em;
+            });
+            
+            widget(quad, {
+                color: "#0000FF";
+                height: 2em;
+            });
+        });
+        
+        widget(label, {
+            caption: "Three colored boxes arranged vertically";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Z-axis container example (layering)
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Z-axis Container (container_z) - Layering";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            width: 15em;
+            height: 10em;
+            
+            // Background layer
+            widget(quad, {
+                color: "#333333";
+            });
+            
+            // Middle layer - semi-transparent overlay
+            widget(quad, {
+                color: "#FF0000";
+                alpha: 0.5;
+                margin: [1em, 1em];
+            });
+            
+            // Top layer - text
+            widget(label, {
+                caption: "Layered Content";
+                align: center;
+                sizeScale: 1.5;
+                color: 1.0;
+                outline: true;
+            });
+        });
+        
+        widget(label, {
+            caption: "Background, overlay, and text stacked on Z-axis";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Nested containers example
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Nested Containers";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_y, {
+            spacing: 1em;
+            
+            // Row 1
+            widget(container_x, {
+                spacing: 1em;
+                height: 3em;
+                
+                widget(container_z, {
+                    width: 8em;
+                    
+                    widget(quad, {
+                        color: "#444444";
+                    });
+                    
+                    widget(label, {
+                        caption: "Box 1";
+                        align: center;
+                    });
+                });
+                
+                widget(container_z, {
+                    width: 8em;
+                    
+                    widget(quad, {
+                        color: "#555555";
+                    });
+                    
+                    widget(label, {
+                        caption: "Box 2";
+                        align: center;
+                    });
+                });
+            });
+            
+            // Row 2
+            widget(container_x, {
+                spacing: 1em;
+                height: 3em;
+                
+                widget(container_z, {
+                    width: 8em;
+                    
+                    widget(quad, {
+                        color: "#666666";
+                    });
+                    
+                    widget(label, {
+                        caption: "Box 3";
+                        align: center;
+                    });
+                });
+                
+                widget(container_z, {
+                    width: 8em;
+                    
+                    widget(quad, {
+                        color: "#777777";
+                    });
+                    
+                    widget(label, {
+                        caption: "Box 4";
+                        align: center;
+                    });
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Grid layout using nested horizontal and vertical containers";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Container with alignment
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Container Alignment";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_y, {
+            spacing: 1em;
+            
+            // Left aligned
+            widget(container_x, {
+                height: 3em;
+                align: left;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    width: 5em;
+                });
+                
+                widget(label, {
+                    caption: "Left aligned";
+                    padding: [0, 1em];
+                });
+            });
+            
+            // Center aligned
+            widget(container_x, {
+                height: 3em;
+                align: center;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    width: 5em;
+                });
+                
+                widget(label, {
+                    caption: "Center aligned";
+                    padding: [0, 1em];
+                });
+            });
+            
+            // Right aligned
+            widget(container_x, {
+                height: 3em;
+                align: right;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    width: 5em;
+                });
+                
+                widget(label, {
+                    caption: "Right aligned";
+                    padding: [0, 1em];
+                });
+            });
+        });
+    });
+    
+    // Container with spacing and padding
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Spacing and Padding";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_z, {
+            width: 20em;
+            
+            // Background to show padding
+            widget(quad, {
+                color: "#222222";
+            });
+            
+            // Container with padding
+            widget(container_y, {
+                padding: 1em;
+                spacing: 0.5em;
+                
+                widget(container_z, {
+                    height: 2em;
+                    
+                    widget(quad, {
+                        color: "#FF0000";
+                    });
+                    
+                    widget(label, {
+                        caption: "Item 1";
+                        align: center;
+                    });
+                });
+                
+                widget(container_z, {
+                    height: 2em;
+                    
+                    widget(quad, {
+                        color: "#00FF00";
+                    });
+                    
+                    widget(label, {
+                        caption: "Item 2";
+                        align: center;
+                    });
+                });
+                
+                widget(container_z, {
+                    height: 2em;
+                    
+                    widget(quad, {
+                        color: "#0000FF";
+                    });
+                    
+                    widget(label, {
+                        caption: "Item 3";
+                        align: center;
+                    });
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Container with 1em padding and 0.5em spacing between items";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+});

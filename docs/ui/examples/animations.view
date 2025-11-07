@@ -1,0 +1,701 @@
+// Animations and Transitions Example
+// Demonstrates iir(), alpha transitions, transforms, and dynamic effects
+
+widget(container_y, {
+    spacing: 2em;
+    padding: 2em;
+    
+    // Title
+    widget(label, {
+        caption: "Animations and Transitions Examples";
+        sizeScale: 2.0;
+        bold: true;
+    });
+    
+    // IIR filter for smooth transitions
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "IIR Smooth Transitions";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            
+            // Fast transition
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                height: 4em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    alpha: 0.3 + 0.7 * iir(isNavFocused(), 2, true);
+                });
+                
+                widget(label, {
+                    caption: "Fast (2)";
+                    align: center;
+                });
+            });
+            
+            // Medium transition
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                height: 4em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    alpha: 0.3 + 0.7 * iir(isNavFocused(), 8, true);
+                });
+                
+                widget(label, {
+                    caption: "Medium (8)";
+                    align: center;
+                });
+            });
+            
+            // Slow transition
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                height: 4em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    alpha: 0.3 + 0.7 * iir(isNavFocused(), 16, true);
+                });
+                
+                widget(label, {
+                    caption: "Slow (16)";
+                    align: center;
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "iir() creates smooth transitions - higher values = slower";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Alpha (opacity) animations
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Alpha (Opacity) Animations";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            height: 6em;
+            
+            // Fade in on focus
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#0066FF";
+                });
+                
+                widget(label, {
+                    caption: "Fade In";
+                    align: center;
+                    alpha: iir(isNavFocused(), 8, true);
+                });
+            });
+            
+            // Fade out on focus
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#0066FF";
+                });
+                
+                widget(label, {
+                    caption: "Fade Out";
+                    align: center;
+                    alpha: 1.0 - iir(isNavFocused(), 8, true);
+                });
+            });
+            
+            // Pulse effect
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#0066FF";
+                    alpha: 0.5 + 0.5 * iir(isNavFocused(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: "Pulse";
+                    align: center;
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Alpha transitions for fade effects";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Color transitions
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Color Transitions";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            height: 6em;
+            
+            // Color change on focus
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: isNavFocused() ? "#00FF00" : "#FF0000";
+                });
+                
+                widget(label, {
+                    caption: "Instant";
+                    align: center;
+                });
+            });
+            
+            // Smooth color transition
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: [
+                        1.0 - iir(isNavFocused(), 8, true),
+                        iir(isNavFocused(), 8, true),
+                        0.0
+                    ];
+                });
+                
+                widget(label, {
+                    caption: "Smooth";
+                    align: center;
+                });
+            });
+            
+            // Brightness change
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                });
+                
+                widget(label, {
+                    caption: "Brightness";
+                    align: center;
+                    color: 0.5 + 0.5 * iir(isNavFocused(), 8, true);
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Color and brightness transitions";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Scale animations
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Scale Animations";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 2em;
+            height: 8em;
+            align: center;
+            
+            // Scale up on focus
+            widget(container_z, {
+                focusable: true;
+                width: 6em;
+                height: 6em;
+                
+                widget(quad, {
+                    color: "#CC00CC";
+                });
+                
+                widget(label, {
+                    caption: "Scale Up";
+                    align: center;
+                    sizeScale: 1.0 + 0.3 * iir(isNavFocused(), 6, true);
+                });
+            });
+            
+            // Scale down on focus
+            widget(container_z, {
+                focusable: true;
+                width: 6em;
+                height: 6em;
+                
+                widget(quad, {
+                    color: "#CC00CC";
+                });
+                
+                widget(label, {
+                    caption: "Scale Down";
+                    align: center;
+                    sizeScale: 1.0 - 0.2 * iir(isNavFocused(), 6, true);
+                });
+            });
+            
+            // Bounce effect
+            widget(container_z, {
+                focusable: true;
+                width: 6em;
+                height: 6em;
+                
+                widget(quad, {
+                    color: "#CC00CC";
+                });
+                
+                widget(label, {
+                    caption: "Bounce";
+                    align: center;
+                    sizeScale: 1.0 + 0.2 * iir(isNavFocused() + isPressed(), 3, true);
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Scale transformations for zoom effects";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Combined animations
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Combined Animations";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 2em;
+            height: 8em;
+            align: center;
+            
+            // Scale + Alpha
+            widget(container_z, {
+                focusable: true;
+                width: 6em;
+                height: 6em;
+                
+                widget(quad, {
+                    color: "#00CCCC";
+                    alpha: 0.5 + 0.5 * iir(isNavFocused(), 6, true);
+                });
+                
+                widget(label, {
+                    caption: "Scale+Alpha";
+                    align: center;
+                    sizeScale: 1.0 + 0.3 * iir(isNavFocused(), 6, true);
+                });
+            });
+            
+            // Scale + Color
+            widget(container_z, {
+                focusable: true;
+                width: 6em;
+                height: 6em;
+                
+                widget(quad, {
+                    color: [
+                        0.0,
+                        0.8 * iir(isNavFocused(), 6, true),
+                        0.8 * (1.0 - iir(isNavFocused(), 6, true))
+                    ];
+                });
+                
+                widget(label, {
+                    caption: "Scale+Color";
+                    align: center;
+                    sizeScale: 1.0 + 0.3 * iir(isNavFocused(), 6, true);
+                });
+            });
+            
+            // All combined
+            widget(container_z, {
+                focusable: true;
+                width: 6em;
+                height: 6em;
+                
+                widget(quad, {
+                    color: [
+                        1.0 - iir(isNavFocused(), 6, true),
+                        iir(isNavFocused(), 6, true),
+                        0.5
+                    ];
+                    alpha: 0.6 + 0.4 * iir(isNavFocused(), 6, true);
+                });
+                
+                widget(label, {
+                    caption: "All";
+                    align: center;
+                    sizeScale: 1.0 + 0.4 * iir(isNavFocused(), 6, true);
+                    color: 0.8 + 0.2 * iir(isNavFocused(), 6, true);
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Multiple animation properties combined";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Hover and press states
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Hover and Press States";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            height: 6em;
+            
+            // Hover effect
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    alpha: 0.6 + 0.4 * iir(isHovered(), 4, true);
+                });
+                
+                widget(label, {
+                    caption: "Hover";
+                    align: center;
+                });
+            });
+            
+            // Press effect
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    alpha: 0.8 - 0.3 * isPressed();
+                });
+                
+                widget(label, {
+                    caption: "Press";
+                    align: center;
+                    sizeScale: 1.0 - 0.1 * isPressed();
+                });
+            });
+            
+            // Combined states
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    alpha: 0.5 + 0.3 * iir(isHovered() + isNavFocused(), 4, true) + 0.2 * isPressed();
+                });
+                
+                widget(label, {
+                    caption: "Combined";
+                    align: center;
+                    sizeScale: 1.0 + 0.1 * iir(isHovered() + isNavFocused(), 4, true) - 0.05 * isPressed();
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Animations based on hover, focus, and press states";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Conditional visibility
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Conditional Visibility";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            height: 6em;
+            
+            // Show on focus
+            widget(container_z, {
+                focusable: true;
+                width: 10em;
+                
+                widget(quad, {
+                    color: "#444444";
+                });
+                
+                widget(label, {
+                    caption: "Focus to reveal";
+                    align: center;
+                    alpha: 0.5;
+                });
+                
+                widget(container_z, {
+                    alpha: iir(isNavFocused(), 8, true);
+                    
+                    widget(quad, {
+                        color: "#00FF00";
+                        alpha: 0.3;
+                    });
+                    
+                    widget(label, {
+                        caption: "Hidden content";
+                        align: center;
+                    });
+                });
+            });
+            
+            // Slide in effect (simulated with alpha)
+            widget(container_z, {
+                focusable: true;
+                width: 10em;
+                
+                widget(quad, {
+                    color: "#444444";
+                });
+                
+                widget(label, {
+                    caption: "Slide effect";
+                    align: center;
+                    alpha: 0.5;
+                });
+                
+                widget(container_y, {
+                    alpha: iir(isNavFocused(), 6, true);
+                    
+                    widget(quad, {
+                        color: "#0066FF";
+                        alpha: 0.8;
+                        height: 2em;
+                    });
+                    
+                    widget(label, {
+                        caption: "Sliding panel";
+                        align: center;
+                    });
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Show/hide elements with smooth transitions";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Loading/progress indicators
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Progress Indicators";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_y, {
+            spacing: 1em;
+            
+            // Progress bar
+            widget(container_z, {
+                height: 2em;
+                width: 30em;
+                
+                widget(quad, {
+                    color: "#333333";
+                });
+                
+                widget(container_x, {
+                    widget(quad, {
+                        color: "#00FF00";
+                        width: 30em * ($page.model.progress ?? 0.5);
+                    });
+                    
+                    widget(container_y, {});
+                });
+                
+                widget(label, {
+                    caption: "Progress: " + (($page.model.progress ?? 0.5) * 100) + "%";
+                    align: center;
+                });
+            });
+            
+            // Pulsing indicator
+            widget(container_x, {
+                spacing: 0.5em;
+                height: 2em;
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    width: 2em;
+                    alpha: 0.3 + 0.7 * iir(1, 4, true);
+                });
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    width: 2em;
+                    alpha: 0.3 + 0.7 * iir(1, 6, true);
+                });
+                
+                widget(quad, {
+                    color: "#FF6600";
+                    width: 2em;
+                    alpha: 0.3 + 0.7 * iir(1, 8, true);
+                });
+                
+                widget(label, {
+                    caption: "Loading...";
+                    padding: [0, 1em];
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Animated progress and loading indicators";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+    
+    // Border animations
+    widget(container_y, {
+        spacing: 0.5em;
+        
+        widget(label, {
+            caption: "Border Animations";
+            sizeScale: 1.5;
+            bold: true;
+        });
+        
+        widget(container_x, {
+            spacing: 1em;
+            height: 6em;
+            
+            // Fade in border
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#444444";
+                });
+                
+                widget(label, {
+                    caption: "Fade Border";
+                    align: center;
+                });
+                
+                widget(border, {
+                    border: 0.2em;
+                    color: "#FFFFFF";
+                    alpha: iir(isNavFocused(), 6, true);
+                });
+            });
+            
+            // Color changing border
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#444444";
+                });
+                
+                widget(label, {
+                    caption: "Color Border";
+                    align: center;
+                });
+                
+                widget(border, {
+                    border: 0.2em;
+                    color: isNavFocused() ? "#00FF00" : "#FF0000";
+                    alpha: 0.8;
+                });
+            });
+            
+            // Thick border on focus
+            widget(container_z, {
+                focusable: true;
+                width: 8em;
+                
+                widget(quad, {
+                    color: "#444444";
+                });
+                
+                widget(label, {
+                    caption: "Thick Border";
+                    align: center;
+                });
+                
+                widget(border, {
+                    border: 0.1em + 0.2em * iir(isNavFocused(), 6, true);
+                    color: "#FFFFFF";
+                    alpha: 0.8;
+                });
+            });
+        });
+        
+        widget(label, {
+            caption: "Animated borders for focus indication";
+            sizeScale: 0.9;
+            color: 0.7;
+        });
+    });
+});
