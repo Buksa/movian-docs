@@ -1,0 +1,14 @@
+{
+  "type": "ecmascript",
+  "apiversion": 2,
+  "id": "configurable-plugin-example",
+  "file": "main.js",
+  "version": "1.0.0",
+  "author": "Movian Documentation Team",
+  "title": "Configurable Plugin Example",
+  "synopsis": "Comprehensive settings and configuration demonstration",
+  "description": "This plugin demonstrates all types of settings, configuration management, validation, callbacks, and dynamic behavior changes based on user preferences.",
+  "homepage": "https://movian-docs.github.io/",
+  "category": "other",
+  "icon": "logo.png"
+}

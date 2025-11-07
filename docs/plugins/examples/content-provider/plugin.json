@@ -1,0 +1,15 @@
+{
+  "type": "ecmascript",
+  "apiversion": 2,
+  "id": "content-provider-example",
+  "file": "main.js",
+  "version": "2.0.0",
+  "author": "Movian Documentation Team",
+  "title": "Content Provider Plugin Example",
+  "synopsis": "Comprehensive example demonstrating professional media content provider patterns",
+  "description": "This plugin demonstrates advanced content provider patterns including robust HTTP API integration, LRU caching, comprehensive error handling, async loading, search functionality, and performance optimization. Based on patterns from successful real-world plugins like anilibria.tv and trakt.",
+  "homepage": "https://movian-docs.github.io/",
+  "category": "video",
+  "icon": "logo.png",
+  "minMovianVersion": "5.0.0"
+}

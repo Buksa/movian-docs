@@ -1,0 +1,34 @@
+{
+  "timestamp": "2025-11-05T06:35:38.618Z",
+  "summary": {
+    "totalExamples": 5,
+    "passedExamples": 5,
+    "failedExamples": 0,
+    "successRate": "100.0"
+  },
+  "errors": [],
+  "warnings": [
+    "Using console.log - consider using proper logging in production",
+    "Consider using named constants for large numbers",
+    "Consider adding a logo.png file for better presentation",
+    "Long line at 657 (138 chars) - consider breaking it up",
+    "Using console.log - consider using proper logging in production",
+    "Consider using named constants for large numbers",
+    "Consider adding a logo.png file for better presentation",
+    "Long line at 629 (129 chars) - consider breaking it up",
+    "Using console.log - consider using proper logging in production",
+    "Consider using named constants for large numbers",
+    "Consider adding a logo.png file for better presentation",
+    "Long line at 379 (172 chars) - consider breaking it up",
+    "Possible unterminated string on line 109",
+    "Using console.log - consider using proper logging in production",
+    "Consider setting page.loading = false when page is ready",
+    "Consider using named constants for large numbers",
+    "Consider adding a logo.png file for better presentation",
+    "Using console.log - consider using proper logging in production",
+    "Consider using named constants for large numbers",
+    "Consider adding a logo.png file for better presentation",
+    "Long line at 148 (126 chars) - consider breaking it up",
+    "Long line at 641 (133 chars) - consider breaking it up"
+  ]
+}

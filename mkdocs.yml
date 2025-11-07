@@ -36,11 +36,7 @@ theme:
 
 plugins:
   - search
-  - mermaid2:
-      arguments:
-        theme: base
-        themeVariables:
-          primaryColor: '#ff0000'
+  - mermaid2
 
 markdown_extensions:
   - admonition
@@ -49,7 +45,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:mermaid2.fence_mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -63,6 +59,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Mermaid Test: mermaid-test.md
   - Architecture:
     - Overview: architecture/README.md
   - Installation:

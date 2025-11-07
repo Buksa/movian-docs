@@ -1,0 +1,13 @@
+{
+  "type": "ecmascript",
+  "id": "advanced-ui-plugin",
+  "file": "main.js",
+  "apiversion": 2,
+  "title": "Advanced UI Plugin",
+  "synopsis": "Demonstrates advanced UI patterns and custom interface elements",
+  "description": "A comprehensive example showing custom view files, advanced UI components, animations, and interactive elements for Movian plugin development.",
+  "author": "Movian Documentation Team",
+  "version": "1.0.0",
+  "icon": "logo.png",
+  "category": "examples"
+}

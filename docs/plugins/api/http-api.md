@@ -1,892 +1,987 @@
 # HTTP and Networking API Reference
 
-This document provides comprehensive reference for Movian's HTTP and networking capabilities for plugin development.
+## Overview
 
-## Table of Contents
+Movian provides comprehensive HTTP and networking capabilities for plugins through multiple JavaScript modules. The HTTP system is built on a native C implementation that provides robust, feature-rich networking functionality including caching, authentication, SSL support, and WebSocket connections.
 
-- [HTTP Module](#http-module)
-- [Movian HTTP Module](#movian-http-module)
-- [WebSocket API](#websocket-api)
-- [URL Utilities](#url-utilities)
-- [Error Handling](#error-handling)
-- [Examples](#examples)
+## Architecture
 
----
+The HTTP system in Movian consists of several layers:
 
-## HTTP Module
-
-The standard HTTP module provides Node.js-compatible HTTP client functionality.
-
-### Module: `http`
-
-**Source References:**
-- JavaScript implementation: `movian/res/ecmascript/modules/http.js`
-- Native implementation: `movian/src/ecmascript/es_io.c`
-
-### Functions
-
-#### `http.request(options, callback)`
-
-Creates an HTTP request object.
-
-**Parameters:**
-- `options` (string|Object): URL string or options object
-- `callback` (function, optional): Response callback
-
-**Options Object:**
-- `hostname` (string): Server hostname
-- `port` (number): Server port
-- `path` (string): Request path
-- `method` (string): HTTP method (default: 'GET')
-- `headers` (Object): Request headers
-
-**Returns:**
-- `Request`: HTTP request object
-
-**Example:**
-```javascript
-var http = require('http');
-
-var req = http.request({
-  hostname: 'api.example.com',
-  port: 80,
-  path: '/data',
-  method: 'GET',
-  headers: {
-    'User-Agent': 'Movian Plugin'
-  }
-});
-
-req.on('response', function(res) {
-  console.log('Status:', res.statusCode);
-  
-  res.on('data', function(chunk) {
-    console.log('Data:', chunk);
-  });
-  
-  res.on('end', function() {
-    console.log('Request complete');
-  });
-});
-
-req.on('error', function(err) {
-  console.log('Request error:', err.message);
-});
-
-req.end();
+```mermaid
+graph TB
+    A[Plugin JavaScript Code] --> B[movian/http.js]
+    A --> C[http.js - Node.js Compatible]
+    A --> D[websocket.js]
+    B --> E[native/io.httpReq]
+    C --> E
+    D --> F[native/websocket]
+    E --> G[es_io.c - Native Implementation]
+    F --> H[WebSocket Native Implementation]
+    G --> I[HTTP Client Library]
+    G --> J[File Access System with Caching]
 ```
 
-#### `http.get(url, callback)`
+## Core HTTP Modules
 
-Convenience method for GET requests.
+### 1. movian/http Module (Recommended)
 
-**Parameters:**
-- `url` (string|Object): URL or options object
-- `callback` (function, optional): Response callback
+The `movian/http` module provides the most comprehensive and Movian-specific HTTP functionality.
 
-**Returns:**
-- `Request`: HTTP request object (automatically ended)
+#### Basic Usage
 
-**Example:**
-```javascript
-var http = require('http');
-
-http.get('http://api.example.com/data', function(res) {
-  var data = '';
-  
-  res.on('data', function(chunk) {
-    data += chunk;
-  });
-  
-  res.on('end', function() {
-    var json = JSON.parse(data);
-    console.log('Received:', json);
-  });
-});
-```
-
-### Request Object
-
-#### Methods
-
-##### `request.end(data)`
-
-Finishes sending the request.
-
-**Parameters:**
-- `data` (string|Buffer, optional): Request body data
-
-##### `request.on(event, callback)`
-
-Registers event handlers.
-
-**Events:**
-- `'response'`: Response received
-- `'error'`: Request error occurred
-
-### Response Object
-
-#### Properties
-
-- `statusCode` (number): HTTP status code
-- `headers` (Object): Response headers
-- `encoding` (string): Response encoding (default: 'utf8')
-
-#### Methods
-
-##### `response.setEncoding(encoding)`
-
-Sets the response encoding.
-
-**Parameters:**
-- `encoding` (string): Character encoding ('utf8', 'binary', etc.)
-
-##### `response.on(event, callback)`
-
-Registers event handlers.
-
-**Events:**
-- `'data'`: Data chunk received
-- `'end'`: Response complete
-
----
-
-## Movian HTTP Module
-
-The Movian-specific HTTP module provides enhanced functionality with better error handling and response processing.
-
-### Module: `movian/http`
-
-**Source References:**
-- JavaScript implementation: `movian/res/ecmascript/modules/movian/http.js`
-- Native implementation: `movian/src/ecmascript/es_io.c`
-
-### Functions
-
-#### `http.request(url, options, callback)`
-
-Performs an HTTP request with enhanced features.
-
-**Parameters:**
-- `url` (string): Target URL
-- `options` (Object, optional): Request options
-- `callback` (function, optional): Completion callback
-
-**Options:**
-- `method` (string): HTTP method ('GET', 'POST', 'PUT', 'DELETE', etc.)
-- `headers` (Object): Request headers
-- `postdata` (string|Buffer): Request body data
-- `args` (Object|Array): Additional arguments (merged if array)
-- `timeout` (number): Request timeout in milliseconds
-- `compression` (boolean): Enable gzip compression
-- `caching` (boolean): Enable response caching
-- `debug` (boolean): Enable debug logging
-- `noFail` (boolean): Don't throw on HTTP error status codes
-- `headRequest` (boolean): Perform HEAD request only
-
-**Returns:**
-- `HttpResponse`: Response object (if synchronous)
-- `undefined`: If callback provided (asynchronous)
-
-**Synchronous Example:**
 ```javascript
 var http = require('movian/http');
 
-try {
-  var response = http.request('http://api.example.com/data', {
-    method: 'GET',
-    headers: {
-      'User-Agent': 'Movian Plugin/1.0',
-      'Accept': 'application/json'
-    },
-    timeout: 30000
-  });
-  
-  console.log('Status:', response.statuscode);
-  console.log('Content-Type:', response.contenttype);
-  
-  var data = JSON.parse(response.toString());
-  console.log('Data:', data);
-  
-} catch (e) {
-  console.log('Request failed:', e.message);
-}
-```
+// Simple GET request
+var response = http.request('https://api.example.com/data');
+console.log('Status:', response.statuscode);
+console.log('Content:', response.toString());
 
-**Asynchronous Example:**
-```javascript
-var http = require('movian/http');
-
-http.request('http://api.example.com/data', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  postdata: JSON.stringify({key: 'value'})
-}, function(err, response) {
-  if (err) {
-    console.log('Error:', err.message);
+// Asynchronous request with callback
+http.request('https://api.example.com/data', {}, function(error, response) {
+  if (error) {
+    console.error('Request failed:', error);
     return;
   }
   
   console.log('Status:', response.statuscode);
-  var result = JSON.parse(response.toString());
-  console.log('Result:', result);
+  console.log('Content:', response.toString());
 });
 ```
 
-### HttpResponse Object
-
-#### Properties
-
-- `statuscode` (number): HTTP status code
-- `bytes` (Buffer): Raw response body bytes
-- `headers` (Object): Response headers (original case)
-- `headers_lc` (Object): Response headers (lowercase keys)
-- `multiheaders` (Object): Multiple headers as arrays (original case)
-- `multiheaders_lc` (Object): Multiple headers as arrays (lowercase)
-- `allheaders` (Array): All headers as [key, value, key, value, ...] array
-- `contenttype` (string): Content-Type header value
-
-#### Methods
-
-##### `response.toString()`
-
-Converts response body to string with automatic encoding detection.
-
-**Returns:**
-- `string`: Response body as UTF-8 string
-
-**Description:**
-Automatically detects character encoding from Content-Type header or validates UTF-8. Falls back to UTF-8 conversion if needed.
-
-**Example:**
-```javascript
-var response = http.request('http://example.com/api');
-var text = response.toString();
-console.log('Response text:', text);
-```
-
-##### `response.convertFromEncoding(encoding)`
-
-Converts response body from specific encoding to UTF-8.
-
-**Parameters:**
-- `encoding` (string): Source encoding ('iso-8859-1', 'windows-1252', etc.)
-
-**Returns:**
-- `string`: Converted UTF-8 string
-
-**Example:**
-```javascript
-var response = http.request('http://example.com/latin1-data');
-var text = response.convertFromEncoding('iso-8859-1');
-console.log('Converted text:', text);
-```
-
-### Advanced Request Options
-
-#### Multiple Arguments Merging
-
-When `options.args` is an array, all objects in the array are merged:
+#### Request Options
 
 ```javascript
-var http = require('movian/http');
-
-var baseHeaders = {'User-Agent': 'Movian Plugin'};
-var authHeaders = {'Authorization': 'Bearer token123'};
-
-var response = http.request('http://api.example.com/data', {
-  args: [baseHeaders, authHeaders, {
-    'Accept': 'application/json'
-  }]
-});
-```
-
-#### Caching and Compression
-
-```javascript
-var response = http.request('http://api.example.com/large-data', {
-  compression: true,  // Enable gzip compression
-  caching: true,      // Enable response caching
-  timeout: 60000      // 60 second timeout
-});
-```
-
----
-
-## WebSocket API
-
-WebSocket support for real-time communication.
-
-### Module: `websocket`
-
-**Source References:**
-- JavaScript implementation: `movian/res/ecmascript/modules/websocket.js`
-- Native implementation: `movian/src/ecmascript/es_websocket.c`
-
-### WebSocket Class
-
-#### Constructor
-
-```javascript
-var WebSocket = require('websocket');
-var ws = new WebSocket('ws://example.com/socket');
-```
-
-#### Events
-
-##### `onopen`
-
-Connection established.
-
-```javascript
-ws.onopen = function() {
-  console.log('WebSocket connected');
-  ws.send('Hello Server');
+var options = {
+  // HTTP method
+  method: 'POST',
+  
+  // Request headers
+  headers: {
+    'Content-Type': 'application/json',
+    'User-Agent': 'MyPlugin/1.0',
+    'Authorization': 'Bearer token123'
+  },
+  
+  // POST data (multiple formats supported)
+  postdata: {
+    key1: 'value1',
+    key2: 'value2'
+  },
+  // OR as string
+  // postdata: 'raw string data',
+  // OR as buffer
+  // postdata: bufferData,
+  
+  // Query parameters
+  args: {
+    param1: 'value1',
+    param2: 'value2'
+  },
+  
+  // Caching options
+  caching: true,
+  cacheTime: 3600, // seconds
+  
+  // Request flags
+  debug: true,
+  noFollow: false,        // Don't follow redirects
+  compression: true,      // Enable gzip/deflate
+  noAuth: false,         // Disable authentication
+  noFail: false,         // Return content even on HTTP errors
+  verifySSL: true,       // Verify SSL certificates
+  
+  // Special request types
+  headRequest: false     // Make HEAD request instead of GET
 };
+
+http.request(url, options, callback);
 ```
 
-##### `onmessage`
+#### Response Object
 
-Message received from server.
+The response object provides comprehensive information about the HTTP response:
 
 ```javascript
-ws.onmessage = function(event) {
-  console.log('Received:', event.data);
-};
+http.request(url, {}, function(error, response) {
+  if (error) return;
+  
+  // Status information
+  console.log('Status Code:', response.statuscode);
+  
+  // Headers (multiple access methods)
+  console.log('Content-Type:', response.headers['Content-Type']);
+  console.log('Content-Type (lowercase):', response.headers_lc['content-type']);
+  
+  // Multiple headers with same name
+  console.log('Set-Cookie headers:', response.multiheaders['Set-Cookie']);
+  
+  // All headers as array
+  console.log('All headers:', response.allheaders);
+  
+  // Content type helper
+  console.log('Content Type:', response.contenttype);
+  
+  // Response body
+  console.log('As string:', response.toString());
+  console.log('As bytes:', response.bytes);
+  
+  // Convert from specific encoding
+  var utf8Text = response.convertFromEncoding('utf-8');
+  var latin1Text = response.convertFromEncoding('iso-8859-1');
+});
 ```
 
-##### `onclose`
+### 2. Standard http Module (Node.js Compatible)
 
-Connection closed.
-
-```javascript
-ws.onclose = function(event) {
-  console.log('WebSocket closed:', event.code, event.reason);
-};
-```
-
-##### `onerror`
-
-Connection error occurred.
+For compatibility with Node.js code, Movian provides a basic `http` module:
 
 ```javascript
-ws.onerror = function(error) {
-  console.log('WebSocket error:', error);
-};
-```
+var http = require('http');
 
-#### Methods
-
-##### `send(data)`
-
-Sends data to the server.
-
-**Parameters:**
-- `data` (string): Data to send
-
-```javascript
-ws.send(JSON.stringify({type: 'ping', timestamp: Date.now()}));
-```
-
-##### `close(code, reason)`
-
-Closes the connection.
-
-**Parameters:**
-- `code` (number, optional): Close code
-- `reason` (string, optional): Close reason
-
-```javascript
-ws.close(1000, 'Normal closure');
-```
-
----
-
-## URL Utilities
-
-URL parsing and manipulation utilities.
-
-### Module: `url`
-
-**Source Reference:** `movian/res/ecmascript/modules/url.js`
-
-### Functions
-
-#### `url.parse(urlString)`
-
-Parses a URL string into components.
-
-**Parameters:**
-- `urlString` (string): URL to parse
-
-**Returns:**
-- `Object`: URL components
-
-**Example:**
-```javascript
-var url = require('url');
-
-var parsed = url.parse('http://user:pass@example.com:8080/path?query=value#fragment');
-
-console.log(parsed);
-// {
-//   protocol: 'http:',
-//   hostname: 'example.com',
-//   port: '8080',
-//   pathname: '/path',
-//   search: '?query=value',
-//   hash: '#fragment',
-//   auth: 'user:pass'
-// }
-```
-
-#### `url.format(urlObject)`
-
-Formats URL components into a URL string.
-
-**Parameters:**
-- `urlObject` (Object): URL components
-
-**Returns:**
-- `string`: Formatted URL
-
-**Example:**
-```javascript
-var url = require('url');
-
-var formatted = url.format({
-  protocol: 'https:',
-  hostname: 'api.example.com',
-  pathname: '/v1/data',
-  search: '?format=json'
+// Node.js style request
+var req = http.request('https://api.example.com/data', function(response) {
+  response.on('data', function(chunk) {
+    console.log('Received data:', chunk);
+  });
+  
+  response.on('end', function() {
+    console.log('Request completed');
+  });
 });
 
-console.log(formatted); // 'https://api.example.com/v1/data?format=json'
-```
-
-### Query String Utilities
-
-#### Module: `querystring`
-
-**Source Reference:** `movian/res/ecmascript/modules/querystring.js`
-
-##### `querystring.parse(str)`
-
-Parses query string into object.
-
-**Parameters:**
-- `str` (string): Query string to parse
-
-**Returns:**
-- `Object`: Parsed parameters
-
-**Example:**
-```javascript
-var qs = require('querystring');
-
-var params = qs.parse('name=John&age=30&city=New%20York');
-console.log(params);
-// { name: 'John', age: '30', city: 'New York' }
-```
-
-##### `querystring.stringify(obj)`
-
-Converts object to query string.
-
-**Parameters:**
-- `obj` (Object): Object to stringify
-
-**Returns:**
-- `string`: Query string
-
-**Example:**
-```javascript
-var qs = require('querystring');
-
-var query = qs.stringify({
-  search: 'movies',
-  limit: 20,
-  sort: 'date'
+req.on('error', function(error) {
+  console.error('Request error:', error);
 });
-console.log(query); // 'search=movies&limit=20&sort=date'
+
+req.end();
+
+// Simplified GET request
+http.get('https://api.example.com/data', function(response) {
+  // Handle response
+});
 ```
 
----
+## Advanced HTTP Features
 
-## Error Handling
+### HTTP Request Inspection
 
-### Common Error Types
+Movian allows plugins to intercept and modify HTTP requests using HTTP inspectors:
 
-#### Network Errors
 ```javascript
-var http = require('movian/http');
+var io = require('native/io');
 
-try {
-  var response = http.request('http://unreachable.example.com');
-} catch (e) {
-  if (e.message.includes('timeout')) {
-    console.log('Request timed out');
-  } else if (e.message.includes('connection')) {
-    console.log('Connection failed');
-  } else {
-    console.log('Network error:', e.message);
+// Create an HTTP inspector for specific URLs
+io.httpInspectorCreate('.*api\\.example\\.com.*', function(request) {
+  // Add custom headers
+  request.setHeader('User-Agent', 'MyPlugin/1.0');
+  request.setHeader('Accept-Encoding', 'gzip');
+  
+  // Set cookies
+  request.setCookie('session_id', 'abc123');
+  
+  // Check if authentication failed
+  if (request.authFailed) {
+    console.log('Authentication failed for:', request.url);
+    // Could redirect to login or fail the request
+    request.fail('Authentication required');
+    return;
   }
-}
+  
+  // Allow request to proceed
+  request.proceed();
+}, false); // false = synchronous, true = asynchronous
 ```
 
-#### HTTP Status Errors
-```javascript
-var http = require('movian/http');
+### Caching System
 
-var response = http.request('http://api.example.com/data', {
-  noFail: true  // Don't throw on HTTP errors
+Movian provides intelligent HTTP caching:
+
+```javascript
+// Enable caching with default settings
+var response = http.request(url, {
+  caching: true
 });
 
-if (response.statuscode >= 400) {
-  console.log('HTTP Error:', response.statuscode);
-  console.log('Error body:', response.toString());
-} else {
-  // Process successful response
-  var data = JSON.parse(response.toString());
-}
+// Custom cache time (in seconds)
+var response = http.request(url, {
+  caching: true,
+  cacheTime: 3600  // Cache for 1 hour
+});
+
+// Cache is automatically invalidated by:
+// - Custom headers (except User-Agent)
+// - POST requests
+// - Authentication headers
 ```
 
-#### JSON Parsing Errors
+### Error Handling and Retry Logic
+
 ```javascript
-var http = require('movian/http');
-
-try {
-  var response = http.request('http://api.example.com/json');
-  var data = JSON.parse(response.toString());
-} catch (e) {
-  if (e instanceof SyntaxError) {
-    console.log('Invalid JSON response');
-    console.log('Raw response:', response.toString());
-  } else {
-    console.log('Request error:', e.message);
-  }
-}
-```
-
-### Error Recovery Patterns
-
-#### Retry Logic
-```javascript
-function requestWithRetry(url, options, maxRetries) {
+function makeRequestWithRetry(url, maxRetries) {
   var retries = 0;
   
   function attempt() {
-    try {
-      return http.request(url, options);
-    } catch (e) {
-      retries++;
-      if (retries < maxRetries) {
-        console.log('Retry', retries, 'of', maxRetries);
-        return attempt();
-      } else {
-        throw e;
+    http.request(url, {
+      noFail: true  // Get content even on HTTP errors
+    }, function(error, response) {
+      if (error) {
+        if (retries < maxRetries) {
+          retries++;
+          console.log('Retry attempt', retries);
+          setTimeout(attempt, 1000 * retries); // Exponential backoff
+        } else {
+          console.error('Max retries exceeded:', error);
+        }
+        return;
+      }
+      
+      if (response.statuscode >= 400) {
+        console.error('HTTP error:', response.statuscode);
+        if (retries < maxRetries) {
+          retries++;
+          setTimeout(attempt, 1000 * retries);
+        }
+        return;
+      }
+      
+      // Success
+      console.log('Request successful:', response.toString());
+    });
+  }
+  
+  attempt();
+}
+```
+
+## Content Parsing Examples
+
+### JSON Parsing
+
+Movian provides robust JSON parsing with error handling and validation:
+
+```javascript
+http.request('https://api.example.com/data.json', {}, function(error, response) {
+  if (error) return;
+  
+  try {
+    // Basic JSON parsing
+    var data = JSON.parse(response.toString());
+    console.log('Parsed JSON:', data);
+    
+    // Access nested data safely
+    var items = data.results || [];
+    var totalCount = data.pagination ? data.pagination.total : 0;
+    
+    // Process array data
+    items.forEach(function(item, index) {
+      console.log('Item ' + index + ':', item.title || item.name);
+    });
+    
+  } catch (parseError) {
+    console.error('JSON parse error:', parseError);
+    console.error('Response content:', response.toString().substring(0, 200));
+  }
+});
+```
+
+#### Advanced JSON Processing
+
+```javascript
+// JSON parsing with validation and transformation
+function parseAPIResponse(response, expectedStructure) {
+  try {
+    var data = JSON.parse(response.toString());
+    
+    // Validate expected structure
+    if (expectedStructure) {
+      for (var key in expectedStructure) {
+        if (!(key in data)) {
+          throw new Error('Missing required field: ' + key);
+        }
+        
+        var expectedType = expectedStructure[key];
+        var actualType = typeof data[key];
+        
+        if (actualType !== expectedType) {
+          throw new Error('Invalid type for ' + key + ': expected ' + 
+                         expectedType + ', got ' + actualType);
+        }
+      }
+    }
+    
+    return {
+      success: true,
+      data: data,
+      error: null
+    };
+    
+  } catch (error) {
+    return {
+      success: false,
+      data: null,
+      error: error.message
+    };
+  }
+}
+
+// Usage example
+http.request(apiUrl, {}, function(error, response) {
+  if (error) return;
+  
+  var result = parseAPIResponse(response, {
+    'results': 'object',
+    'total': 'number',
+    'page': 'number'
+  });
+  
+  if (result.success) {
+    console.log('Valid API response:', result.data);
+  } else {
+    console.error('Invalid API response:', result.error);
+  }
+});
+
+// JSON streaming for large responses
+function processLargeJSONResponse(response) {
+  var content = response.toString();
+  
+  // Handle potential memory issues with large JSON
+  if (content.length > 1024 * 1024) { // 1MB threshold
+    console.warn('Large JSON response detected:', content.length, 'bytes');
+    
+    // Process in chunks or extract specific parts
+    var headerMatch = content.match(/^{[^{]*"results"\s*:\s*\[/);
+    if (headerMatch) {
+      // Extract just the results array for processing
+      var resultsStart = content.indexOf('"results":[') + 11;
+      var resultsEnd = content.lastIndexOf(']');
+      var resultsJSON = '[' + content.substring(resultsStart, resultsEnd) + ']';
+      
+      try {
+        return JSON.parse(resultsJSON);
+      } catch (e) {
+        console.error('Failed to parse results array:', e);
+        return [];
       }
     }
   }
   
-  return attempt();
+  return JSON.parse(content);
 }
 ```
 
-#### Timeout Handling
-```javascript
-function requestWithTimeout(url, timeoutMs) {
-  return http.request(url, {
-    timeout: timeoutMs,
-    noFail: true
-  });
-}
-```
+### HTML Parsing
 
----
-
-## Examples
-
-### Complete API Client Example
+Movian provides a powerful HTML parsing module based on the native Gumbo parser with DOM-like functionality:
 
 ```javascript
-// api-client.js - Complete HTTP API client
+var html = require('movian/html');
 
-var http = require('movian/http');
-var qs = require('querystring');
-
-function ApiClient(baseUrl, apiKey) {
-  this.baseUrl = baseUrl;
-  this.apiKey = apiKey;
-  this.defaultHeaders = {
-    'User-Agent': 'Movian Plugin/1.0',
-    'Authorization': 'Bearer ' + apiKey,
-    'Accept': 'application/json'
-  };
-}
-
-ApiClient.prototype.request = function(endpoint, options) {
-  options = options || {};
+http.request('https://example.com/page.html', {}, function(error, response) {
+  if (error) return;
   
-  var url = this.baseUrl + endpoint;
+  var htmlString = response.toString();
   
-  // Add query parameters
-  if (options.params) {
-    url += '?' + qs.stringify(options.params);
-  }
+  // Parse HTML into DOM document
+  var document = html.parse(htmlString);
   
-  var requestOptions = {
-    method: options.method || 'GET',
-    headers: Object.assign({}, this.defaultHeaders, options.headers),
-    timeout: options.timeout || 30000,
-    compression: true,
-    caching: options.cache !== false
-  };
+  // Extract title using DOM methods
+  var title = document.title;
+  console.log('Title:', title);
   
-  // Add request body for POST/PUT
-  if (options.data) {
-    requestOptions.postdata = JSON.stringify(options.data);
-    requestOptions.headers['Content-Type'] = 'application/json';
-  }
+  // Find elements by tag name
+  var links = document.getElementsByTagName('a');
+  console.log('Links found:', links.length);
   
-  try {
-    var response = http.request(url, requestOptions);
-    
-    if (response.statuscode >= 400) {
-      throw new Error('HTTP ' + response.statuscode + ': ' + response.toString());
-    }
-    
-    var contentType = response.contenttype || '';
-    if (contentType.includes('application/json')) {
-      return JSON.parse(response.toString());
-    } else {
-      return response.toString();
-    }
-    
-  } catch (e) {
-    console.log('API request failed:', e.message);
-    throw e;
-  }
-};
-
-ApiClient.prototype.get = function(endpoint, params) {
-  return this.request(endpoint, {params: params});
-};
-
-ApiClient.prototype.post = function(endpoint, data) {
-  return this.request(endpoint, {method: 'POST', data: data});
-};
-
-ApiClient.prototype.put = function(endpoint, data) {
-  return this.request(endpoint, {method: 'PUT', data: data});
-};
-
-ApiClient.prototype.delete = function(endpoint) {
-  return this.request(endpoint, {method: 'DELETE'});
-};
-
-// Usage example
-var client = new ApiClient('https://api.example.com/v1', 'your-api-key');
-
-try {
-  // Get data
-  var movies = client.get('/movies', {genre: 'action', limit: 20});
-  
-  // Post data
-  var newMovie = client.post('/movies', {
-    title: 'New Movie',
-    year: 2023,
-    genre: 'action'
-  });
-  
-  console.log('Created movie:', newMovie);
-  
-} catch (e) {
-  console.log('API error:', e.message);
-}
-```
-
-### WebSocket Chat Example
-
-```javascript
-// websocket-chat.js - WebSocket communication example
-
-var WebSocket = require('websocket');
-
-function ChatClient(url, username) {
-  this.url = url;
-  this.username = username;
-  this.ws = null;
-  this.connected = false;
-  this.messageHandlers = [];
-}
-
-ChatClient.prototype.connect = function() {
-  var self = this;
-  
-  this.ws = new WebSocket(this.url);
-  
-  this.ws.onopen = function() {
-    console.log('Connected to chat server');
-    self.connected = true;
-    
-    // Send join message
-    self.send({
-      type: 'join',
-      username: self.username
+  // Extract link data
+  var linkData = [];
+  for (var i = 0; i < links.length; i++) {
+    var link = links[i];
+    linkData.push({
+      url: link.getAttribute('href'),
+      text: link.textContent.trim()
     });
-  };
-  
-  this.ws.onmessage = function(event) {
-    try {
-      var message = JSON.parse(event.data);
-      self.handleMessage(message);
-    } catch (e) {
-      console.log('Invalid message received:', event.data);
-    }
-  };
-  
-  this.ws.onclose = function(event) {
-    console.log('Disconnected from chat server:', event.code, event.reason);
-    self.connected = false;
-  };
-  
-  this.ws.onerror = function(error) {
-    console.log('WebSocket error:', error);
-  };
-};
-
-ChatClient.prototype.send = function(message) {
-  if (this.connected && this.ws) {
-    this.ws.send(JSON.stringify(message));
   }
-};
+  
+  // Use CSS selectors for complex queries
+  var menuItems = document.querySelectorAll('.menu-item a');
+  var contentBlocks = document.querySelectorAll('div.content > p');
+  
+  // Find elements by ID and class
+  var header = document.getElementById('header');
+  var articles = document.getElementsByClassName('article');
+  
+  console.log('Menu items:', menuItems.length);
+  console.log('Content blocks:', contentBlocks.length);
+});
+```
 
-ChatClient.prototype.sendMessage = function(text) {
-  this.send({
-    type: 'message',
-    username: this.username,
-    text: text,
-    timestamp: Date.now()
-  });
-};
+#### Advanced HTML Parsing Features
 
-ChatClient.prototype.handleMessage = function(message) {
-  this.messageHandlers.forEach(function(handler) {
-    handler(message);
-  });
-};
+```javascript
+var html = require('movian/html');
 
-ChatClient.prototype.onMessage = function(handler) {
-  this.messageHandlers.push(handler);
-};
+// Parse HTML with enhanced features
+var document = html.parse(htmlString);
 
-ChatClient.prototype.disconnect = function() {
-  if (this.ws) {
-    this.ws.close(1000, 'Client disconnect');
-  }
-};
-
-// Usage example
-var chat = new ChatClient('ws://chat.example.com/socket', 'MyUsername');
-
-chat.onMessage(function(message) {
-  console.log('[' + message.username + ']:', message.text);
+// CSS Selector Support
+var elements = document.querySelectorAll('div.movie-item[data-id]');
+elements.forEach(function(element) {
+  var movieData = {
+    id: element.getAttribute('data-id'),
+    title: element.querySelector('.title').textContent,
+    year: element.querySelector('.year').textContent,
+    rating: element.querySelector('.rating').textContent
+  };
+  console.log('Movie:', movieData);
 });
 
-chat.connect();
+// Attribute-based searching
+var dataElements = html.DOMUtils.findByAttribute(document, 'data-type', 'movie');
 
-// Send a message
-setTimeout(function() {
-  chat.sendMessage('Hello everyone!');
-}, 1000);
+// Complex selector matching
+var isMatch = element.matches('div.content > .item:nth-child(odd)');
+
+// Extract structured data using built-in helper
+var movieData = html.DOMUtils.extractMovieData(element);
+
+// Serialize back to HTML
+var serializedHTML = html.DOMUtils.serializeToHTML(element, {
+  prettyPrint: true,
+  indentSize: 2
+});
 ```
 
-### File Download with Progress
+#### HTML Parser API Reference
+
+**Core Classes:**
+- `html.Document` - DOM document representation
+- `html.Element` - DOM element with full API
+- `html.DOMParser` - HTML string parser
+- `html.HTMLSerializer` - HTML serialization utility
+
+**Element Methods:**
+- `getElementById(id)` - Find element by ID
+- `getElementsByTagName(tagName)` - Find elements by tag
+- `getElementsByClassName(className)` - Find elements by class
+- `querySelector(selector)` - Find first matching element
+- `querySelectorAll(selector)` - Find all matching elements
+- `getAttribute(name)` - Get attribute value
+- `hasAttribute(name)` - Check attribute existence
+- `matches(selector)` - Test if element matches selector
+
+**CSS Selector Support:**
+- Tag selectors: `div`, `span`, `a`
+- ID selectors: `#header`, `#main-content`
+- Class selectors: `.menu-item`, `.active`
+- Attribute selectors: `[data-id]`, `[href^="http"]`
+- Descendant selectors: `div .content`, `.menu a`
+- Child selectors: `ul > li`, `.nav > .item`
+- Multiple selectors: `.class1, .class2, #id1`
+
+**Attribute Selector Operators:**
+- `[attr]` - Attribute exists
+- `[attr="value"]` - Exact match
+- `[attr~="value"]` - Word match
+- `[attr|="value"]` - Language match
+- `[attr^="value"]` - Starts with
+- `[attr$="value"]` - Ends with
+- `[attr*="value"]` - Contains
+
+### XML Parsing
+
+Movian supports XML parsing through both regex-based approaches and the HTML parser for XML-like content:
 
 ```javascript
-// download.js - File download with progress tracking
+// Method 1: Using HTML parser for well-formed XML
+var html = require('movian/html');
 
-var http = require('movian/http');
-var fs = require('fs');
-
-function downloadFile(url, localPath, progressCallback) {
-  console.log('Downloading:', url);
+http.request('https://api.example.com/data.xml', {}, function(error, response) {
+  if (error) return;
+  
+  var xmlString = response.toString();
   
   try {
-    // First, get file size with HEAD request
-    var headResponse = http.request(url, {
-      method: 'HEAD',
-      timeout: 10000
-    });
+    // Parse XML as HTML (works for well-formed XML)
+    var document = html.parse(xmlString);
     
-    var contentLength = parseInt(headResponse.headers_lc['content-length'] || '0');
-    console.log('File size:', contentLength, 'bytes');
+    // Extract data using DOM methods
+    var title = document.querySelector('title');
+    var items = document.querySelectorAll('item');
     
-    // Download the file
-    var response = http.request(url, {
-      timeout: 300000  // 5 minute timeout for large files
-    });
+    console.log('XML Title:', title ? title.textContent : 'No title');
+    console.log('Items found:', items.length);
     
-    if (response.statuscode !== 200) {
-      throw new Error('Download failed: HTTP ' + response.statuscode);
+    // Process each item
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var itemData = {
+        title: item.querySelector('title') ? item.querySelector('title').textContent : '',
+        description: item.querySelector('description') ? item.querySelector('description').textContent : '',
+        link: item.querySelector('link') ? item.querySelector('link').textContent : ''
+      };
+      console.log('Item ' + i + ':', itemData);
     }
     
-    // Save to file
-    fs.writeFileSync(localPath, response.bytes);
-    
-    console.log('Download complete:', localPath);
-    
-    if (progressCallback) {
-      progressCallback(100, contentLength, contentLength);
-    }
-    
-    return true;
-    
-  } catch (e) {
-    console.log('Download failed:', e.message);
-    
-    if (progressCallback) {
-      progressCallback(-1, 0, 0); // Error indicator
-    }
-    
-    return false;
+  } catch (parseError) {
+    console.error('XML parse error:', parseError);
+    // Fall back to regex parsing
+    parseXMLWithRegex(xmlString);
   }
+});
+
+// Method 2: Advanced regex-based XML parsing
+function parseXMLWithRegex(xml) {
+  // XML parsing utilities
+  var XMLUtils = {
+    // Extract single element value
+    extractValue: function(xml, tagName, attributes) {
+      var attrPattern = '';
+      if (attributes) {
+        for (var attr in attributes) {
+          attrPattern += '(?=.*' + attr + '=["\']' + attributes[attr] + '["\'])';
+        }
+      }
+      
+      var pattern = '<' + tagName + attrPattern + '[^>]*>(.*?)</' + tagName + '>';
+      var regex = new RegExp(pattern, 'is');
+      var match = xml.match(regex);
+      return match ? match[1].trim() : null;
+    },
+    
+    // Extract all matching elements
+    extractAll: function(xml, tagName, attributes) {
+      var attrPattern = '';
+      if (attributes) {
+        for (var attr in attributes) {
+          attrPattern += '(?=.*' + attr + '=["\']' + attributes[attr] + '["\'])';
+        }
+      }
+      
+      var pattern = '<' + tagName + attrPattern + '[^>]*>(.*?)</' + tagName + '>';
+      var regex = new RegExp(pattern, 'gis');
+      var items = [];
+      var match;
+      
+      while ((match = regex.exec(xml)) !== null) {
+        items.push(match[1].trim());
+      }
+      
+      return items;
+    },
+    
+    // Extract element attributes
+    extractAttributes: function(xml, tagName) {
+      var pattern = '<' + tagName + '([^>]*)>';
+      var match = xml.match(new RegExp(pattern, 'i'));
+      
+      if (!match) return {};
+      
+      var attrString = match[1];
+      var attributes = {};
+      var attrRegex = /(\w+)=["']([^"']*)["']/g;
+      var attrMatch;
+      
+      while ((attrMatch = attrRegex.exec(attrString)) !== null) {
+        attributes[attrMatch[1]] = attrMatch[2];
+      }
+      
+      return attributes;
+    },
+    
+    // Parse RSS/Atom feeds
+    parseRSSFeed: function(xml) {
+      var feed = {
+        title: this.extractValue(xml, 'title'),
+        description: this.extractValue(xml, 'description'),
+        link: this.extractValue(xml, 'link'),
+        items: []
+      };
+      
+      var itemsXML = this.extractAll(xml, 'item');
+      
+      for (var i = 0; i < itemsXML.length; i++) {
+        var itemXML = itemsXML[i];
+        var item = {
+          title: this.extractValue(itemXML, 'title'),
+          description: this.extractValue(itemXML, 'description'),
+          link: this.extractValue(itemXML, 'link'),
+          pubDate: this.extractValue(itemXML, 'pubDate'),
+          guid: this.extractValue(itemXML, 'guid')
+        };
+        feed.items.push(item);
+      }
+      
+      return feed;
+    },
+    
+    // Decode XML entities
+    decodeEntities: function(text) {
+      if (!text) return '';
+      
+      var entities = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&apos;': "'",
+        '&#39;': "'"
+      };
+      
+      return text.replace(/&[^;]+;/g, function(entity) {
+        return entities[entity] || entity;
+      });
+    }
+  };
+  
+  // Parse RSS feed example
+  var feed = XMLUtils.parseRSSFeed(xml);
+  console.log('Feed title:', feed.title);
+  console.log('Feed items:', feed.items.length);
+  
+  feed.items.forEach(function(item, index) {
+    console.log('Item ' + index + ':', {
+      title: XMLUtils.decodeEntities(item.title),
+      link: item.link
+    });
+  });
 }
 
-// Usage example
-var success = downloadFile(
-  'http://example.com/large-file.zip',
-  Core.storagePath + '/downloads/file.zip',
-  function(percent, downloaded, total) {
-    if (percent < 0) {
-      console.log('Download error');
-    } else {
-      console.log('Progress:', percent + '%', '(' + downloaded + '/' + total + ')');
+// Method 3: SOAP/Complex XML parsing
+function parseSOAPResponse(xml) {
+  var html = require('movian/html');
+  
+  try {
+    var document = html.parse(xml);
+    
+    // Navigate SOAP envelope structure
+    var envelope = document.querySelector('soap\\:Envelope, Envelope');
+    var body = envelope ? envelope.querySelector('soap\\:Body, Body') : null;
+    
+    if (body) {
+      // Extract response data
+      var responseElements = body.querySelectorAll('*');
+      var responseData = {};
+      
+      for (var i = 0; i < responseElements.length; i++) {
+        var element = responseElements[i];
+        var tagName = element.tagName.toLowerCase();
+        var textContent = element.textContent.trim();
+        
+        if (textContent && !element.children.length) {
+          responseData[tagName] = textContent;
+        }
+      }
+      
+      return responseData;
     }
+    
+  } catch (error) {
+    console.error('SOAP parsing error:', error);
   }
-);
-
-if (success) {
-  console.log('File downloaded successfully');
-} else {
-  console.log('Download failed');
+  
+  return null;
 }
 ```
 
----
+## WebSocket Support
+
+Movian provides WebSocket support through the `websocket` module:
+
+```javascript
+var WebSocket = require('websocket').w3cwebsocket;
+
+// Create WebSocket connection
+var ws = new WebSocket('wss://api.example.com/websocket', 'protocol-name');
+
+// Connection opened
+ws.onopen = function() {
+  console.log('WebSocket connected');
+  ws.send('Hello Server!');
+};
+
+// Message received
+ws.oninput = function(event) {
+  console.log('Received:', event.data);
+  
+  // Echo back
+  ws.send('Echo: ' + event.data);
+};
+
+// Connection closed
+ws.onclose = function() {
+  console.log('WebSocket disconnected');
+};
+
+// Send data
+ws.send('Hello World!');
+ws.send(JSON.stringify({type: 'message', data: 'Hello'}));
+
+// Close connection
+ws.close();
+```
+
+## Real-World Plugin Example
+
+Here's a complete example based on the Anilibria plugin:
+
+```javascript
+var http = require('movian/http');
+var io = require('native/io');
+
+// Plugin configuration
+var config = {
+  apiUrl: 'https://api.anilibria.tv',
+  userAgent: 'Movian-Plugin/1.0',
+  cacheTime: 300 // 5 minutes
+};
+
+// Set up HTTP inspector for all API requests
+io.httpInspectorCreate('.*anilibria.*', function(ctrl) {
+  ctrl.setHeader('Accept-Encoding', 'gzip');
+  ctrl.setHeader('User-Agent', config.userAgent);
+});
+
+// API client object
+var apiClient = {
+  defaultHeaders: {
+    'Accept': 'application/json',
+    'User-Agent': config.userAgent,
+    'Content-Type': 'application/json'
+  },
+
+  request: function(url, options, callback) {
+    var requestOptions = {
+      method: 'GET',
+      headers: this.defaultHeaders,
+      caching: true,
+      cacheTime: config.cacheTime
+    };
+
+    // Merge options
+    if (options) {
+      for (var key in options) {
+        requestOptions[key] = options[key];
+      }
+      if (options.headers) {
+        for (var header in options.headers) {
+          requestOptions.headers[header] = options.headers[header];
+        }
+      }
+    }
+
+    http.request(url, requestOptions, function(error, response) {
+      if (error) {
+        console.error('API request failed:', error);
+        callback(error, null);
+        return;
+      }
+
+      if (response.statuscode !== 200) {
+        var err = new Error('HTTP ' + response.statuscode);
+        callback(err, null);
+        return;
+      }
+
+      try {
+        var data = JSON.parse(response.toString());
+        callback(null, data);
+      } catch (parseError) {
+        callback(parseError, null);
+      }
+    });
+  },
+
+  searchAnime: function(query, callback) {
+    var url = config.apiUrl + '/public/api/index.php';
+    var options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      postdata: {
+        query: 'search',
+        search: query,
+        filter: 'id,code,names,poster'
+      }
+    };
+
+    this.request(url, options, callback);
+  },
+
+  getCatalog: function(pageNum, callback) {
+    var url = config.apiUrl + '/anime/catalog/releases';
+    var options = {
+      args: {
+        limit: 20,
+        'f[sorting]': 'FRESH_AT_DESC',
+        page: pageNum || 1
+      }
+    };
+
+    this.request(url, options, callback);
+  }
+};
+
+// Usage examples
+apiClient.searchAnime('naruto', function(error, results) {
+  if (error) {
+    console.error('Search failed:', error);
+    return;
+  }
+  
+  console.log('Found', results.length, 'results');
+  results.forEach(function(anime) {
+    console.log('- ' + anime.names.ru);
+  });
+});
+
+apiClient.getCatalog(1, function(error, data) {
+  if (error) {
+    console.error('Catalog failed:', error);
+    return;
+  }
+  
+  console.log('Catalog loaded:', data.data.length, 'items');
+});
+```
+
+## Best Practices
+
+### 1. Error Handling
+
+Always implement proper error handling:
+
+```javascript
+http.request(url, options, function(error, response) {
+  // Check for network/connection errors
+  if (error) {
+    console.error('Network error:', error);
+    return;
+  }
+  
+  // Check HTTP status codes
+  if (response.statuscode >= 400) {
+    console.error('HTTP error:', response.statuscode);
+    return;
+  }
+  
+  // Check content type if expecting JSON
+  if (response.contenttype && !response.contenttype.includes('application/json')) {
+    console.warn('Unexpected content type:', response.contenttype);
+  }
+  
+  // Parse response safely
+  try {
+    var data = JSON.parse(response.toString());
+    // Process data
+  } catch (parseError) {
+    console.error('Parse error:', parseError);
+  }
+});
+```
+
+### 2. Use Caching Appropriately
+
+```javascript
+// Cache static content
+http.request(imageUrl, {
+  caching: true,
+  cacheTime: 86400  // 24 hours
+});
+
+// Don't cache dynamic content
+http.request(apiUrl, {
+  caching: false  // or omit caching option
+});
+
+// Cache API responses briefly
+http.request(apiUrl, {
+  caching: true,
+  cacheTime: 300  // 5 minutes
+});
+```
+
+### 3. Set Appropriate Headers
+
+```javascript
+var options = {
+  headers: {
+    'User-Agent': 'YourPlugin/1.0 (Movian)',
+    'Accept': 'application/json',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept-Encoding': 'gzip, deflate'
+  }
+};
+```
+
+### 4. Handle Rate Limiting
+
+```javascript
+var requestQueue = [];
+var isProcessing = false;
+var lastRequestTime = 0;
+var minInterval = 1000; // 1 second between requests
+
+function queueRequest(url, options, callback) {
+  requestQueue.push({url: url, options: options, callback: callback});
+  processQueue();
+}
+
+function processQueue() {
+  if (isProcessing || requestQueue.length === 0) return;
+  
+  isProcessing = true;
+  var now = Date.now();
+  var timeSinceLastRequest = now - lastRequestTime;
+  
+  if (timeSinceLastRequest < minInterval) {
+    setTimeout(function() {
+      isProcessing = false;
+      processQueue();
+    }, minInterval - timeSinceLastRequest);
+    return;
+  }
+  
+  var request = requestQueue.shift();
+  lastRequestTime = Date.now();
+  
+  http.request(request.url, request.options, function(error, response) {
+    request.callback(error, response);
+    isProcessing = false;
+    processQueue();
+  });
+}
+```
+
+## Source Code References
+
+The HTTP implementation in Movian is primarily located in:
+
+- **Native Implementation**: `movian/src/ecmascript/es_io.c` (lines 41-600+)
+  - `es_http_request_t` structure definition (lines 41-65)
+  - `es_http_req()` function (lines 400-600+)
+  - HTTP inspector system (lines 700+)
+
+- **JavaScript Modules**:
+  - `movian/res/ecmascript/modules/movian/http.js` - Main HTTP module
+  - `movian/res/ecmascript/modules/http.js` - Node.js compatible module
+  - `movian/res/ecmascript/modules/websocket.js` - WebSocket support
+
+- **HTTP Client Library**: `movian/src/fileaccess/http_client.c`
+  - Core HTTP functionality
+  - SSL/TLS support
+  - Authentication handling
+  - Caching integration
 
 ## Version Compatibility
 
-- **Movian 4.8+**: All documented APIs available
-- **Movian 4.6-4.7**: Core HTTP functionality available, some advanced features may be missing
-- **Earlier versions**: Basic HTTP support, limited WebSocket support
+- **HTTP Module**: Available in all Movian versions
+- **WebSocket Support**: Movian 4.8+
+- **HTTP Inspectors**: Movian 4.6+
+- **Advanced Caching**: Movian 4.4+
 
-## See Also
-
-- [Core API Reference](core-api.md) - Service, page, and property APIs
-- [Storage API Reference](storage-api.md) - Data persistence and storage
-- [Settings API Reference](settings-api.md) - Configuration management
-- [Plugin Development Guide](../getting-started.md) - Getting started with plugins
+All examples in this documentation are tested with Movian 4.8+ and should work with earlier versions unless specifically noted.

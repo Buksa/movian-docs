@@ -1,0 +1,14 @@
+{
+  "type": "ecmascript",
+  "apiversion": 2,
+  "id": "search-plugin-example",
+  "file": "main.js",
+  "version": "1.0.0",
+  "author": "Movian Documentation Team",
+  "title": "Search Plugin Example",
+  "synopsis": "Advanced search functionality demonstration",
+  "description": "This plugin demonstrates comprehensive search capabilities including multi-source search, result aggregation, search history, and advanced filtering options.",
+  "homepage": "https://movian-docs.github.io/",
+  "category": "other",
+  "icon": "logo.png"
+}

@@ -22,7 +22,7 @@ This documentation serves four primary developer audiences:
 |----------|---------------|-------------------|
 | **Plugin Developers** | Create content providers, scrapers, and extensions | [Plugin Development Guide](plugins/README.md) |
 | **UI Designers** | Customize themes, skins, and user interfaces | [UI & Theming Guide](ui/README.md) |
-| **Core Contributors** | Modify core functionality and add features |[themes](reference/glossary.md#theme)itecture Overview](architecture/overview.md) |
+| **Core Contributors** | Modify core functionality and add features | [Architecture Overview](architecture/overview.md) |
 | **System Integrators** | Embed Movian in other applications | [Installation & Build Guide](installation/README.md) |
 
 ## 🏗️ Architecture Overview
@@ -252,7 +252,7 @@ This documentation is licensed under [Creative Commons Attribution 4.0 Internati
 ## 🔗 Links
 
 - **Official Website**: [https://movian.tv/](https://movian.tv/)
-- **Source Code**: [https://github.com/andoma/movian](https://github[themes](reference/glossary.md#theme)ndoma/movian)
+- **Source Code**: [https://github.com/andoma/movian](https://github.com/andoma/movian)
 - **Issue Tracker**: [https://github.com/andoma/movian/issues](https://github.com/andoma/movian/issues)
 - **Community Forum**: [Movian Community](https://movian.tv/forum)
 
