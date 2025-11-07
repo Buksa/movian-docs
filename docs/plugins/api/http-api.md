@@ -464,8 +464,8 @@ var serializedHTML = html.DOMUtils.serializeToHTML(element, {
 
 **Element Methods:**
 - `getElementById(id)` - Find element by ID
-- `getElementsByTagName(tagName)` - Find elements by tag
-- `getElementsByClassName(className)` - Find elements by class
+- `getElementByTagName(tagName)` - Find elements by tag ⚠️ **Note: Non-standard naming**
+- `getElementByClassName(className)` - Find elements by class ⚠️ **Note: Non-standard naming**
 - `querySelector(selector)` - Find first matching element
 - `querySelectorAll(selector)` - Find all matching elements
 - `getAttribute(name)` - Get attribute value
@@ -685,6 +685,199 @@ function parseSOAPResponse(xml) {
   return null;
 }
 ```
+
+## XML Processing
+
+Movian provides dedicated XML processing capabilities through built-in modules:
+
+### movian/xml Module
+
+The `movian/xml` module provides XML parsing using the native htsmsg system:
+
+```javascript
+var xml = require('movian/xml');
+
+http.request('https://api.example.com/data.xml', {}, function(error, response) {
+  if (error) return;
+  
+  var xmlString = response.toString();
+  
+  // Parse XML using htsmsg-based parser
+  var xmlDoc = xml.parse(xmlString);
+  
+  // Access XML elements as properties
+  console.log('Root element:', xmlDoc.toString());
+  
+  // Navigate XML structure
+  var title = xmlDoc.title;
+  var items = xmlDoc.items;
+  
+  // Filter nodes by name
+  var allItems = xmlDoc.filterNodes('item');
+  console.log('Found items:', allItems.length);
+  
+  // Process each item
+  allItems.forEach(function(item, index) {
+    console.log('Item ' + index + ':', {
+      title: item.title ? item.title.toString() : '',
+      description: item.description ? item.description.toString() : '',
+      link: item.link ? item.link.toString() : ''
+    });
+  });
+  
+  // Debug XML structure
+  xmlDoc.dump(); // Print XML structure to console
+});
+```
+
+#### XML Module API Reference
+
+**Core Functions:**
+- `xml.parse(xmlString)` - Parse XML string into htsmsg object
+- `xml.htsmsg(htsmsgObject)` - Wrap existing htsmsg object
+
+**XML Object Methods:**
+- `toString()` - Convert to string representation
+- `valueOf()` - Get primitive value
+- `dump()` - Print XML structure for debugging
+- `filterNodes(nodeName)` - Get all child nodes with specific name
+- `length` - Number of child elements
+
+**Property Access:**
+- Direct property access: `xmlDoc.elementName`
+- Numeric indexing: `xmlDoc[0]`, `xmlDoc[1]`
+- Dynamic property access: `xmlDoc['element-name']`
+
+### movian/xmlrpc Module
+
+The `movian/xmlrpc` module provides XML-RPC client functionality:
+
+```javascript
+var xmlrpc = require('movian/xmlrpc');
+
+// Make XML-RPC call
+var result = xmlrpc.call(
+  'http://api.example.com/xmlrpc',  // Server URL
+  'methodName',                     // Method name
+  param1,                          // Parameters...
+  param2,
+  param3
+);
+
+// Process XML-RPC response
+console.log('Result:', result.toString());
+
+// Access response data
+if (result.fault) {
+  console.error('XML-RPC Fault:', {
+    code: result.fault.value.faultCode,
+    message: result.fault.value.faultString
+  });
+} else {
+  // Process successful response
+  var data = result.params.param.value;
+  console.log('Response data:', data);
+}
+```
+
+#### XML-RPC Examples
+
+```javascript
+// Example: WordPress XML-RPC API
+var xmlrpc = require('movian/xmlrpc');
+
+function getBlogPosts(blogUrl, username, password) {
+  try {
+    var result = xmlrpc.call(
+      blogUrl + '/xmlrpc.php',
+      'wp.getPosts',
+      0,  // Blog ID
+      username,
+      password,
+      {
+        post_type: 'post',
+        post_status: 'publish',
+        number: 10
+      }
+    );
+    
+    if (result.fault) {
+      console.error('WordPress API Error:', result.fault.value.faultString);
+      return [];
+    }
+    
+    var posts = result.params.param.value.array.data.value;
+    return posts.map(function(post) {
+      var postData = post.struct.member;
+      return {
+        title: postData.post_title.value,
+        content: postData.post_content.value,
+        date: postData.post_date.value
+      };
+    });
+    
+  } catch (error) {
+    console.error('XML-RPC call failed:', error);
+    return [];
+  }
+}
+
+// Example: MetaWeblog API
+function publishPost(apiUrl, username, password, postData) {
+  var result = xmlrpc.call(
+    apiUrl,
+    'metaWeblog.newPost',
+    '1',  // Blog ID
+    username,
+    password,
+    {
+      title: postData.title,
+      description: postData.content,
+      categories: postData.categories || []
+    },
+    true  // Publish immediately
+  );
+  
+  if (result.fault) {
+    throw new Error('Failed to publish: ' + result.fault.value.faultString);
+  }
+  
+  return result.params.param.value; // Post ID
+}
+```
+
+### XML vs HTML Parsing Comparison
+
+| Feature | movian/xml | movian/html | html2.js (Enhanced) |
+|---------|------------|-------------|---------------------|
+| **Parser Engine** | htsmsg-based | Gumbo (basic) | Gumbo (enhanced) |
+| **DOM API** | ❌ Proxy-based | ⚠️ Limited | ✅ Full W3C-like |
+| **CSS Selectors** | ❌ No | ❌ No | ✅ Complete |
+| **Method Naming** | N/A | ⚠️ Non-standard | ✅ Standard |
+| **XML Support** | ✅ Native | ⚠️ As HTML | ✅ As HTML |
+| **Performance** | ✅ Fast | ✅ Fast | ⚠️ Feature-rich |
+| **Memory Usage** | ✅ Low | ✅ Low | ⚠️ Higher |
+| **Error Handling** | ⚠️ Basic | ⚠️ Basic | ✅ Comprehensive |
+
+#### Built-in HTML Module Issues
+
+⚠️ **Important**: The built-in `movian/html` module has non-standard method names:
+
+```javascript
+// ❌ Built-in module (incorrect naming)
+var elements = document.getElementByTagName('div');    // Should be getElementsByTagName
+var items = document.getElementByClassName('item');    // Should be getElementsByClassName
+
+// ✅ Standard DOM API (html2.js)
+var elements = document.getElementsByTagName('div');
+var items = document.getElementsByClassName('item');
+```
+
+**Recommendation**: Use the enhanced `html2.js` module for:
+- Standard DOM API compliance
+- CSS selector support
+- Better error handling
+- More comprehensive parsing features
 
 ## WebSocket Support
 

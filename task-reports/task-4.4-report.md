@@ -68,8 +68,11 @@ Document HTTP and networking capabilities including native HTTP implementation, 
 - JSON parsing with error handling and validation
 - HTML parsing using native Gumbo parser with DOM API
 - XML parsing with both DOM and regex approaches
+- Native XML module (movian/xml) with htsmsg-based parsing
+- XML-RPC client functionality (movian/xmlrpc)
 - Advanced CSS selector support for HTML parsing
 - Binary content handling
+- Comparison between built-in and enhanced parsing modules
 
 ### Advanced Features
 - Request queuing and rate limiting
@@ -94,6 +97,11 @@ Document HTTP and networking capabilities including native HTTP implementation, 
 - **Issue**: Needed practical examples beyond basic API documentation
 - **Solution**: Analyzed actual plugin code (Anilibria) to extract real usage patterns
 - **Result**: Comprehensive examples showing production-ready code
+
+### Challenge 4: Built-in Module Inconsistencies
+- **Issue**: Discovered non-standard method naming in built-in HTML module
+- **Solution**: Documented inconsistencies and provided comparison with enhanced modules
+- **Result**: Clear guidance on which modules to use for different scenarios
 
 ## Code Quality and Testing
 
@@ -139,6 +147,17 @@ Document HTTP and networking capabilities including native HTTP implementation, 
 - `movian/res/ecmascript/modules/movian/http.js` - Primary HTTP module
 - `movian/res/ecmascript/modules/http.js` - Node.js compatible module  
 - `movian/res/ecmascript/modules/websocket.js` - WebSocket implementation
+
+### JavaScript Modules Documented
+- `movian/res/ecmascript/modules/movian/http.js` - Primary HTTP module
+- `movian/res/ecmascript/modules/http.js` - Node.js compatible module  
+- `movian/res/ecmascript/modules/websocket.js` - WebSocket implementation
+- `movian/res/ecmascript/modules/movian/html.js` - Built-in HTML parser (non-standard naming)
+- `movian/res/ecmascript/modules/movian/xml.js` - Native XML parser with htsmsg
+- `movian/res/ecmascript/modules/movian/xmlrpc.js` - XML-RPC client
+
+### Enhanced Modules Analyzed
+- `New_Rezka/utils/html2.js` - Enhanced HTML parser with standard DOM API
 
 ### Real Plugin Examples
 - `movian-plugin-anilibria.tv/lib/api.js` - Production HTTP client implementation
