@@ -22,6 +22,7 @@ DOCS_DIR="$(dirname "$SCRIPT_DIR")"
 # Test configuration
 RUN_DEPENDENCY_CHECK=1
 RUN_BUILD_VALIDATION=1
+RUN_PLUGIN_TESTS=1
 RUN_PERFORMANCE_TESTS=0
 VERBOSE=0
 
@@ -49,6 +50,7 @@ Usage: $0 [options]
 Options:
     --dependency-only       Run only dependency checks
     --build-only           Run only build validation
+    --plugin-only          Run only plugin integration tests
     --performance          Include performance tests
     --verbose              Enable verbose output
     --help                 Show this help message
@@ -56,6 +58,7 @@ Options:
 Examples:
     $0                     # Run all tests
     $0 --dependency-only   # Check dependencies only
+    $0 --plugin-only       # Test plugin examples only
     $0 --performance       # Run with performance benchmarks
 EOF
 }
@@ -65,10 +68,17 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --dependency-only)
             RUN_BUILD_VALIDATION=0
+            RUN_PLUGIN_TESTS=0
             shift
             ;;
         --build-only)
             RUN_DEPENDENCY_CHECK=0
+            RUN_PLUGIN_TESTS=0
+            shift
+            ;;
+        --plugin-only)
+            RUN_DEPENDENCY_CHECK=0
+            RUN_BUILD_VALIDATION=0
             shift
             ;;
         --performance)
@@ -141,6 +151,29 @@ main() {
             fi
         else
             warning "Build validation script not found or not executable"
+        fi
+        echo
+    fi
+    
+    # Run plugin integration tests
+    if [ "$RUN_PLUGIN_TESTS" = "1" ]; then
+        info "Running plugin integration tests..."
+        
+        if [ -x "$SCRIPT_DIR/run-plugin-tests.sh" ]; then
+            local plugin_args=""
+            if [ "$VERBOSE" = "1" ]; then
+                plugin_args="--verbose"
+            fi
+            
+            if "$SCRIPT_DIR/run-plugin-tests.sh" $plugin_args; then
+                success "Plugin integration tests passed"
+                ((tests_passed++))
+            else
+                error "Plugin integration tests failed"
+                ((tests_failed++))
+            fi
+        else
+            warning "Plugin integration test script not found or not executable"
         fi
         echo
     fi

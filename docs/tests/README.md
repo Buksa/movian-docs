@@ -5,7 +5,7 @@ This directory contains automated tests to validate the Movian installation inst
 ## Test Scripts
 
 ### `run-tests.sh`
-Main test runner that executes all available tests.
+Main test runner that executes all available tests including dependency checks, build validation, and plugin integration tests.
 
 **Usage:**
 ```bash
@@ -18,11 +18,53 @@ Main test runner that executes all available tests.
 # Run only build validation
 ./run-tests.sh --build-only
 
+# Run only plugin integration tests
+./run-tests.sh --plugin-only
+
 # Include performance benchmarks
 ./run-tests.sh --performance
 
 # Verbose output
 ./run-tests.sh --verbose
+```
+
+### `run-plugin-tests.sh`
+Dedicated plugin integration test runner that validates all plugin examples.
+
+**Usage:**
+```bash
+# Run plugin integration tests
+./run-plugin-tests.sh
+
+# Skip dependency installation
+./run-plugin-tests.sh --no-install
+
+# Skip HTML report generation
+./run-plugin-tests.sh --no-report
+
+# Verbose output
+./run-plugin-tests.sh --verbose
+```
+
+### `plugin-integration-tests.js`
+Node.js script that performs comprehensive integration testing of plugin examples.
+
+**Features:**
+- Plugin manifest validation (plugin.json)
+- JavaScript syntax and API usage validation
+- Simulated Movian environment testing
+- Plugin loading and initialization verification
+- Service registration and route handling tests
+- Error handling validation
+- Comprehensive HTML and JSON reporting
+
+**Usage:**
+```bash
+# Run integration tests directly
+node plugin-integration-tests.js
+
+# Or use npm script
+npm run validate
 ```
 
 ### `dependency-check.py`
@@ -86,11 +128,45 @@ The `.github/workflows/build-validation.yml` workflow automatically runs these t
 | **macOS** | 11, 12, 13 | ✅ Automated |
 | **Cross-compilation** | ARM | ✅ Limited testing |
 
+## Plugin Integration Testing
+
+The test suite includes comprehensive integration testing for all plugin examples to ensure they:
+
+- Have valid plugin.json manifests with required fields
+- Use correct JavaScript syntax and Movian API patterns
+- Can load and initialize in a simulated Movian environment
+- Properly register services and handle routes
+- Include appropriate error handling
+- Follow documented best practices
+
+### Plugin Test Types
+
+| Test Type | Description | Validation |
+|-----------|-------------|------------|
+| **Manifest Validation** | Checks plugin.json structure | Required fields, valid types, API version |
+| **Structure Validation** | Verifies file organization | Required files (main.js, README.md) |
+| **Syntax Validation** | JavaScript syntax checking | Parse validation, basic syntax errors |
+| **API Usage** | Movian API pattern validation | Required imports, service creation, routes |
+| **Loading Simulation** | Mock environment execution | Plugin initialization, error handling |
+| **Service Registration** | Service creation testing | Service.create() calls, proper registration |
+| **Route Handling** | Route definition validation | page.Route usage, URI handling |
+| **Error Handling** | Exception handling testing | try/catch blocks, graceful failures |
+
+### Plugin Test Results
+
+Test results are generated in multiple formats:
+
+- **Console Output**: Real-time test progress and summary
+- **JSON Report**: Machine-readable detailed results (`results/integration-test-report.json`)
+- **HTML Report**: Human-readable visual report (`results/integration-test-report.html`)
+
 ## Running Tests Locally
 
 ### Prerequisites
 
 - **Python 3.6+** - For dependency checking
+- **Node.js 12+** - For plugin integration tests
+- **npm** - For JavaScript dependencies
 - **Bash** - For shell scripts (Linux/macOS)
 - **Git** - For repository cloning
 - **Internet connection** - For downloading Movian source

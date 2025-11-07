@@ -1,0 +1,241 @@
+{
+  "timestamp": "2025-11-07T03:46:27.838Z",
+  "totalPlugins": 5,
+  "passedPlugins": 2,
+  "failedPlugins": 3,
+  "totalTests": 40,
+  "passedTests": 31,
+  "failedTests": 9,
+  "plugins": {
+    "advanced-ui-plugin": {
+      "name": "advanced-ui-plugin",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\advanced-ui-plugin",
+      "passed": false,
+      "tests": {
+        "manifest_validation": {
+          "passed": true,
+          "message": "Manifest validation passed"
+        },
+        "structure_validation": {
+          "passed": true,
+          "message": "File structure validation passed"
+        },
+        "javascript_syntax": {
+          "passed": true,
+          "message": "JavaScript syntax validation passed"
+        },
+        "api_usage": {
+          "passed": true,
+          "message": "API usage validation passed"
+        },
+        "plugin_loading": {
+          "passed": false,
+          "message": "prop.createRoot is not a function"
+        },
+        "service_registration": {
+          "passed": false,
+          "message": "prop.createRoot is not a function"
+        },
+        "route_handling": {
+          "passed": false,
+          "message": "prop.createRoot is not a function"
+        },
+        "error_handling": {
+          "passed": true,
+          "message": "Error handling test passed"
+        }
+      },
+      "errors": [
+        "Plugin loading test failed: prop.createRoot is not a function",
+        "Service registration test failed: prop.createRoot is not a function",
+        "Route handling test failed: prop.createRoot is not a function"
+      ],
+      "warnings": [
+        "Missing recommended files: logo.png"
+      ]
+    },
+    "configurable-plugin": {
+      "name": "configurable-plugin",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\configurable-plugin",
+      "passed": false,
+      "tests": {
+        "manifest_validation": {
+          "passed": true,
+          "message": "Manifest validation passed"
+        },
+        "structure_validation": {
+          "passed": true,
+          "message": "File structure validation passed"
+        },
+        "javascript_syntax": {
+          "passed": true,
+          "message": "JavaScript syntax validation passed"
+        },
+        "api_usage": {
+          "passed": true,
+          "message": "API usage validation passed"
+        },
+        "plugin_loading": {
+          "passed": false,
+          "message": "\"undefined\" is not valid JSON"
+        },
+        "service_registration": {
+          "passed": false,
+          "message": "\"undefined\" is not valid JSON"
+        },
+        "route_handling": {
+          "passed": false,
+          "message": "\"undefined\" is not valid JSON"
+        },
+        "error_handling": {
+          "passed": true,
+          "message": "Error handling test passed"
+        }
+      },
+      "errors": [
+        "Plugin loading test failed: \"undefined\" is not valid JSON",
+        "Service registration test failed: \"undefined\" is not valid JSON",
+        "Route handling test failed: \"undefined\" is not valid JSON"
+      ],
+      "warnings": [
+        "Missing recommended files: logo.png",
+        "Missing best practices: Page loading state management"
+      ]
+    },
+    "content-provider": {
+      "name": "content-provider",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\content-provider",
+      "passed": false,
+      "tests": {
+        "manifest_validation": {
+          "passed": true,
+          "message": "Manifest validation passed"
+        },
+        "structure_validation": {
+          "passed": true,
+          "message": "File structure validation passed"
+        },
+        "javascript_syntax": {
+          "passed": true,
+          "message": "JavaScript syntax validation passed"
+        },
+        "api_usage": {
+          "passed": true,
+          "message": "API usage validation passed"
+        },
+        "plugin_loading": {
+          "passed": false,
+          "message": "Module not found: native/io"
+        },
+        "service_registration": {
+          "passed": false,
+          "message": "\"undefined\" is not valid JSON"
+        },
+        "route_handling": {
+          "passed": false,
+          "message": "\"undefined\" is not valid JSON"
+        },
+        "error_handling": {
+          "passed": true,
+          "message": "Error handling test passed"
+        }
+      },
+      "errors": [
+        "Plugin loading test failed: Module not found: native/io",
+        "Service registration test failed: \"undefined\" is not valid JSON",
+        "Route handling test failed: \"undefined\" is not valid JSON"
+      ],
+      "warnings": []
+    },
+    "hello-world": {
+      "name": "hello-world",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\hello-world",
+      "passed": true,
+      "tests": {
+        "manifest_validation": {
+          "passed": true,
+          "message": "Manifest validation passed"
+        },
+        "structure_validation": {
+          "passed": true,
+          "message": "File structure validation passed"
+        },
+        "javascript_syntax": {
+          "passed": true,
+          "message": "JavaScript syntax validation passed"
+        },
+        "api_usage": {
+          "passed": true,
+          "message": "API usage validation passed"
+        },
+        "plugin_loading": {
+          "passed": true,
+          "message": "Plugin loading test passed"
+        },
+        "service_registration": {
+          "passed": true,
+          "message": "Service registration test passed (1 services created)"
+        },
+        "route_handling": {
+          "passed": true,
+          "message": "Route handling test passed (6 routes created)"
+        },
+        "error_handling": {
+          "passed": true,
+          "message": "Error handling test passed"
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "Missing recommended files: logo.png",
+        "Missing best practices: Error handling (try/catch), Page loading state management",
+        "Plugin lacks explicit error handling (try/catch blocks)"
+      ]
+    },
+    "search-plugin": {
+      "name": "search-plugin",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\search-plugin",
+      "passed": true,
+      "tests": {
+        "manifest_validation": {
+          "passed": true,
+          "message": "Manifest validation passed"
+        },
+        "structure_validation": {
+          "passed": true,
+          "message": "File structure validation passed"
+        },
+        "javascript_syntax": {
+          "passed": true,
+          "message": "JavaScript syntax validation passed"
+        },
+        "api_usage": {
+          "passed": true,
+          "message": "API usage validation passed"
+        },
+        "plugin_loading": {
+          "passed": true,
+          "message": "Plugin loading test passed"
+        },
+        "service_registration": {
+          "passed": true,
+          "message": "Service registration test passed (1 services created)"
+        },
+        "route_handling": {
+          "passed": true,
+          "message": "Route handling test passed (7 routes created)"
+        },
+        "error_handling": {
+          "passed": true,
+          "message": "Error handling test passed"
+        }
+      },
+      "errors": [],
+      "warnings": [
+        "Missing recommended files: logo.png"
+      ]
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

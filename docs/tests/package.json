@@ -1,0 +1,39 @@
+{
+  "name": "movian-docs-test-suite",
+  "version": "1.0.0",
+  "description": "Comprehensive test suite for Movian documentation and plugin examples",
+  "main": "run-tests.sh",
+  "scripts": {
+    "test": "bash run-tests.sh",
+    "test:plugins": "bash run-plugin-tests.sh",
+    "test:build": "bash run-tests.sh --build-only",
+    "test:deps": "bash run-tests.sh --dependency-only",
+    "test:verbose": "bash run-tests.sh --verbose",
+    "validate": "node plugin-integration-tests.js",
+    "install-deps": "npm install vm2"
+  },
+  "keywords": [
+    "movian",
+    "documentation",
+    "testing",
+    "plugin",
+    "integration",
+    "validation"
+  ],
+  "author": "Movian Documentation Team",
+  "license": "MIT",
+  "dependencies": {
+    "vm2": "^3.9.19"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/movian/movian-docs"
+  },
+  "bugs": {
+    "url": "https://github.com/movian/movian-docs/issues"
+  },
+  "homepage": "https://github.com/movian/movian-docs#readme"
+}
