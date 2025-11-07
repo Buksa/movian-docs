@@ -1,7 +1,7 @@
 ﻿site_name: Movian Architecture Documentation
 site_description: Comprehensive documentation for Movian media player development
 site_author: Movian Documentation Team
-site_url: https://movian-docs.github.io/
+site_url: https://your-username.github.io/movian-docs/
 
 # Default docs_dir: docs
 
@@ -59,9 +59,11 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Mermaid Test: mermaid-test.md
   - Architecture:
     - Overview: architecture/README.md
+    - Components: architecture/components.md
+    - Lifecycle: architecture/lifecycle.md
+    - Threading: architecture/threading.md
   - Installation:
     - Overview: installation/README.md
     - Linux: installation/linux.md
@@ -70,11 +72,21 @@ nav:
     - Troubleshooting: installation/troubleshooting.md
   - Plugin Development:
     - Overview: plugins/README.md
+    - Architecture: plugins/architecture.md
+    - Lifecycle: plugins/lifecycle.md
+    - Manifest Reference: plugins/manifest-reference.md
+    - Best Practices: plugins/best-practices.md
     - API Reference:
+      - Core APIs: plugins/api/core-api.md
       - HTTP & Networking: plugins/api/http-api.md
       - HTML Modules Comparison: plugins/api/html-modules-comparison.md
+      - Storage APIs: plugins/api/storage-api.md
+      - Settings APIs: plugins/api/settings-api.md
     - Examples:
-      - Hello World: plugins/examples/hello-world/README.md
+      - Content Provider: plugins/examples/content-provider/README.md
+      - Search Plugin: plugins/examples/search-plugin/README.md
+      - Configurable Plugin: plugins/examples/configurable-plugin/README.md
+      - Advanced UI Plugin: plugins/examples/advanced-ui-plugin/README.md
   - UI System:
     - Overview: ui/README.md
     - Examples: ui/examples/README.md
