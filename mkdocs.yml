@@ -70,6 +70,9 @@ nav:
     - Troubleshooting: installation/troubleshooting.md
   - Plugin Development:
     - Overview: plugins/README.md
+    - API Reference:
+      - HTTP & Networking: plugins/api/http-api.md
+      - HTML Modules Comparison: plugins/api/html-modules-comparison.md
     - Examples:
       - Hello World: plugins/examples/hello-world/README.md
   - UI System:

@@ -879,6 +879,8 @@ var items = document.getElementsByClassName('item');
 - Better error handling
 - More comprehensive parsing features
 
+📖 **See Also**: [Detailed HTML Modules Comparison](html-modules-comparison.md) for complete feature analysis and migration guide.
+
 ## WebSocket Support
 
 Movian provides WebSocket support through the `websocket` module:
