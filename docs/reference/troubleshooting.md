@@ -1,6 +1,6 @@
 # Troubleshooting Reference
 
-**Status**: 🟢 Comprehensive solutions for common issues  
+**Status**: 🟢 Complete reference guide  
 **Last Updated**: 2024-11-06  
 **Movian Version**: 4.8+
 
@@ -10,750 +10,757 @@ This reference provides quick solutions to common problems encountered when deve
 
 ## Quick Reference
 
-### Problem Categories
-
-- [View File Issues](#view-file-issues) - Syntax, parsing, and rendering problems
-- [Property Binding Issues](#property-binding-issues) - Data binding and updates
-- [Layout Problems](#layout-problems) - Widget positioning and sizing
-- [Focus and Navigation](#focus-and-navigation) - Focus management and events
-- [Performance Issues](#performance-issues) - Slowdowns and optimization
-- [Plugin Issues](#plugin-issues) - Plugin loading and execution
-- [Build Issues](#build-issues) - Compilation and dependencies
-- [Runtime Issues](#runtime-issues) - Crashes and errors
+| Category | Common Issues |
+|----------|---------------|
+| [View Files](#view-file-issues) | Syntax errors, loading failures, layout problems |
+| [Plugins](#plugin-issues) | Loading failures, API errors, crashes |
+| [Properties](#property-issues) | Binding failures, undefined values, scope errors |
+| [Layout](#layout-issues) | Positioning, sizing, visibility problems |
+| [Performance](#performance-issues) | Lag, stuttering, memory issues |
+| [Navigation](#navigation-issues) | Focus problems, event handling |
+| [Media](#media-issues) | Playback failures, codec problems |
+| [Build](#build-issues) | Compilation errors, dependency problems |
 
 ## View File Issues
 
-### View File Not Loading
+### Syntax Error: Unexpected Token
 
 **Symptoms**:
-- Blank screen or default view shown
-- No error message in console
-- Loader widget empty
+```
+Error views/main.view:42: Unexpected token '}' after expression
+```
 
-**Possible Causes**:
-1. File path incorrect
-2. File doesn't exist
-3. Syntax error preventing parse
-4. Loader source property not set
+**Causes**:
+- Missing semicolon
+- Unmatched braces
+- Invalid operator
+- Malformed expression
 
 **Solutions**:
 
+1. **Check for missing semicolons**:
 ```javascript
-// Check file path
-<loader source="skin://views/home.view"/>  // Correct
-<loader source="views/home.view"/>         // May fail if not relative
+// ❌ Wrong
+widget(label, {
+  caption: "Text"  // Missing semicolon
+  color: "#FFFFFF";
+});
 
-// Verify file exists
-// Check console for "File not found" errors
-
-// Test with simple view
-<loader source="skin://views/test.view"/>
-// test.view:
-container_y {
-  label { caption = "Test"; }
-}
-
-// Check source property
-<loader source="$page.model.viewUrl"/>
-// Ensure $page.model.viewUrl is set and valid
+// ✅ Correct
+widget(label, {
+  caption: "Text";
+  color: "#FFFFFF";
+});
 ```
 
+2. **Match all braces**:
+```javascript
+// ❌ Wrong - missing closing brace
+widget(container_x, {
+  widget(label, {
+    caption: "Text";
+  });
+// Missing }
 
-### Syntax Error in View File
+// ✅ Correct
+widget(container_x, {
+  widget(label, {
+    caption: "Text";
+  });
+});
+```
+
+3. **Use valid operators**:
+```javascript
+// ❌ Wrong
+width: 100 @ 50;
+
+// ✅ Correct
+width: 100 + 50;
+```
+
+### View File Won't Load
 
 **Symptoms**:
-- Error message in console with file and line number
-- View fails to load
-- Specific error description provided
+- Blank screen
+- Error in log: "Error loading view"
+- Application shows fallback content
 
-**Common Errors**:
+**Causes**:
+- File path incorrect
+- File doesn't exist
+- Syntax error in file
+- Circular include/import
 
-**Unterminated String**:
+**Solutions**:
+
+1. **Verify file path**:
 ```javascript
-// Problem
-label { caption = "Hello World; }
-
-// Error: Unterminated string literal
-
-// Solution
-label { caption = "Hello World"; }
+// Check path is correct
+widget(loader, {
+  source: "skin://pages/home.view";  // Correct path
+});
 ```
 
-**Missing Semicolon**:
-```javascript
-// Problem
-label {
-  caption = "Test"
-  alpha = 0.5;
-}
-
-// Error: Unexpected identifier 'alpha'
-
-// Solution
-label {
-  caption = "Test";  // Added semicolon
-  alpha = 0.5;
-}
+2. **Check file exists**:
+```bash
+# Verify file is in correct location
+ls -la glwskins/flat/pages/home.view
 ```
 
-**Unbalanced Braces**:
+3. **Check for syntax errors**:
+- Review error log for specific line numbers
+- Use text editor with syntax checking
+- Comment out sections to isolate problem
+
+4. **Avoid circular includes**:
 ```javascript
-// Problem
-container_y {
-  label { caption = "Test"; }
-// Missing closing brace
-
-// Error: Unexpected end of file
-
-// Solution
-container_y {
-  label { caption = "Test"; }
-}  // Added closing brace
-```
-
-**Unknown Widget Type**:
-```javascript
-// Problem
-containr_x { }  // Typo
-
-// Error: Unknown widget type 'containr_x'
-
-// Solution
-container_x { }  // Fixed typo
-```
-
-**Unknown Attribute**:
-```javascript
-// Problem
-label { captin = "Test"; }  // Typo
-
-// Error: Unknown attribute 'captin'
-
-// Solution
-label { caption = "Test"; }  // Fixed typo
-```
-
-
-### Widget Not Visible
-
-**Symptoms**:
-- Widget created but not shown on screen
-- No error messages
-- Other widgets in same view visible
-
-**Possible Causes and Solutions**:
-
-**Alpha is Zero**:
-```javascript
-// Problem
-label {
-  caption = "Test";
-  alpha = 0.0;  // Invisible
-}
-
-// Solution
-label {
-  caption = "Test";
-  alpha = 1.0;  // Visible
-}
-```
-
-**Size is Zero**:
-```javascript
-// Problem
-container_x {
-  width = 0;  // No size
-  label { caption = "Test"; }
-}
-
-// Solution
-container_x {
-  width = 200;  // Explicit size
-  label { caption = "Test"; }
-}
-```
-
-**Widget Off-Screen**:
-```javascript
-// Problem
-container_y {
-  height = 100;
-  label { caption = "Item 1"; }
-  label { caption = "Item 2"; }
-  label { caption = "Item 3"; }  // May be clipped
-}
-
-// Solution
-list_y {  // Scrollable
-  label { caption = "Item 1"; }
-  label { caption = "Item 2"; }
-  label { caption = "Item 3"; }
-}
-```
-
-**Behind Another Widget**:
-```javascript
-// Problem
-container_z {
-  quad { color = "#000000"; }  // Opaque background
-  label { caption = "Hidden"; }  // Behind quad
-}
-
-// Solution
-container_z {
-  label { caption = "Visible"; }  // First = on top
-  quad { color = "#000000"; alpha = 0.5; }  // Semi-transparent
-}
-```
-
-**Parent Invisible**:
-```javascript
-// Problem
-container_y {
-  alpha = 0.0;  // Parent invisible
-  label { caption = "Also invisible"; }  // Child inherits
-}
-
-// Solution
-container_y {
-  alpha = 1.0;  // Parent visible
-  label { caption = "Now visible"; }
-}
-```
-
-
-### Macro Expansion Errors
-
-**Symptoms**:
-- Error during preprocessing
-- Macro not expanding correctly
-- Argument count mismatch
-
-**Common Issues**:
-
-**Argument Count Mismatch**:
-```javascript
-// Definition
-#define button(label, width) {
-  container_x {
-    width = $width;
-    label { caption = $label; }
-  }
-}
-
-// Problem
-button("Click Me")  // Missing width argument
-
-// Error: Macro 'button' expects 2 arguments, got 1
-
-// Solution
-button("Click Me", 100)  // Provide all arguments
-// Or use default values
-#define button(label, width=100) { ... }
-```
-
-**Circular Include**:
-```javascript
+// ❌ Wrong - circular dependency
 // file1.view
 #include "file2.view"
 
 // file2.view
-#include "file1.view"  // Circular!
+#include "file1.view"
 
-// Error: Circular include detected
+// ✅ Correct - use #import
+// file1.view
+#import "common.view"
 
-// Solution: Restructure to avoid circular dependencies
+// file2.view
+#import "common.view"  // Only loaded once
 ```
 
-**File Not Found**:
+### Macro Expansion Error
+
+**Symptoms**:
+```
+Error: Macro 'ButtonWidget' not defined
+Error: Argument count mismatch for macro 'Button'
+```
+
+**Causes**:
+- Macro not defined before use
+- Wrong number of arguments
+- Missing default values
+
+**Solutions**:
+
+1. **Define macros before use**:
 ```javascript
-// Problem
-#include "missing.view"
+// ✅ Correct order
+#define Button(label) {
+  widget(container_x, {
+    widget(label, { caption: $label; });
+  });
+}
 
-// Error: File not found: missing.view
-
-// Solution: Check file path and existence
-#include "common/macros.view"  // Correct path
+Button("Click Me");
 ```
 
-## Property Binding Issues
+2. **Match argument count**:
+```javascript
+#define Button(label, width, height) {
+  widget(container_x, {
+    width: $width;
+    height: $height;
+    widget(label, { caption: $label; });
+  });
+}
+
+// ❌ Wrong - missing arguments
+Button("Click");
+
+// ✅ Correct - all arguments provided
+Button("Click", 100, 40);
+```
+
+3. **Use default values**:
+```javascript
+#define Button(label, width=100, height=40) {
+  widget(container_x, {
+    width: $width;
+    height: $height;
+    widget(label, { caption: $label; });
+  });
+}
+
+// ✅ Now works with fewer arguments
+Button("Click");
+Button("Click", 200);
+Button("Click", 200, 50);
+```
+
+### Unterminated String
+
+**Symptoms**:
+```
+Error: Unterminated string literal
+```
+
+**Causes**:
+- Missing closing quote
+- Unescaped quote in string
+- Wrong quote type
+
+**Solutions**:
+
+1. **Close all strings**:
+```javascript
+// ❌ Wrong
+caption: "Hello World;
+
+// ✅ Correct
+caption: "Hello World";
+```
+
+2. **Escape quotes in strings**:
+```javascript
+// ❌ Wrong
+caption: "He said "Hello"";
+
+// ✅ Correct
+caption: "He said \"Hello\"";
+```
+
+3. **Use correct quote type**:
+```javascript
+// For plain text
+caption: "Plain text";
+
+// For rich text (HTML-like)
+caption: '<b>Bold</b> text';
+```
+
+## Plugin Issues
+
+### Plugin Won't Load
+
+**Symptoms**:
+- Plugin not visible in Movian
+- Error in log: "Plugin load failed"
+- No service registered
+
+**Causes**:
+- Invalid plugin.json
+- JavaScript syntax error
+- Missing required fields
+- API version mismatch
+
+**Solutions**:
+
+1. **Validate plugin.json**:
+```json
+{
+  "id": "myplugin",
+  "version": "1.0.0",
+  "title": "My Plugin",
+  "synopsis": "Description",
+  "author": "Your Name",
+  "homepage": "https://example.com",
+  "type": "javascript",
+  "file": "main.js"
+}
+```
+
+2. **Check JavaScript syntax**:
+```javascript
+// Use strict mode to catch errors
+"use strict";
+
+// Check for syntax errors
+exports.init = function() {
+  // Plugin code
+};
+```
+
+3. **Verify API version**:
+```json
+{
+  "apiversion": 1,
+  "type": "javascript"
+}
+```
+
+### Plugin Crashes Movian
+
+**Symptoms**:
+- Movian crashes when plugin loads
+- Segmentation fault
+- Application freeze
+
+**Causes**:
+- Null pointer dereference
+- Infinite loop
+- Memory corruption
+- Invalid API call
+
+**Solutions**:
+
+1. **Add error handling**:
+```javascript
+try {
+  // Potentially problematic code
+  var data = JSON.parse(response);
+} catch (e) {
+  console.error("Parse error:", e);
+  return;
+}
+```
+
+2. **Avoid infinite loops**:
+```javascript
+// ❌ Wrong - potential infinite loop
+while (true) {
+  // No break condition
+}
+
+// ✅ Correct - with break condition
+var maxIterations = 100;
+var count = 0;
+while (condition && count < maxIterations) {
+  count++;
+  // Loop body
+}
+```
+
+3. **Validate API calls**:
+```javascript
+// Check parameters before API calls
+if (url && typeof url === "string") {
+  http.request(url);
+} else {
+  console.error("Invalid URL:", url);
+}
+```
+
+### HTTP Request Fails
+
+**Symptoms**:
+- Network error
+- Timeout
+- Empty response
+
+**Causes**:
+- Invalid URL
+- Network connectivity
+- Server error
+- Timeout too short
+
+**Solutions**:
+
+1. **Validate URL**:
+```javascript
+function isValidUrl(url) {
+  return url && 
+         typeof url === "string" && 
+         (url.startsWith("http://") || url.startsWith("https://"));
+}
+
+if (isValidUrl(url)) {
+  var response = http.request(url);
+} else {
+  console.error("Invalid URL:", url);
+}
+```
+
+2. **Increase timeout**:
+```javascript
+var response = http.request(url, {
+  timeout: 30000,  // 30 seconds
+  method: "GET"
+});
+```
+
+3. **Handle errors**:
+```javascript
+try {
+  var response = http.request(url);
+  if (response.statuscode === 200) {
+    // Success
+  } else {
+    console.error("HTTP error:", response.statuscode);
+  }
+} catch (e) {
+  console.error("Request failed:", e);
+}
+```
+
+### JSON Parse Error
+
+**Symptoms**:
+```
+Error: JSON parse error
+SyntaxError: Unexpected token
+```
+
+**Causes**:
+- Invalid JSON format
+- Server returned HTML instead of JSON
+- Encoding issues
+
+**Solutions**:
+
+1. **Validate JSON before parsing**:
+```javascript
+try {
+  var data = JSON.parse(response.body);
+} catch (e) {
+  console.error("JSON parse error:", e);
+  console.error("Response:", response.body.substring(0, 200));
+  return null;
+}
+```
+
+2. **Check content type**:
+```javascript
+var contentType = response.headers["content-type"];
+if (contentType && contentType.indexOf("application/json") !== -1) {
+  var data = JSON.parse(response.body);
+} else {
+  console.error("Expected JSON, got:", contentType);
+}
+```
+
+3. **Handle empty responses**:
+```javascript
+if (response.body && response.body.length > 0) {
+  var data = JSON.parse(response.body);
+} else {
+  console.error("Empty response");
+  return null;
+}
+```
+
+## Property Issues
+
+### Property Not Found
+
+**Symptoms**:
+- Widget shows no data
+- Log: "Property not found"
+- Undefined value
+
+**Causes**:
+- Property doesn't exist
+- Wrong property path
+- Scope issue
+- Property not yet set
+
+**Solutions**:
+
+1. **Use null coalescing**:
+```javascript
+// Provide fallback value
+caption: $page.model.title ?? "Untitled";
+```
+
+2. **Check property path**:
+```javascript
+// ❌ Wrong path
+caption: $item.title;
+
+// ✅ Correct path in cloner
+cloner($items, container_x, {
+  caption: $self.title;
+});
+```
+
+3. **Verify scope**:
+```javascript
+// In page context
+caption: $page.model.title;
+
+// In cloner context
+caption: $self.title;
+
+// In loader context
+caption: $args.title;
+```
 
 ### Property Not Updating
 
 **Symptoms**:
-- Widget shows initial value
-- Value doesn't change when property changes
-- No error messages
+- Widget doesn't reflect changes
+- Stale data displayed
+- No subscription created
 
-**Possible Causes and Solutions**:
-
-**Static Expression**:
-```javascript
-// Problem: No property reference, evaluated once
-label {
-  caption = "Static Text";  // Never changes
-}
-
-// Solution: Use property binding
-label {
-  caption = $page.model.title;  // Updates when property changes
-}
-```
-
-**Wrong Property Path**:
-```javascript
-// Problem: Typo in property path
-label {
-  caption = $page.model.titl;  // Typo: should be 'title'
-}
-
-// Solution: Fix property path
-label {
-  caption = $page.model.title;  // Correct
-}
-
-// Debug: Use null coalescing to detect
-label {
-  caption = $page.model.title ?? "Property not found";
-}
-```
-
-**Property Doesn't Exist**:
-```javascript
-// Problem: Property never set
-label {
-  caption = $page.model.missingProperty;  // Returns void
-}
-
-// Solution: Ensure property is set in plugin/page
-// Or provide fallback
-label {
-  caption = $page.model.title ?? "No title";
-}
-```
-
-
-**Widget Inactive**:
-```javascript
-// Problem: Widget not active, subscription suspended
-container_y {
-  alpha = 0.0;  // Inactive
-  label {
-    caption = $page.model.title;  // Subscription suspended
-  }
-}
-
-// Solution: Ensure widget is active
-container_y {
-  alpha = 1.0;  // Active
-  label {
-    caption = $page.model.title;  // Subscription active
-  }
-}
-```
-
-### Wrong Scope Context
-
-**Symptoms**:
-- Property reference returns void
-- Works in one context but not another
-- Cloner items not showing data
-
-**Common Issues**:
-
-**Cloner Scope**:
-```javascript
-// Problem: Wrong scope in cloner
-<cloner source="$items">
-  <label caption="$items.title"/>  <!-- Wrong: $items is array -->
-</cloner>
-
-// Solution: Use $self for current item
-<cloner source="$items">
-  <label caption="$self.title"/>  <!-- Correct: $self is current item -->
-</cloner>
-```
-
-**Loader Scope**:
-```javascript
-// Problem: Accessing parent scope incorrectly
-<!-- parent.view -->
-<loader source="child.view" args="$item"/>
-
-<!-- child.view -->
-<label caption="$item.title"/>  <!-- Wrong: $item not in scope -->
-
-// Solution: Use $args
-<!-- child.view -->
-<label caption="$args.title"/>  <!-- Correct: $args contains passed data -->
-```
-
-**Nested Scope**:
-```javascript
-// Problem: Accessing outer scope
-<cloner source="$items">
-  <cloner source="$self.subitems">
-    <label caption="$items.title"/>  <!-- Wrong: $items is outer scope -->
-  </cloner>
-</cloner>
-
-// Solution: Use $parent or save reference
-<cloner source="$items">
-  <container_y id="$self.id">
-    <cloner source="$self.subitems">
-      <label caption="$parent.title"/>  <!-- Access parent scope -->
-    </cloner>
-  </container_y>
-</cloner>
-```
-
-## Layout Problems
-
-### Children Overlapping
-
-**Symptoms**:
-- Widgets stack on top of each other
-- Only last widget visible
-- Expected vertical/horizontal layout not working
-
-**Cause**: Wrong container type
-
-**Solution**:
-```javascript
-// Problem: Using container_z (layering)
-container_z {
-  label { caption = "Item 1"; }
-  label { caption = "Item 2"; }  // Overlaps Item 1
-}
-
-// Solution: Use container_y (vertical) or container_x (horizontal)
-container_y {
-  label { caption = "Item 1"; }
-  label { caption = "Item 2"; }  // Below Item 1
-}
-
-container_x {
-  label { caption = "Item 1"; }
-  label { caption = "Item 2"; }  // Right of Item 1
-}
-```
-
-
-### Incorrect Widget Sizes
-
-**Symptoms**:
-- Widgets too small or too large
-- Content clipped or overflowing
-- Inconsistent sizing
-
-**Common Issues**:
-
-**No Size Specified**:
-```javascript
-// Problem: Size determined by content only
-container_x {
-  label { caption = "Test"; }  // Size = text size
-}
-
-// Solution: Specify explicit size
-container_x {
-  width = 200;
-  height = 50;
-  label { caption = "Test"; }
-}
-```
-
-**Conflicting Constraints**:
-```javascript
-// Problem: Child larger than parent
-container_x {
-  width = 100;
-  label {
-    width = 200;  // Larger than parent!
-    caption = "Test";
-  }
-}
-
-// Solution: Use relative sizing
-container_x {
-  width = 100;
-  label {
-    width = $parent.width;  // Match parent
-    caption = "Test";
-  }
-}
-```
-
-**EM Units Not Calculated**:
-```javascript
-// Problem: EM units require font context
-label {
-  width = 10em;  // May not work without font
-}
-
-// Solution: Ensure font is set
-label {
-  fontSize = 16;
-  width = 10em;  // Now calculated correctly
-}
-```
-
-### Alignment Issues
-
-**Symptoms**:
-- Content not centered
-- Items not aligned as expected
-- Uneven spacing
+**Causes**:
+- Static expression (no property reference)
+- Subscription not created
+- Property path incorrect
+- Widget not re-evaluating
 
 **Solutions**:
 
-**Center Alignment**:
+1. **Ensure dynamic expression**:
 ```javascript
-// Horizontal centering
-container_x {
-  align = center;
-  label { caption = "Centered"; }
-}
+// ❌ Static - evaluated once
+caption: "Title: " + "Fixed";
 
-// Vertical centering
-container_y {
-  align = center;
-  label { caption = "Centered"; }
-}
-
-// Both axes
-container_z {
-  label {
-    caption = "Centered";
-    align = center;  // Within parent
-  }
-}
+// ✅ Dynamic - updates with property
+caption: "Title: " + $page.model.title;
 ```
 
-**Left/Right Alignment**:
+2. **Use debug assignment**:
 ```javascript
-// Left align
-container_x {
-  align = left;
-  label { caption = "Left"; }
-}
-
-// Right align
-container_x {
-  align = right;
-  label { caption = "Right"; }
-}
+// Log property changes
+caption _=_ $page.model.title;
 ```
 
-**Top/Bottom Alignment**:
+3. **Force re-evaluation**:
 ```javascript
-// Top align
-container_y {
-  align = top;
-  label { caption = "Top"; }
-}
-
-// Bottom align
-container_y {
-  align = bottom;
-  label { caption = "Bottom"; }
-}
+// Use property reference to trigger updates
+alpha: $page.model.updated ? 1.0 : 1.0;
 ```
 
-
-### Spacing Problems
+### Scope Error
 
 **Symptoms**:
-- No space between items
-- Too much space between items
+- $self undefined
+- $args not available
+- Wrong data displayed
+
+**Causes**:
+- Using $self outside cloner
+- Using $args outside loader
+- Incorrect scope reference
+
+**Solutions**:
+
+1. **Use correct scope**:
+```javascript
+// ❌ Wrong - $self not available
+widget(label, {
+  caption: $self.title;
+});
+
+// ✅ Correct - use appropriate scope
+widget(label, {
+  caption: $page.model.title;
+});
+```
+
+2. **In cloner context**:
+```javascript
+cloner($page.model.items, container_x, {
+  // $self refers to current item
+  widget(label, {
+    caption: $self.title;
+  });
+});
+```
+
+3. **In loader context**:
+```javascript
+// Parent view
+widget(loader, {
+  source: "item.view";
+  args: $item;
+});
+
+// item.view
+widget(label, {
+  caption: $args.title;  // Access passed data
+});
+```
+
+## Layout Issues
+
+### Widget Not Visible
+
+**Symptoms**:
+- Widget exists but doesn't appear
+- Blank space where widget should be
+- No error in log
+
+**Causes**:
+- Alpha is 0
+- No size constraints
+- Covered by other widget
+- Outside parent bounds
+- Hidden attribute set
+
+**Solutions**:
+
+1. **Check alpha**:
+```javascript
+widget(label, {
+  caption: "Text";
+  alpha: 1.0;  // Ensure visible
+});
+```
+
+2. **Add size constraints**:
+```javascript
+widget(container_x, {
+  height: 50;  // Specify size
+  widget(label, {
+    caption: "Text";
+  });
+});
+```
+
+3. **Check z-order**:
+```javascript
+widget(container_z, {
+  // Background first
+  widget(quad, { color: "#000000"; });
+  // Content on top
+  widget(label, { caption: "Text"; });
+});
+```
+
+4. **Verify not hidden**:
+```javascript
+widget(label, {
+  caption: "Text";
+  hidden: false;  // Ensure not hidden
+});
+```
+
+### Widget Wrong Size
+
+**Symptoms**:
+- Widget too large or too small
+- Doesn't fit in container
+- Overlaps other widgets
+
+**Causes**:
+- Missing size constraints
+- Conflicting constraints
+- Wrong weight value
+- Aspect ratio issues
+
+**Solutions**:
+
+1. **Specify size**:
+```javascript
+widget(container_x, {
+  width: 200;
+  height: 50;
+});
+```
+
+2. **Use weight for flexible sizing**:
+```javascript
+widget(container_x, {
+  widget(container_y, {
+    width: 200;  // Fixed width
+  });
+  widget(container_y, {
+    weight: 1.0;  // Fills remaining space
+  });
+});
+```
+
+3. **Avoid conflicting constraints**:
+```javascript
+// ❌ Wrong - conflicting
+widget(container_x, {
+  width: 100;
+  weight: 1.0;  // Conflicts with fixed width
+});
+
+// ✅ Correct - use one
+widget(container_x, {
+  weight: 1.0;
+});
+```
+
+### Widget Wrong Position
+
+**Symptoms**:
+- Widget in wrong location
+- Not aligned correctly
+- Overlapping incorrectly
+
+**Causes**:
+- Wrong container type
+- Incorrect alignment
+- Wrong parent
+- Z-order issues
+
+**Solutions**:
+
+1. **Use correct container**:
+```javascript
+// Horizontal layout
+widget(container_x, {
+  widget(label, { caption: "Left"; });
+  widget(label, { caption: "Right"; });
+});
+
+// Vertical layout
+widget(container_y, {
+  widget(label, { caption: "Top"; });
+  widget(label, { caption: "Bottom"; });
+});
+
+// Layered
+widget(container_z, {
+  widget(quad, { color: "#000000"; });
+  widget(label, { caption: "Overlay"; });
+});
+```
+
+2. **Set alignment**:
+```javascript
+widget(container_x, {
+  alignment: center;  // Center children
+  widget(label, { caption: "Centered"; });
+});
+```
+
+3. **Check parent hierarchy**:
+```javascript
+// Ensure widget is in correct parent
+widget(container_y, {
+  widget(container_x, {
+    // This widget is inside container_x
+    widget(label, { caption: "Text"; });
+  });
+});
+```
+
+### Spacing Issues
+
+**Symptoms**:
+- Widgets too close together
+- Too much space between widgets
 - Inconsistent spacing
 
-**Solutions**:
-
-**Add Spacing**:
-```javascript
-// Problem: No spacing
-container_y {
-  label { caption = "Item 1"; }
-  label { caption = "Item 2"; }  // Touching Item 1
-}
-
-// Solution: Add spacing
-container_y {
-  spacing = 0.5em;  // Space between children
-  label { caption = "Item 1"; }
-  label { caption = "Item 2"; }
-}
-```
-
-**Add Padding**:
-```javascript
-// Problem: Content touching edges
-container_y {
-  label { caption = "Text"; }  // At edge
-}
-
-// Solution: Add padding
-container_y {
-  padding = [1em, 2em];  // [vertical, horizontal]
-  label { caption = "Text"; }  // Padded
-}
-```
-
-## Focus and Navigation
-
-### Widget Not Focusable
-
-**Symptoms**:
-- Cannot navigate to widget
-- Widget doesn't respond to input
-- Focus skips over widget
-
-**Cause**: Missing focusable attribute
-
-**Solution**:
-```javascript
-// Problem: Not focusable
-container_x {
-  label { caption = "Click Me"; }
-}
-
-// Solution: Add focusable attribute
-container_x {
-  focusable = true;  // Now can receive focus
-  label { caption = "Click Me"; }
-}
-```
-
-### No Visual Focus Indicator
-
-**Symptoms**:
-- Can't tell which widget is focused
-- Navigation works but no visual feedback
-
-**Solution**: Add focus indicator
-```javascript
-container_z {
-  focusable = true;
-  
-  // Background that changes on focus
-  quad {
-    color = "#444444";
-    alpha = 0.6 + 0.4 * iir(isNavFocused(), 4, true);
-  }
-  
-  // Border that appears on focus
-  border {
-    border = 0.1em;
-    color = "#FFFFFF";
-    alpha = isNavFocused();
-  }
-  
-  label { caption = "Focusable"; }
-}
-```
-
-### Events Not Firing
-
-**Symptoms**:
-- Widget focused but doesn't respond to activation
-- No action when pressing Enter/Click
-
-**Common Issues**:
-
-**Missing Event Handler**:
-```javascript
-// Problem: No event handler
-container_x {
-  focusable = true;
-  label { caption = "Click Me"; }
-}
-
-// Solution: Add event handler
-container_x {
-  focusable = true;
-  onEvent(activate, navOpen("target:url"));
-  label { caption = "Click Me"; }
-}
-```
-
-**Wrong Event Type**:
-```javascript
-// Problem: Wrong event name
-container_x {
-  focusable = true;
-  onEvent(click, navOpen("url"));  // Wrong: should be 'activate'
-}
-
-// Solution: Use correct event type
-container_x {
-  focusable = true;
-  onEvent(activate, navOpen("url"));  // Correct
-}
-```
-
-**Invalid Action**:
-```javascript
-// Problem: Invalid action syntax
-container_x {
-  focusable = true;
-  onEvent(activate, "navOpen(url)");  // Wrong: string, not action
-}
-
-// Solution: Use proper action syntax
-container_x {
-  focusable = true;
-  onEvent(activate, navOpen($self.url));  // Correct
-}
-```
-
-
-### Focus Navigation Issues
-
-**Symptoms**:
-- Focus jumps unexpectedly
-- Cannot navigate to certain widgets
-- Focus order incorrect
+**Causes**:
+- Missing spacing attribute
+- Wrong spacing value
+- Padding not set
+- Margin issues
 
 **Solutions**:
 
-**Set Focus Weight**:
+1. **Set spacing**:
 ```javascript
-// Control focus priority
-container_y {
-  container_x {
-    focusable = true;
-    focusWeight = 1.0;  // Higher priority
-    label { caption = "Important"; }
-  }
-  
-  container_x {
-    focusable = true;
-    focusWeight = 0.5;  // Lower priority
-    label { caption = "Less Important"; }
-  }
-}
+widget(container_y, {
+  spacing: 10;  // 10 pixels between children
+  widget(label, { caption: "Item 1"; });
+  widget(label, { caption: "Item 2"; });
+});
 ```
 
-**Fix Focus Path**:
+2. **Use padding**:
 ```javascript
-// Problem: Parent not allowing focus
-container_y {
-  // No focusable attribute
-  container_x {
-    focusable = true;  // Can't receive focus (parent blocks)
-    label { caption = "Unreachable"; }
-  }
-}
+widget(container_x, {
+  padding: [10, 20, 10, 20];  // left, top, right, bottom
+  widget(label, { caption: "Text"; });
+});
+```
 
-// Solution: Ensure focus path is clear
-container_y {
-  // Parent doesn't need to be focusable for children to be
-  container_x {
-    focusable = true;  // Now reachable
-    label { caption = "Reachable"; }
-  }
-}
+3. **Add spacer widgets**:
+```javascript
+widget(container_x, {
+  widget(label, { caption: "Left"; });
+  space(1);  // Flexible spacer
+  widget(label, { caption: "Right"; });
+});
 ```
 
 ## Performance Issues
@@ -761,603 +768,533 @@ container_y {
 ### Slow Rendering
 
 **Symptoms**:
-- UI feels sluggish
-- Frame rate drops
-- Animations stutter
+- Lag when scrolling
+- Stuttering animations
+- Low frame rate
 
-**Common Causes**:
-
-**Too Many Widgets**:
-```javascript
-// Problem: Creating hundreds of individual widgets
-container_y {
-  label { caption = "Item 1"; }
-  label { caption = "Item 2"; }
-  // ... 500 more labels
-}
-
-// Solution: Use cloner with list
-list_y {
-  cloner($items, container_x, {
-    label { caption = $self.title; }
-  });
-}
-```
-
-**Complex Expressions**:
-```javascript
-// Problem: Complex expression evaluated frequently
-alpha = iir(($a && $b && $c) || ($d && $e && $f), 8, true) * 
-        ($g ? 1.0 : 0.5) + 
-        ($h ? 0.2 : 0.0);
-
-// Solution: Simplify
-alpha = iir($visible, 8, true);
-```
-
-**Too Many Subscriptions**:
-```javascript
-// Problem: Many property references
-alpha = $enabled ? 1.0 : 0.3;
-color = $enabled ? "#FF0000" : "#CCCCCC";
-scale = $enabled ? 1.0 : 0.8;
-blur = $enabled ? 0.0 : 2.0;
-
-// Solution: Reduce redundant references
-// Consider caching or simplifying logic
-```
-
-### Memory Issues
-
-**Symptoms**:
-- Memory usage grows over time
-- Crashes after extended use
-- Slow performance after time
+**Causes**:
+- Too many widgets
+- Complex expressions
+- Large images
+- Inefficient layout
 
 **Solutions**:
 
-**Clean Up Resources**:
+1. **Reduce widget count**:
 ```javascript
-// Ensure widgets are properly destroyed
-// Use autohide to remove inactive widgets
-container_y {
-  autohide = true;
-  alpha = $visible ? 1.0 : 0.0;
-}
+// ❌ Too many widgets
+widget(container_z, {
+  widget(quad, { ... });
+  widget(quad, { ... });
+  widget(quad, { ... });
+  widget(label, { ... });
+});
+
+// ✅ Simplified
+widget(container_z, {
+  widget(quad, { ... });  // Combined background
+  widget(label, { ... });
+});
 ```
 
-**Limit Cloner Items**:
+2. **Simplify expressions**:
 ```javascript
-// Problem: Cloning thousands of items
-<cloner source="$allItems">  <!-- 10,000 items -->
-  <container_x>...</container_x>
-</cloner>
+// ❌ Complex expression
+alpha: ($enabled && $visible && !$disabled) ? 
+       (isNavFocused() ? 1.0 : 0.8) : 0.3;
 
-// Solution: Use pagination or virtual scrolling
-<cloner source="$visibleItems">  <!-- Only visible items -->
-  <container_x>...</container_x>
-</cloner>
+// ✅ Broken down
+$isActive = $enabled && $visible && !$disabled;
+alpha: $isActive ? (isNavFocused() ? 1.0 : 0.8) : 0.3;
 ```
 
+3. **Optimize images**:
+```bash
+# Resize large images
+convert large.png -resize 1920x1080 optimized.png
 
-## Plugin Issues
+# Compress images
+pngquant optimized.png
+```
 
-### Plugin Not Loading
+4. **Use list widgets for scrolling**:
+```javascript
+// ✅ Efficient for large lists
+widget(list_y, {
+  cloner($items, container_x, {
+    // Item template
+  });
+});
+```
+
+### High Memory Usage
 
 **Symptoms**:
-- Plugin doesn't appear in Movian
-- No error message
-- Plugin directory exists
+- Memory usage increases over time
+- Application becomes slow
+- Eventually crashes
 
-**Common Causes**:
+**Causes**:
+- Memory leaks
+- Too many cached items
+- Large images
+- Subscriptions not released
 
-**Invalid plugin.json**:
-```json
-// Problem: Syntax error in JSON
-{
-  "id": "myplugin",
-  "version": "1.0",  // Trailing comma
-}
+**Solutions**:
 
-// Solution: Fix JSON syntax
-{
-  "id": "myplugin",
-  "version": "1.0"
-}
+1. **Limit cached items**:
+```javascript
+// In plugin
+page.model.items = items.slice(0, 100);  // Limit items
 ```
 
-**Missing Required Fields**:
-```json
-// Problem: Missing required fields
-{
-  "version": "1.0"
-}
-
-// Solution: Add all required fields
-{
-  "id": "myplugin",
-  "version": "1.0",
-  "title": "My Plugin",
-  "type": "javascript",
-  "file": "plugin.js"
-}
+2. **Use smaller images**:
+```javascript
+// Request appropriate size from API
+var imageUrl = item.image + "?size=medium";
 ```
 
-**Wrong File Path**:
-```json
-// Problem: File doesn't exist
-{
-  "id": "myplugin",
-  "file": "main.js"  // File doesn't exist
-}
-
-// Solution: Use correct filename
-{
-  "id": "myplugin",
-  "file": "plugin.js"  // File exists
-}
+3. **Clean up resources**:
+```javascript
+// In plugin cleanup
+exports.cleanup = function() {
+  // Release resources
+  subscriptions.forEach(function(sub) {
+    sub.destroy();
+  });
+};
 ```
 
-### JavaScript Errors
+### Stuttering Animations
 
 **Symptoms**:
-- Plugin loads but doesn't work
-- Error messages in console
-- Features not functioning
+- Animations not smooth
+- Jerky transitions
+- Inconsistent frame rate
 
-**Common Errors**:
+**Causes**:
+- Complex calculations during animation
+- Too many animated widgets
+- Inefficient iir() usage
 
-**Syntax Error**:
+**Solutions**:
+
+1. **Use appropriate iir() time constant**:
 ```javascript
-// Problem
-var title = "Test"  // Missing semicolon
-var count = 10;
+// ❌ Too fast - jerky
+alpha: iir(isNavFocused(), 1, true);
 
-// Error: Unexpected token
-
-// Solution
-var title = "Test";  // Added semicolon
-var count = 10;
+// ✅ Smooth
+alpha: iir(isNavFocused(), 8, true);
 ```
 
-**Undefined Variable**:
+2. **Limit animated widgets**:
 ```javascript
-// Problem
-console.log(myVariable);  // Variable not defined
-
-// Error: ReferenceError: myVariable is not defined
-
-// Solution
-var myVariable = "value";
-console.log(myVariable);
+// Only animate focused items
+alpha: isNavFocused() ? 
+       iir(1.0, 8, true) : 
+       0.7;  // Static for non-focused
 ```
 
-**API Not Available**:
+3. **Avoid complex expressions in animations**:
 ```javascript
-// Problem
-var response = http.get("url");  // Wrong API
+// ❌ Complex calculation every frame
+scale: iir(isNavFocused() ? 
+           ($parent.width / $self.width) : 
+           1.0, 8, true);
 
-// Error: http is not defined
-
-// Solution
-var response = require('movian/http').request("url", {
-  method: 'GET'
-});
+// ✅ Pre-calculate
+$targetScale = $parent.width / $self.width;
+scale: iir(isNavFocused() ? $targetScale : 1.0, 8, true);
 ```
 
-### Service Not Registering
+## Navigation Issues
+
+### Can't Focus Widget
 
 **Symptoms**:
-- Plugin loads but service doesn't appear
-- No search results
-- Content not accessible
+- Widget not selectable
+- Navigation skips widget
+- No focus indicator
 
-**Solution**:
+**Causes**:
+- Missing focusable attribute
+- Widget hidden or alpha 0
+- Focus weight too low
+- Parent not focusable
+
+**Solutions**:
+
+1. **Add focusable attribute**:
 ```javascript
-// Ensure service is registered correctly
-var service = require('movian/service');
-
-service.create("My Service", "myservice:start", "video", true, 
-  require('movian/plugin').path + "logo.png");
+widget(container_x, {
+  focusable: true;  // Make focusable
+  widget(label, { caption: "Button"; });
+});
 ```
 
+2. **Ensure visible**:
+```javascript
+widget(container_x, {
+  focusable: true;
+  alpha: 1.0;  // Ensure visible
+  hidden: false;
+});
+```
 
-### HTTP Request Failures
+3. **Set focus weight**:
+```javascript
+widget(container_x, {
+  focusable: true;
+  focusWeight: 1.0;  // Higher priority
+});
+```
+
+### Focus Indicator Not Visible
 
 **Symptoms**:
-- Network requests fail
-- Timeout errors
-- No response data
+- Can navigate but can't see focus
+- No visual feedback
+- Hard to tell what's selected
 
-**Common Issues**:
+**Causes**:
+- No focus indicator implemented
+- Focus indicator same color as background
+- Alpha too low
 
-**Wrong URL**:
+**Solutions**:
+
+1. **Add focus indicator**:
 ```javascript
-// Problem
-var response = http.request("htp://example.com");  // Typo
-
-// Solution
-var response = http.request("http://example.com");
-```
-
-**Missing Headers**:
-```javascript
-// Problem: API requires headers
-var response = http.request("http://api.example.com/data");
-
-// Solution: Add required headers
-var response = http.request("http://api.example.com/data", {
-  headers: {
-    'User-Agent': 'Movian Plugin',
-    'Accept': 'application/json'
-  }
+widget(container_z, {
+  focusable: true;
+  
+  // Background with focus effect
+  widget(quad, {
+    color: "#444444";
+    alpha: 0.6 + 0.4 * iir(isNavFocused(), 4, true);
+  });
+  
+  widget(label, { caption: "Button"; });
+  
+  // Focus border
+  widget(border, {
+    border: 0.1em;
+    color: "#FFFFFF";
+    alpha: isNavFocused();
+  });
 });
 ```
 
-**Timeout Too Short**:
+2. **Use contrasting colors**:
 ```javascript
-// Problem: Request times out
-var response = http.request("http://slow-api.com", {
-  timeout: 1000  // 1 second, too short
-});
-
-// Solution: Increase timeout
-var response = http.request("http://slow-api.com", {
-  timeout: 30000  // 30 seconds
+widget(quad, {
+  color: isNavFocused() ? "#FFFF00" : "#444444";
 });
 ```
 
-**SSL/HTTPS Issues**:
+3. **Add scale effect**:
 ```javascript
-// Problem: SSL certificate validation fails
-var response = http.request("https://self-signed.com");
-
-// Solution: Disable SSL verification (use with caution)
-var response = http.request("https://self-signed.com", {
-  noVerify: true
+widget(container_x, {
+  focusable: true;
+  scale: 1.0 + 0.1 * iir(isNavFocused(), 4, true);
 });
 ```
+
+### Event Not Firing
+
+**Symptoms**:
+- Button doesn't respond
+- onEvent handler not called
+- No action on activation
+
+**Causes**:
+- Event handler syntax error
+- Widget not focusable
+- Event type wrong
+- Handler returns wrong value
+
+**Solutions**:
+
+1. **Check event handler syntax**:
+```javascript
+widget(container_x, {
+  focusable: true;
+  onEvent(activate, navOpen("test:url"));
+});
+```
+
+2. **Verify widget is focusable**:
+```javascript
+widget(container_x, {
+  focusable: true;  // Required for events
+  onEvent(activate, navOpen("test:url"));
+});
+```
+
+3. **Use correct event type**:
+```javascript
+// Common event types
+onEvent(activate, ...);  // Enter/Click
+onEvent(cancel, ...);    // Back/Escape
+onEvent(focus, ...);     // Gained focus
+onEvent(blur, ...);      // Lost focus
+```
+
+## Media Issues
+
+### Video Won't Play
+
+**Symptoms**:
+- Black screen
+- Error message
+- Playback fails to start
+
+**Causes**:
+- Unsupported codec
+- Invalid URL
+- DRM protected
+- Network issue
+
+**Solutions**:
+
+1. **Check codec support**:
+```javascript
+// Verify video format
+console.log("Video codec:", videoInfo.codec);
+console.log("Audio codec:", audioInfo.codec);
+```
+
+2. **Validate URL**:
+```javascript
+if (videoUrl && videoUrl.startsWith("http")) {
+  page.model.videoUrl = videoUrl;
+} else {
+  console.error("Invalid video URL:", videoUrl);
+}
+```
+
+3. **Handle DRM**:
+```javascript
+// Check for DRM
+if (video.drm) {
+  console.log("DRM protected content");
+  // Handle DRM if supported
+}
+```
+
+### Audio Out of Sync
+
+**Symptoms**:
+- Audio doesn't match video
+- Delay in audio
+- Audio ahead of video
+
+**Causes**:
+- Incorrect timestamps
+- Codec issues
+- Performance problems
+
+**Solutions**:
+
+1. **Adjust audio delay**:
+```javascript
+// In playback settings
+audioDelay: -200;  // Negative to delay audio
+```
+
+2. **Check video format**:
+- Verify container format (MP4, MKV, etc.)
+- Check for variable frame rate issues
+- Test with different video files
+
+### Subtitles Not Showing
+
+**Symptoms**:
+- No subtitles displayed
+- Subtitle option not available
+- Wrong subtitles shown
+
+**Causes**:
+- Subtitle track not detected
+- Wrong encoding
+- Subtitle format not supported
+
+**Solutions**:
+
+1. **Verify subtitle track**:
+```javascript
+// Check available subtitle tracks
+console.log("Subtitle tracks:", media.subtitleTracks);
+```
+
+2. **Set subtitle track**:
+```javascript
+// Select subtitle track
+media.currentSubtitleTrack = 0;
+```
+
+3. **Check encoding**:
+- Ensure UTF-8 encoding for subtitle files
+- Verify subtitle format (SRT, ASS, etc.)
 
 ## Build Issues
 
-### Missing Dependencies
+### Compilation Error
 
 **Symptoms**:
-- Configure fails with "Package not found"
-- Compilation errors about missing headers
-- Linker errors about missing libraries
+```
+error: undefined reference to 'function'
+error: 'struct' has no member named 'field'
+```
+
+**Causes**:
+- Missing dependency
+- Wrong include path
+- API version mismatch
+- Platform-specific code
 
 **Solutions**:
 
-**Ubuntu/Debian**:
-```bash
-# Install development packages
-sudo apt-get install \
-  libfreetype6-dev \
-  libfontconfig1-dev \
-  libxext-dev \
-  libgl1-mesa-dev \
-  libasound2-dev \
-  libssl-dev
-```
-
-**Fedora/CentOS**:
-```bash
-# Install development packages
-sudo dnf install \
-  freetype-devel \
-  fontconfig-devel \
-  libXext-devel \
-  mesa-libGL-devel \
-  alsa-lib-devel \
-  openssl-devel
-```
-
-**macOS**:
-```bash
-# Install via Homebrew
-brew install \
-  freetype \
-  fontconfig \
-  openssl
-```
-
-### Compiler Errors
-
-**Symptoms**:
-- Compilation fails with syntax errors
-- C99/C++11 features not supported
-- Undefined references
-
-**Solutions**:
-
-**Update Compiler**:
+1. **Install dependencies**:
 ```bash
 # Ubuntu/Debian
-sudo apt-get install gcc-8 g++-8
+sudo apt-get install build-essential libssl-dev
 
-# Configure with specific compiler
-./configure --cc=gcc-8 --cxx=g++-8
+# macOS
+brew install openssl
 ```
 
-**Add Missing Libraries**:
+2. **Check configure options**:
 ```bash
-# Configure with additional libraries
-./configure --extra-ldflags="-lpthread -ldl -lm"
+./configure --help
+./configure --enable-feature
 ```
 
+3. **Clean and rebuild**:
+```bash
+make clean
+make
+```
 
-## Runtime Issues
-
-### Crashes on Startup
+### Linking Error
 
 **Symptoms**:
-- Movian crashes immediately after launch
-- Segmentation fault
-- No UI appears
-
-**Common Causes**:
-
-**Missing Libraries**:
-```bash
-# Check for missing libraries
-ldd build.linux/movian
-
-# Install missing runtime libraries
-sudo apt-get install libssl1.1 libpulse0
+```
+error: cannot find -llibrary
+undefined reference to 'symbol'
 ```
 
-**Graphics Driver Issues**:
-```bash
-# Check OpenGL support
-glxinfo | grep "direct rendering"
-
-# Install proper drivers
-sudo apt-get install mesa-utils libgl1-mesa-dri
-```
-
-**Permission Issues**:
-```bash
-# Check file permissions
-ls -la build.linux/movian
-
-# Fix if needed
-chmod +x build.linux/movian
-```
-
-### Audio/Video Playback Issues
-
-**Symptoms**:
-- No audio output
-- Video doesn't play
-- Codec errors
+**Causes**:
+- Missing library
+- Wrong library path
+- Library version mismatch
 
 **Solutions**:
 
-**Audio Device Access**:
+1. **Install missing library**:
 ```bash
-# Add user to audio group
-sudo usermod -a -G audio $USER
+# Find package name
+apt-cache search library-name
 
-# Log out and back in
+# Install
+sudo apt-get install library-dev
 ```
 
-**Missing Codecs**:
+2. **Set library path**:
 ```bash
-# Install codec libraries
-sudo apt-get install \
-  libavcodec-dev \
-  libavformat-dev \
-  libavutil-dev
+export LD_LIBRARY_PATH=/path/to/libs:$LD_LIBRARY_PATH
 ```
 
-### Display Issues
+3. **Check library version**:
+```bash
+pkg-config --modversion library-name
+```
+
+### Platform-Specific Issues
 
 **Symptoms**:
-- Blank screen
-- Corrupted graphics
-- Wrong resolution
+- Builds on one platform but not another
+- Platform-specific errors
+- Missing platform features
+
+**Causes**:
+- Platform-specific code
+- Different library versions
+- Missing platform dependencies
 
 **Solutions**:
 
-**X11 Connection**:
+1. **Check platform requirements**:
 ```bash
-# Set DISPLAY variable
-export DISPLAY=:0
-
-# Allow X11 connections
-xhost +local:
+# Read platform-specific docs
+cat README.platform
 ```
 
-**OpenGL Context**:
+2. **Use platform-specific configure**:
 ```bash
-# Check OpenGL version
-glxinfo | grep "OpenGL version"
+# Linux
+./configure.linux
 
-# Update graphics drivers if needed
+# macOS
+./configure.osx
+
+# Android
+./configure.android
 ```
 
-## Platform-Specific Issues
-
-### Linux-Specific
-
-**Wayland Issues**:
+3. **Install platform dependencies**:
 ```bash
-# Force X11 backend
-export GDK_BACKEND=x11
-./movian
-```
-
-**PulseAudio Issues**:
-```bash
-# Restart PulseAudio
-pulseaudio --kill
-pulseaudio --start
-```
-
-### macOS-Specific
-
-**Gatekeeper Issues**:
-```bash
-# Allow unsigned application
-xattr -d com.apple.quarantine /path/to/Movian.app
-```
-
-**OpenSSL Path Issues**:
-```bash
-# Configure with Homebrew OpenSSL
-./configure \
-  --extra-cflags="-I/opt/homebrew/opt/openssl/include" \
-  --extra-ldflags="-L/opt/homebrew/opt/openssl/lib"
-```
-
-### Windows-Specific
-
-**MSYS2 Path Issues**:
-```bash
-# Ensure MSYS2 in PATH
-export PATH="/mingw64/bin:$PATH"
-```
-
-**DLL Not Found**:
-```bash
-# Copy required DLLs to executable directory
-cp /mingw64/bin/*.dll build.win32/
-```
-
-## Diagnostic Tools
-
-### Enable Debug Output
-
-```bash
-# View file debugging
-./movian --debug glw:view
-
-# Property system debugging
-./movian --debug prop
-
-# Plugin debugging
-./movian --debug plugin
-
-# All debug output
-./movian --debug all
-```
-
-### Check System Information
-
-```bash
-# System info
-uname -a
-
-# OpenGL info
-glxinfo | head -20
-
-# Library versions
-pkg-config --modversion freetype2
-pkg-config --modversion openssl
-```
-
-### Memory Debugging
-
-```bash
-# Build with address sanitizer
-./configure --extra-cflags="-fsanitize=address"
-make
-
-# Run and check for leaks
-./movian
-```
-
-### Performance Profiling
-
-```bash
-# Build with profiling
-./configure --optlevel=g
-make
-
-# Run with profiler
-gdb ./build.linux/movian
-(gdb) run
-(gdb) bt  # Backtrace on crash
+# Check platform requirements
+./configure --help
 ```
 
 ## Getting Help
 
-### Before Asking
+### Collecting Debug Information
 
-1. **Check console output** for error messages
-2. **Search existing issues** on GitHub
-3. **Try minimal reproduction** to isolate problem
-4. **Collect system information** (OS, version, etc.)
-5. **Review this troubleshooting guide**
+When reporting issues, include:
 
-### Where to Ask
+1. **Movian version**:
+```bash
+movian --version
+```
 
-- **GitHub Issues**: Bug reports and feature requests
-- **Community Forum**: General questions and discussion
-- **Documentation**: Check guides and references
+2. **Platform information**:
+```bash
+uname -a  # Linux/macOS
+```
 
-### Information to Include
+3. **Error logs**:
+```bash
+movian --debug 2>&1 | tee movian.log
+```
 
-When reporting issues:
+4. **Minimal test case**:
+- Create smallest example that reproduces issue
+- Include all relevant files
+- Document steps to reproduce
 
-- **Platform**: OS, version, architecture
-- **Movian version**: Build date, commit hash
-- **Error messages**: Complete output, not summaries
-- **Steps to reproduce**: Exact sequence to trigger issue
-- **Expected vs actual**: What should happen vs what does
-- **Code samples**: Minimal reproduction case
+### Community Resources
 
-## Quick Reference Tables
+- **GitHub Issues**: https://github.com/andoma/movian/issues
+- **Forums**: Check Movian community forums
+- **Documentation**: https://github.com/andoma/movian/wiki
 
-### Error Message Patterns
+### Reporting Bugs
 
-| Error Pattern | Category | Common Cause |
-|---------------|----------|--------------|
-| `Unexpected token` | Syntax | Missing semicolon, brace |
-| `Unknown widget type` | Syntax | Typo in widget name |
-| `Unknown attribute` | Syntax | Typo in attribute name |
-| `Unterminated string` | Syntax | Missing quote |
-| `Property not found` | Binding | Wrong property path |
-| `Package not found` | Build | Missing dependency |
-| `undefined reference` | Build | Missing library |
-| `Permission denied` | Runtime | File/device permissions |
+When reporting bugs:
 
-### Widget Visibility Checklist
+1. **Search existing issues** first
+2. **Provide clear title** describing the problem
+3. **Include steps to reproduce**
+4. **Attach relevant logs** and files
+5. **Specify platform** and version
+6. **Describe expected vs actual behavior**
 
-- [ ] Alpha > 0
-- [ ] Width > 0 and Height > 0
-- [ ] Parent visible
-- [ ] Not clipped by parent
-- [ ] Not behind opaque widget
-- [ ] In viewport
-
-### Focus Checklist
-
-- [ ] focusable = true
-- [ ] Widget visible
-- [ ] Parent allows focus
-- [ ] Focus indicator present
-- [ ] Event handler defined
-
-### Performance Checklist
-
-- [ ] Widget count < 1000
-- [ ] Expression complexity low
-- [ ] Property subscriptions minimal
-- [ ] Cloner used for lists
-- [ ] Autohide for inactive widgets
-
-## Related Documentation
+## See Also
 
 - [Debugging View Files](../guides/debugging-view-files.md) - Detailed debugging guide
-- [Installation Troubleshooting](../installation/troubleshooting.md) - Build issues
-- [Syntax Reference](../ui/view-files/syntax-reference.md) - View file syntax
-- [Plugin Best Practices](../plugins/best-practices.md) - Plugin development
-- [Performance Optimization](../guides/performance-optimization.md) - Optimization tips
-
----
-
-**Accuracy Status**: 🟢 Solutions verified from real issues and source code  
-**Last Updated**: November 2024  
-**Movian Version**: 4.8+
+- [Syntax Reference](../ui/view-files/syntax-reference.md) - Complete syntax guide
+- [Plugin API Reference](../plugins/api/core-api.md) - Plugin development
+- [GLW Architecture](../ui/glw-architecture.md) - System architecture

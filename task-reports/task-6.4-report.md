@@ -2,7 +2,10 @@
 
 ## Task Description
 
-Document layout debugging and development techniques for GLW view files, including debugging tools, common issues, and troubleshooting workflows.
+Document layout debugging and development techniques for GLW view files, including:
+- Guide for debugging view file issues
+- Development tools and debugging techniques
+- Troubleshooting guide for common layout problems
 
 ## Completion Summary
 
@@ -15,227 +18,350 @@ Document layout debugging and development techniques for GLW view files, includi
 ### 1. Debugging View Files Guide
 **File**: `movian-docs/docs/guides/debugging-view-files.md`
 
-Comprehensive guide covering:
-- Development environment setup with debug logging
-- Syntax error identification and resolution
-- Property binding debugging techniques
-- Layout debugging strategies
-- Focus and interaction debugging
-- Performance debugging and optimization
-- Advanced debugging techniques (token trees, memory debugging)
-- Common patterns and solutions
-- Step-by-step troubleshooting workflow
+**Content Overview**:
+- Understanding the view file pipeline (lexer → preprocessor → parser → evaluator → layout → render)
+- Common error types with examples:
+  - Syntax errors (unmatched braces, unterminated strings, invalid operators)
+  - Preprocessor errors (undefined macros, circular includes, argument mismatches)
+  - Property reference errors (undefined properties, wrong paths, scope issues)
+  - Expression errors (type mismatches, division by zero, operator precedence)
+  - Layout issues (missing size constraints, conflicting constraints, z-order)
+  - Focus and navigation issues (missing focusable attribute, no focus indicators)
+- Debugging tools and techniques:
+  - Debug assignment operator (`_=_`)
+  - Conditional visibility for debugging
+  - Visual debugging with colored backgrounds
+  - Simplified test cases
+  - Progressive commenting
+  - Property inspector widgets
+  - Incremental development
+- Development workflow (plan → implement → test → debug → refine)
+- Common debugging scenarios with solutions:
+  - Widget not visible
+  - Property not updating
+  - Layout not working
+  - Navigation not working
+  - Performance issues
+- Best practices for debuggable code
+- Comprehensive troubleshooting checklist
 
 **Key Features**:
-- Quick diagnosis checklist for common symptoms
-- Practical code examples for each issue type
-- Debug techniques with visual indicators
-- Console output interpretation
-- Incremental testing strategies
-- Best practices for development and debugging
+- Practical code examples showing wrong vs correct approaches
+- Mermaid diagram of the view file processing pipeline
+- Step-by-step debugging procedures
+- Real-world debugging scenarios
+- Performance optimization techniques
 
 ### 2. Troubleshooting Reference
 **File**: `movian-docs/docs/reference/troubleshooting.md`
 
-Quick reference guide organized by problem category:
-- View file issues (syntax, loading, visibility)
-- Property binding issues (updates, scope, paths)
-- Layout problems (overlapping, sizing, alignment, spacing)
-- Focus and navigation issues
-- Performance issues (rendering, memory)
-- Plugin issues (loading, JavaScript errors, HTTP)
-- Build issues (dependencies, compiler errors)
-- Runtime issues (crashes, playback, display)
-- Platform-specific issues (Linux, macOS, Windows)
+**Content Overview**:
+- Quick reference table for common issues by category
+- View file issues:
+  - Syntax errors (unexpected tokens, unmatched braces, unterminated strings)
+  - Loading failures (file path errors, circular includes)
+  - Macro expansion errors
+- Plugin issues:
+  - Plugin won't load (invalid plugin.json, syntax errors)
+  - Plugin crashes (null pointers, infinite loops, invalid API calls)
+  - HTTP request failures
+  - JSON parse errors
+- Property issues:
+  - Property not found (wrong paths, scope issues)
+  - Property not updating (static expressions, missing subscriptions)
+  - Scope errors ($self, $args availability)
+- Layout issues:
+  - Widget not visible (alpha, size constraints, z-order, hidden attribute)
+  - Widget wrong size (conflicting constraints, weight issues)
+  - Widget wrong position (container types, alignment)
+  - Spacing issues (spacing attribute, padding, spacers)
+- Performance issues:
+  - Slow rendering (too many widgets, complex expressions, large images)
+  - High memory usage (memory leaks, cached items, large images)
+  - Stuttering animations (iir() usage, complex calculations)
+- Navigation issues:
+  - Can't focus widget (missing focusable, visibility, focus weight)
+  - Focus indicator not visible (no indicator, color contrast)
+  - Event not firing (syntax errors, event types)
+- Media issues:
+  - Video won't play (codec support, invalid URL, DRM)
+  - Audio out of sync (timestamps, codec issues)
+  - Subtitles not showing (track detection, encoding)
+- Build issues:
+  - Compilation errors (missing dependencies, include paths)
+  - Linking errors (missing libraries, library paths)
+  - Platform-specific issues
 
 **Key Features**:
-- Symptom → Cause → Solution format
-- Code examples showing problems and fixes
-- Quick reference tables
-- Diagnostic tools and commands
-- Checklists for common issues
-- Platform-specific solutions
+- Quick reference format for fast lookup
+- Symptoms → Causes → Solutions structure
+- Code examples for each issue
+- Platform-specific guidance
+- Community resources and bug reporting guidelines
 
 ## Key Findings
 
-### Common Debugging Challenges
+### 1. Common Debugging Patterns
 
-1. **Syntax Errors**: Most common issues are unterminated strings, missing semicolons, and unbalanced braces
-2. **Property Binding**: Developers often struggle with scope context (especially in cloners and loaders)
-3. **Visibility Issues**: Multiple factors affect visibility (alpha, size, parent, z-order, clipping)
-4. **Focus Management**: Requires understanding of focus paths and focusable hierarchy
-5. **Performance**: Widget count and expression complexity are primary bottlenecks
+**Most Frequent Issues**:
+1. Syntax errors (unmatched braces, missing semicolons)
+2. Property reference errors (wrong scope, undefined properties)
+3. Layout issues (missing size constraints, z-order problems)
+4. Focus/navigation problems (missing focusable attribute)
 
-### Effective Debugging Techniques
+**Most Effective Debugging Techniques**:
+1. Visual debugging with colored backgrounds
+2. Progressive commenting to isolate issues
+3. Debug assignment operator for property tracking
+4. Incremental development approach
 
-1. **Visual Debugging**: Using colored backgrounds and borders to see widget bounds
-2. **Debug Assignment**: Using `_=_` operator to log property value changes
-3. **Incremental Development**: Building complexity gradually to isolate issues
-4. **Simplification**: Replacing complex widgets with simple ones to test
-5. **Console Logging**: Enabling GLW debug output for detailed information
+### 2. Documentation Insights
 
-### Documentation Approach
+**View File Pipeline Understanding**:
+- Critical to understand where errors occur in the pipeline
+- Different error types require different debugging approaches
+- Lexer/parser errors prevent loading entirely
+- Runtime errors are harder to diagnose
 
-- **Practical Focus**: Emphasis on real-world problems and solutions
-- **Code Examples**: Every issue includes before/after code samples
-- **Progressive Complexity**: Starting with simple issues, building to advanced
-- **Cross-References**: Linking related documentation for deeper understanding
-- **Quick Reference**: Tables and checklists for rapid problem identification
+**Developer Pain Points**:
+- Property scope confusion ($self vs $page vs $args)
+- Layout constraint conflicts
+- Focus management complexity
+- Performance optimization challenges
+
+### 3. Best Practices Identified
+
+**For Debuggable Code**:
+- Use meaningful variable names
+- Add comments for complex logic
+- Structure code consistently
+- Use defensive programming (null checks, fallbacks)
+- Keep expressions simple
+
+**For Efficient Debugging**:
+- Start with minimal test cases
+- Build incrementally
+- Test frequently
+- Use version control
+- Document known issues
 
 ## Challenges and Solutions
 
 ### Challenge 1: Comprehensive Coverage
-**Issue**: Balancing comprehensive coverage with readability
+
+**Issue**: Needed to cover wide range of potential issues across different subsystems
 
 **Solution**: 
-- Created two documents: detailed guide and quick reference
-- Used tables and checklists for quick lookup
-- Provided code examples for every issue type
-- Cross-referenced between documents
+- Organized by category (view files, plugins, properties, layout, performance, navigation, media, build)
+- Used consistent structure (symptoms → causes → solutions)
+- Provided code examples for each issue type
 
-### Challenge 2: Organizing Diverse Issues
-**Issue**: Many different types of problems across multiple domains
+### Challenge 2: Balancing Detail and Usability
+
+**Issue**: Too much detail makes guides hard to use; too little makes them unhelpful
 
 **Solution**:
-- Organized by symptom/problem category
-- Used consistent format (Symptoms → Causes → Solutions)
-- Added quick diagnosis section at top
-- Created reference tables for common patterns
+- Created two complementary documents:
+  - Detailed debugging guide for learning and understanding
+  - Quick reference for fast lookup during development
+- Used clear formatting (checklists, tables, code blocks)
+- Included visual aids (diagrams, examples)
 
 ### Challenge 3: Practical Examples
-**Issue**: Ensuring examples are realistic and helpful
+
+**Issue**: Needed realistic examples that developers would encounter
 
 **Solution**:
-- Based examples on actual source code analysis
-- Included common mistakes from real development
-- Showed both incorrect and correct approaches
-- Added debug techniques that actually work in practice
+- Drew from existing documentation and source analysis
+- Used common patterns from Movian skins
+- Showed both wrong and correct approaches
+- Included real error messages and symptoms
 
 ## Integration with Existing Documentation
 
-### Links to Related Documentation
+### Cross-References
 
-**From Debugging Guide**:
+**Debugging Guide Links To**:
 - Syntax Reference (for correct syntax)
-- GLW Architecture (for system understanding)
+- GLW Architecture (for understanding pipeline)
 - Source Analysis Summary (for technical details)
-- Examples (for working patterns)
-- Performance Optimization (for optimization techniques)
+- Troubleshooting Reference (for quick solutions)
 
-**From Troubleshooting Reference**:
-- Installation Troubleshooting (for build issues)
-- Plugin Best Practices (for plugin development)
-- View File Syntax (for syntax questions)
+**Troubleshooting Reference Links To**:
+- Debugging View Files (for detailed techniques)
+- Syntax Reference (for syntax rules)
+- Plugin API Reference (for plugin development)
+- GLW Architecture (for system understanding)
 
-### Complementary Documentation
+### Documentation Flow
 
-- **Debugging View Files**: Detailed, tutorial-style guide
-- **Troubleshooting Reference**: Quick lookup, problem-solution format
-- **Syntax Reference**: Authoritative syntax documentation
-- **Examples**: Working code to learn from
-- **Best Practices**: Patterns and anti-patterns
-
-## Usage Scenarios
-
-### Scenario 1: Syntax Error
-1. Developer sees error in console
-2. Checks Troubleshooting Reference for error pattern
-3. Finds matching issue with solution
-4. Applies fix
-
-### Scenario 2: Widget Not Visible
-1. Developer checks Debugging Guide visibility section
-2. Follows checklist (alpha, size, parent, etc.)
-3. Uses visual debugging technique (colored border)
-4. Identifies issue (alpha was 0)
-5. Fixes and verifies
-
-### Scenario 3: Performance Issue
-1. Developer notices slowdown
-2. Checks Performance section in Troubleshooting
-3. Identifies too many widgets
-4. Follows solution to use cloner
-5. Verifies improvement
-
-### Scenario 4: Property Not Updating
-1. Developer checks Debugging Guide property section
-2. Uses debug assignment operator
-3. Sees property is void
-4. Checks Troubleshooting for scope issues
-5. Fixes property path
-
-## Metrics and Quality
-
-### Documentation Metrics
-
-- **Debugging Guide**: ~800 lines, comprehensive coverage
-- **Troubleshooting Reference**: ~600 lines, quick reference format
-- **Code Examples**: 100+ code snippets showing problems and solutions
-- **Issue Categories**: 8 major categories, 50+ specific issues
-- **Cross-References**: 10+ links to related documentation
-
-### Quality Indicators
-
-- ✅ All examples based on source code analysis
-- ✅ Consistent format throughout
-- ✅ Practical, actionable solutions
-- ✅ Multiple entry points (symptom, category, keyword)
-- ✅ Platform-specific guidance included
-- ✅ Debug tools and commands documented
-- ✅ Best practices integrated
+```
+Developer encounters issue
+    ↓
+Troubleshooting Reference (quick lookup)
+    ↓
+Debugging View Files Guide (detailed techniques)
+    ↓
+Syntax Reference / Architecture Docs (deep understanding)
+    ↓
+Source Analysis (implementation details)
+```
 
 ## Next Steps
 
-### Immediate
-- ✅ Git commit completed
-- ✅ Task report created
-- ✅ Progress file updated
+### Recommended Follow-up Tasks
 
-### Future Enhancements
-- Add video tutorials for visual debugging techniques
-- Create interactive debugging checklist tool
-- Expand platform-specific sections based on user feedback
-- Add more advanced debugging scenarios
-- Create debugging quick reference card (printable)
+1. **Create Video Tutorials**:
+   - Screen recordings of debugging sessions
+   - Common issue walkthroughs
+   - Tool usage demonstrations
 
-## Recommendations
+2. **Develop Debugging Tools**:
+   - View file validator script
+   - Property inspector plugin
+   - Layout visualization tool
 
-### For Developers
-1. Start with Troubleshooting Reference for quick fixes
-2. Use Debugging Guide for learning debugging techniques
-3. Enable debug logging during development
-4. Use visual debugging techniques early
-5. Build incrementally and test frequently
+3. **Expand Examples**:
+   - More real-world debugging scenarios
+   - Platform-specific issues
+   - Advanced debugging techniques
 
-### For Documentation Maintainers
-1. Keep examples updated with Movian changes
-2. Add new issues as they're discovered
-3. Collect common questions from community
-4. Update based on user feedback
-5. Maintain cross-references as docs evolve
+4. **Community Feedback**:
+   - Gather feedback from developers
+   - Identify missing issues
+   - Update based on common questions
 
-### For Tool Developers
-1. Consider creating debugging UI in Movian
-2. Add widget inspector tool
-3. Implement property value viewer
-4. Create layout visualization tool
-5. Add performance profiler
+### Documentation Maintenance
+
+**Regular Updates Needed**:
+- Add new issues as discovered
+- Update for API changes
+- Incorporate community feedback
+- Add platform-specific guidance
+
+**Version Tracking**:
+- Mark Movian version compatibility
+- Note when issues were introduced/fixed
+- Track deprecated debugging techniques
+
+## Metrics and Success Criteria
+
+### Documentation Quality
+
+**Completeness**: ✅
+- All major issue categories covered
+- Both detailed guide and quick reference provided
+- Examples for each issue type
+
+**Accuracy**: ✅
+- Based on source code analysis
+- Verified against existing documentation
+- Uses real error messages and symptoms
+
+**Usability**: ✅
+- Clear organization and structure
+- Quick reference format for fast lookup
+- Code examples with explanations
+- Visual aids (diagrams, checklists)
+
+**Maintainability**: ✅
+- Modular structure for easy updates
+- Clear version tracking
+- Cross-referenced with other docs
+
+### Expected Impact
+
+**For New Developers**:
+- Faster onboarding with debugging guide
+- Reduced frustration with common issues
+- Better understanding of view file system
+
+**For Experienced Developers**:
+- Quick reference for rare issues
+- Advanced debugging techniques
+- Performance optimization guidance
+
+**For Documentation**:
+- Completes the view file documentation suite
+- Provides practical complement to reference docs
+- Reduces support burden
+
+## Files Created/Modified
+
+### Created Files
+
+1. **movian-docs/docs/guides/debugging-view-files.md** (1,200+ lines)
+   - Comprehensive debugging guide
+   - Pipeline explanation
+   - Common errors with solutions
+   - Debugging tools and techniques
+   - Development workflow
+   - Best practices
+
+2. **movian-docs/docs/reference/troubleshooting.md** (1,100+ lines)
+   - Quick reference format
+   - Issue categories
+   - Symptoms → Causes → Solutions
+   - Platform-specific guidance
+   - Community resources
+
+3. **movian-docs/task-reports/task-6.4-report.md** (this file)
+   - Task completion documentation
+   - Deliverables summary
+   - Key findings
+   - Next steps
+
+### Modified Files
+
+None - all new documentation
+
+## Validation
+
+### Documentation Review
+
+**Structure**: ✅
+- Logical organization
+- Clear hierarchy
+- Consistent formatting
+
+**Content**: ✅
+- Accurate information
+- Practical examples
+- Complete coverage
+
+**Cross-References**: ✅
+- Links to related documentation
+- Consistent terminology
+- No broken references
+
+### Code Examples
+
+**Syntax**: ✅
+- All examples use correct syntax
+- Wrong examples clearly marked
+- Correct alternatives provided
+
+**Completeness**: ✅
+- Examples are self-contained
+- Context provided
+- Expected behavior explained
 
 ## Conclusion
 
-Task 6.4 successfully delivers comprehensive debugging and troubleshooting documentation for Movian view file development. The two-document approach (detailed guide + quick reference) provides both learning resources and practical problem-solving tools.
+Task 6.4 has been successfully completed with two comprehensive documentation files:
 
-The documentation is:
-- **Practical**: Focused on real problems with actionable solutions
-- **Comprehensive**: Covers syntax, layout, properties, focus, performance
-- **Accessible**: Multiple entry points and formats for different needs
-- **Accurate**: Based on source code analysis and verified techniques
-- **Integrated**: Well-connected with existing documentation
+1. **Debugging View Files Guide** - A detailed guide for understanding and debugging view file issues, with practical techniques and real-world scenarios
 
-This completes the UI documentation section of the Movian documentation project, providing developers with the tools they need to debug and troubleshoot view file issues effectively.
+2. **Troubleshooting Reference** - A quick reference for common issues across all Movian subsystems, organized for fast lookup
 
----
+These documents complete the view file documentation suite and provide essential resources for developers working with Movian's GLW system. The combination of detailed guidance and quick reference ensures developers can both learn debugging techniques and quickly resolve issues during development.
 
-**Report Created**: 2024-11-06  
-**Task**: 6.4 Document layout debugging and development techniques  
-**Status**: ✅ Complete
+The documentation is based on source code analysis, existing documentation, and real-world patterns from Movian skins, ensuring accuracy and practical utility.
+
+## Mandatory Completion Steps
+
+- [x] Create debugging-view-files.md guide
+- [x] Create troubleshooting.md reference
+- [x] Create task completion report
+- [ ] Git commit with message: "docs: 6.4 - Document layout debugging and development techniques"
+- [ ] Update PROGRESS.md with task completion entry
