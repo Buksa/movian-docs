@@ -36,7 +36,6 @@ theme:
 
 plugins:
   - search
-  - mermaid2
 
 markdown_extensions:
   - admonition
@@ -60,7 +59,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Architecture:
-    - Overview: architecture/README.md
+    - Overview: architecture/overview.md
     - Components: architecture/components.md
     - Lifecycle: architecture/lifecycle.md
     - Threading: architecture/threading.md
@@ -92,10 +91,7 @@ nav:
     - Examples: ui/examples/README.md
     - Source Analysis: ui/source-analysis/README.md
   - Reference:
-    - Overview: reference/README.md
     - Glossary: reference/glossary.md
-  - Guides:
-    - Overview: guides/README.md
   - Testing:
     - Overview: tests/README.md
 
