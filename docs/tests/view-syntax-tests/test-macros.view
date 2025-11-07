@@ -1,0 +1,186 @@
+/**
+ * Test: Macro Definitions and Invocations
+ * 
+ * Tests macro syntax in GLW view files:
+ * - Simple macro definitions
+ * - Macros with arguments
+ * - Macros with default arguments
+ * - Macro invocations (positional and named arguments)
+ */
+
+// Test: Simple macro without arguments
+#define separator() {
+  quad {
+    height = 1;
+    color = "#CCCCCC";
+  }
+}
+
+// Test: Macro with single argument
+#define button(label) {
+  container_x {
+    focusable = true;
+    
+    label {
+      caption = $label;
+      size = 16;
+    }
+  }
+}
+
+// Test: Macro with multiple arguments
+#define listItem(title, subtitle, icon) {
+  container_x {
+    spacing = 10;
+    
+    image {
+      source = $icon;
+      width = 32;
+      height = 32;
+    }
+    
+    container_y {
+      label {
+        caption = $title;
+        bold = true;
+      }
+      
+      label {
+        caption = $subtitle;
+        size = 12;
+      }
+    }
+  }
+}
+
+// Test: Macro with default arguments
+#define widget(name, width=100, height=50) {
+  container_x {
+    id = $name;
+    width = $width;
+    height = $height;
+  }
+}
+
+// Test: Macro with mixed default and non-default arguments
+#define card(title, description="", showIcon=true, iconSize=32) {
+  container_y {
+    spacing = 5;
+    
+    label {
+      caption = $title;
+      bold = true;
+    }
+    
+    label {
+      caption = $description;
+    }
+    
+    image {
+      source = "icon.png";
+      width = $iconSize;
+      height = $iconSize;
+      hidden = !$showIcon;
+    }
+  }
+}
+
+// Test: Complex macro with nested widgets
+#define panel(title, width=300, height=200, padding=10) {
+  container_y {
+    width = $width;
+    height = $height;
+    padding = $padding;
+    
+    // Header
+    container_x {
+      label {
+        caption = $title;
+        size = 18;
+        bold = true;
+      }
+    }
+    
+    // Separator
+    quad {
+      height = 1;
+      color = "#CCCCCC";
+    }
+    
+    // Content area
+    container_y {
+      spacing = 5;
+    }
+  }
+}
+
+// Test: Macro invocations
+container_y {
+  spacing = 10;
+  
+  // Test: Simple macro invocation
+  separator()
+  
+  // Test: Macro with positional arguments
+  button("Click Me")
+  
+  button("Submit")
+  
+  // Test: Macro with multiple positional arguments
+  listItem("Title", "Subtitle", "icon.png")
+  
+  // Test: Macro with default arguments (using defaults)
+  widget("myWidget")
+  
+  // Test: Macro with default arguments (overriding some)
+  widget("customWidget", 200)
+  
+  // Test: Macro with default arguments (overriding all)
+  widget("fullCustom", 250, 100)
+  
+  // Test: Macro with named arguments
+  widget(name="namedWidget", height=75)
+  
+  widget(height=80, name="reorderedWidget", width=180)
+  
+  // Test: Complex macro invocation
+  card("Card Title", "This is a description", true, 48)
+  
+  card("Simple Card")
+  
+  card(title="Named Card", description="With description", showIcon=false)
+  
+  // Test: Panel macro
+  panel("Settings", 400, 300, 15)
+  
+  panel("Info")
+  
+  panel(title="Custom Panel", width=500)
+}
+
+// Test: Nested macro invocations
+#define section(title) {
+  container_y {
+    spacing = 5;
+    
+    label {
+      caption = $title;
+      size = 20;
+      bold = true;
+    }
+    
+    separator()
+  }
+}
+
+container_y {
+  section("Section 1")
+  
+  button("Action 1")
+  button("Action 2")
+  
+  section("Section 2")
+  
+  listItem("Item 1", "Description 1", "icon1.png")
+  listItem("Item 2", "Description 2", "icon2.png")
+}

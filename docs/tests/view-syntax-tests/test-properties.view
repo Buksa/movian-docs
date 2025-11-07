@@ -1,0 +1,146 @@
+/**
+ * Test: Property References
+ * 
+ * Tests property reference syntax in GLW view files:
+ * - Basic property references ($property)
+ * - Property chains ($object.property.subproperty)
+ * - Property roots ($self, $parent, $page, etc.)
+ * - Property binding and subscriptions
+ */
+
+container_y {
+  // Test: Basic property references
+  label {
+    caption = $title;
+    width = $itemWidth;
+    alpha = $opacity;
+  }
+  
+  // Test: Property chains
+  label {
+    caption = $page.model.title;
+    width = $item.metadata.width;
+    color = $global.settings.theme.textColor;
+  }
+  
+  // Test: $self reference (current item in cloner)
+  cloner {
+    source = $items;
+    
+    container_x {
+      label {
+        caption = $self.title;
+      }
+      
+      label {
+        caption = $self.subtitle;
+      }
+      
+      image {
+        source = $self.icon;
+      }
+    }
+  }
+  
+  // Test: $parent reference
+  container_x {
+    width = 500;
+    
+    container_y {
+      width = $parent.width * 0.8;
+      
+      label {
+        width = $parent.width - 20;
+      }
+    }
+  }
+  
+  // Test: $page reference
+  container_y {
+    label {
+      caption = $page.model.title;
+    }
+    
+    label {
+      caption = $page.model.description;
+    }
+    
+    cloner {
+      source = $page.model.items;
+      
+      label {
+        caption = $self.name;
+      }
+    }
+  }
+  
+  // Test: $global reference
+  container_x {
+    label {
+      color = $global.settings.textColor;
+      size = $global.settings.fontSize;
+    }
+  }
+  
+  // Test: $ui reference (theme properties)
+  label {
+    color = $ui.color.text;
+    font = $ui.font.default;
+    size = $ui.size.normal;
+  }
+  
+  // Test: $args reference (passed to loaded view)
+  loader {
+    source = "item-view.view";
+    args = $itemData;
+    
+    // In loaded view, accessible as $args
+  }
+  
+  // Test: $clone reference (cloner context)
+  cloner {
+    source = $items;
+    
+    container_x {
+      label {
+        caption = "Item " + $clone.index;
+      }
+      
+      label {
+        caption = $self.title;
+        alpha = $clone.index == 0 ? 1.0 : 0.7;
+      }
+    }
+  }
+  
+  // Test: Property binding with link assignment
+  container_x {
+    width <- $model.containerWidth;
+    height <- $model.containerHeight;
+    alpha <- $model.opacity;
+  }
+  
+  // Test: Property references in expressions
+  container_x {
+    width = $parent.width - ($padding * 2);
+    alpha = $enabled ? 1.0 : 0.3;
+    color = $selected ? $ui.color.selected : $ui.color.normal;
+  }
+  
+  // Test: Null coalescing with properties
+  label {
+    caption = $item.title ?? $item.name ?? "Untitled";
+    width = $custom.width ?? $default.width ?? 100;
+  }
+  
+  // Test: Complex property expressions
+  container_y {
+    alpha = $page.model.enabled && $self.visible ? 1.0 : 0.3;
+    
+    width = $parent.width * ($self.widthRatio ?? 1.0);
+    
+    color = $self.selected ? 
+            $ui.color.selected : 
+            ($self.focused ? $ui.color.focused : $ui.color.normal);
+  }
+}

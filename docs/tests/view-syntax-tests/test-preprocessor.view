@@ -1,0 +1,50 @@
+/**
+ * Test: Preprocessor Directives
+ * 
+ * Tests preprocessor directive syntax in GLW view files:
+ * - #include directive (loads file each time)
+ * - #import directive (loads file once)
+ * - File path resolution
+ */
+
+// Test: #include directive
+// Note: These files don't need to exist for syntax validation
+#include "common/header.view"
+#include "common/macros.view"
+
+// Test: #import directive (loaded only once)
+#import "macros/ui-components.view"
+#import "macros/ui-components.view"  // This will be ignored
+
+// Test: Multiple includes of same file (each is processed)
+#include "common/footer.view"
+#include "common/footer.view"  // This will be processed
+
+container_y {
+  // Content using imported/included definitions
+  
+  label {
+    caption = "Main Content";
+  }
+  
+  // Test: Include in middle of file
+  #include "sections/content.view"
+  
+  label {
+    caption = "More Content";
+  }
+}
+
+// Test: Import with different path styles
+#import "skin://common/theme.view"
+#import "../shared/utilities.view"
+#import "dataroot://resources/definitions.view"
+
+// Test: Nested includes (files can include other files)
+#include "layouts/main-layout.view"
+
+container_x {
+  label {
+    caption = "Footer";
+  }
+}

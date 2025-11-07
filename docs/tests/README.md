@@ -46,6 +46,21 @@ Dedicated plugin integration test runner that validates all plugin examples.
 ./run-plugin-tests.sh --verbose
 ```
 
+### `run-view-syntax-tests.sh`
+GLW view file syntax validation test runner that validates documented syntax.
+
+**Usage:**
+```bash
+# Run view syntax validation tests
+./run-view-syntax-tests.sh
+
+# Verbose output
+./run-view-syntax-tests.sh --verbose
+
+# Skip HTML report generation
+./run-view-syntax-tests.sh --no-report
+```
+
 ### `plugin-integration-tests.js`
 Node.js script that performs comprehensive integration testing of plugin examples.
 
@@ -65,6 +80,32 @@ node plugin-integration-tests.js
 
 # Or use npm script
 npm run validate
+```
+
+### `view-syntax-validator.js`
+Node.js script that validates GLW view file syntax against documented syntax rules.
+
+**Features:**
+- Lexical element validation (comments, strings, numbers)
+- Operator syntax validation (all operator types)
+- Expression syntax validation (static and dynamic)
+- Property reference validation
+- Widget definition validation
+- Preprocessor directive validation
+- Macro syntax validation
+- Advanced feature validation (cloner, events, loader)
+- Comprehensive JSON and HTML reporting
+
+**Usage:**
+```bash
+# Run syntax validation directly
+node view-syntax-validator.js
+
+# With verbose output
+node view-syntax-validator.js --verbose
+
+# Or use npm script
+npm run validate:view-syntax
 ```
 
 ### `dependency-check.py`

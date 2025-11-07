@@ -1,0 +1,76 @@
+/**
+ * Test: Lexical Elements
+ * 
+ * Tests all lexical elements defined in the GLW view syntax:
+ * - Comments (single-line and multi-line)
+ * - String literals (double-quoted and single-quoted)
+ * - Numeric literals (integers, floats, EM units)
+ * - Boolean constants (true, false)
+ * - Identifiers
+ */
+
+// Single line comment
+/* Multi-line
+   comment block */
+
+container_y {
+  // Test: Double-quoted strings (UTF-8)
+  label {
+    caption = "Hello World";
+  }
+  
+  label {
+    caption = "Path: /home/user/file.txt";
+  }
+  
+  label {
+    caption = "Escaped quotes and backslash";
+  }
+  
+  // Test: Single-quoted strings (Rich Text)
+  label {
+    caption = '<b>Bold Text</b>';
+  }
+  
+  label {
+    caption = '<i>Italic</i> and <u>Underline</u>';
+  }
+  
+  // Test: Integer literals
+  container_x {
+    width = 100;
+    height = 200;
+    spacing = 10;
+  }
+  
+  // Test: Float literals
+  container_x {
+    alpha = 0.5;
+    scale = 1.5;
+    weight = 2.0;
+  }
+  
+  // Test: EM units
+  label {
+    size = 2 em;
+    padding = 1.5 em;
+  }
+  
+  // Test: Boolean constants
+  container_x {
+    focusable = true;
+    hidden = false;
+  }
+  
+  // Test: Identifiers
+  container_x {
+    id = "myContainer";
+    _privateProperty = 123;
+    property2 = "value";
+  }
+  
+  // Test: void constant
+  label {
+    caption = void;
+  }
+}

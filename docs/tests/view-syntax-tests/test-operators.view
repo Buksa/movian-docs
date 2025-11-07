@@ -1,0 +1,100 @@
+/**
+ * Test: Operators
+ * 
+ * Tests all operators defined in the GLW view syntax:
+ * - Assignment operators (=, ?=, <-, :=, _=_)
+ * - Arithmetic operators (+, -, *, /, %)
+ * - Comparison operators (==, !=, <, >)
+ * - Logical operators (&&, ||, ^^, !)
+ * - Ternary operator (? :)
+ * - Null coalescing operator (??)
+ */
+
+container_y {
+  // Test: Standard assignment
+  label {
+    width = 100;
+    caption = "Standard";
+  }
+  
+  // Test: Conditional assignment (only if void)
+  label {
+    width ?= 200;
+    caption = "Conditional";
+  }
+  
+  // Test: Link assignment (property binding)
+  label {
+    width <- $parent.width;
+    caption = "Linked";
+  }
+  
+  // Test: Arithmetic operators
+  container_x {
+    width = 100 + 50;      // Addition
+    height = 200 - 50;     // Subtraction
+    spacing = 10 * 2;      // Multiplication
+    padding = 100 / 4;     // Division
+    offset = 100 % 30;     // Modulo
+  }
+  
+  // Test: String concatenation
+  label {
+    caption = "Hello" + " " + "World";
+  }
+  
+  label {
+    caption = "Value: " + 123;
+  }
+  
+  // Test: Comparison operators
+  container_x {
+    alpha = $value == 100 ? 1.0 : 0.5;     // Equality
+    hidden = $count != 0 ? false : true;    // Inequality
+    enabled = $index < 10 ? true : false;   // Less than
+    visible = $size > 0 ? true : false;     // Greater than
+  }
+  
+  // Test: Logical operators
+  container_x {
+    focusable = $enabled && $visible;       // Logical AND
+    hidden = $disabled || $invisible;       // Logical OR
+    toggle = $state1 ^^ $state2;           // Logical XOR
+    enabled = !$disabled;                   // Logical NOT
+  }
+  
+  // Test: Ternary operator
+  label {
+    caption = $selected ? "Selected" : "Not Selected";
+    alpha = $enabled ? 1.0 : 0.3;
+    color = $active ? [1, 0, 0] : [0.5, 0.5, 0.5];
+  }
+  
+  // Test: Null coalescing operator
+  label {
+    caption = $item.title ?? "Untitled";
+    width = $custom.width ?? 100;
+  }
+  
+  // Test: Complex expressions with operator precedence
+  container_x {
+    // Multiplication before addition
+    width = 10 + 20 * 2;  // = 50
+    
+    // Parentheses override precedence
+    height = (10 + 20) * 2;  // = 60
+    
+    // Logical AND before OR
+    enabled = $a || $b && $c;
+    
+    // Comparison before logical
+    visible = $x > 0 && $y < 100;
+  }
+  
+  // Test: Nested ternary
+  label {
+    caption = $state == 0 ? "Zero" : 
+              $state == 1 ? "One" : 
+              "Other";
+  }
+}

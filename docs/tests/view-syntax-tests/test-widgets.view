@@ -1,0 +1,232 @@
+/**
+ * Test: Widget Definitions
+ * 
+ * Tests widget definition syntax in GLW view files:
+ * - Container widgets (container_x, container_y, container_z)
+ * - Content widgets (label, image, quad)
+ * - List widgets (list_x, list_y)
+ * - Widget attributes
+ * - Widget nesting
+ */
+
+// Test: container_x (horizontal container)
+container_x {
+  spacing = 10;
+  align = "center";
+  padding = 5;
+  
+  label {
+    caption = "Left";
+  }
+  
+  label {
+    caption = "Center";
+  }
+  
+  label {
+    caption = "Right";
+  }
+}
+
+// Test: container_y (vertical container)
+container_y {
+  spacing = 5;
+  align = "left";
+  
+  label {
+    caption = "Top";
+  }
+  
+  label {
+    caption = "Middle";
+  }
+  
+  label {
+    caption = "Bottom";
+  }
+}
+
+// Test: container_z (z-axis stacking)
+container_z {
+  image {
+    source = "background.png";
+    alpha = 0.5;
+  }
+  
+  label {
+    caption = "Overlay Text";
+    color = "#FFFFFF";
+  }
+}
+
+// Test: label widget with various attributes
+label {
+  caption = "Hello World";
+  font = "default";
+  size = 24;
+  color = "#FFFFFF";
+  align = "center";
+  maxlines = 2;
+  ellipsize = true;
+  bold = true;
+  italic = false;
+  outline = true;
+}
+
+// Test: image widget with various attributes
+image {
+  source = "icon.png";
+  color = "#FFFFFF";
+  saturation = 1.0;
+  alpha = 0.8;
+  aspectConstraint = true;
+  fixedSize = false;
+}
+
+// Test: quad widget (colored rectangle)
+quad {
+  color = "#FF0000";
+  alpha = 0.5;
+}
+
+// Test: list_x (horizontal scrollable list)
+list_x {
+  spacing = 10;
+  childTilesX = 5;
+  scrollThreshold = 0.5;
+  
+  cloner {
+    source = $items;
+    
+    container_x {
+      label {
+        caption = $self.title;
+      }
+    }
+  }
+}
+
+// Test: list_y (vertical scrollable list)
+list_y {
+  spacing = 5;
+  childTilesY = 10;
+  
+  cloner {
+    source = $items;
+    
+    label {
+      caption = $self.title;
+    }
+  }
+}
+
+// Test: Nested widget hierarchy
+container_y {
+  spacing = 10;
+  
+  // Header section
+  container_x {
+    align = "center";
+    
+    image {
+      source = "logo.png";
+      width = 50;
+      height = 50;
+    }
+    
+    label {
+      caption = "Application Title";
+      size = 24;
+      bold = true;
+    }
+  }
+  
+  // Content section
+  container_y {
+    spacing = 5;
+    
+    label {
+      caption = "Description";
+      size = 16;
+    }
+    
+    // Nested list
+    list_y {
+      spacing = 3;
+      
+      cloner {
+        source = $items;
+        
+        container_x {
+          spacing = 5;
+          
+          image {
+            source = $self.icon;
+            width = 32;
+            height = 32;
+          }
+          
+          container_y {
+            label {
+              caption = $self.title;
+              bold = true;
+            }
+            
+            label {
+              caption = $self.subtitle;
+              size = 12;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Footer section
+  container_x {
+    align = "right";
+    
+    label {
+      caption = "Footer Text";
+      size = 10;
+    }
+  }
+}
+
+// Test: Widget with all common attributes
+container_x {
+  id = "myContainer";
+  width = 500;
+  height = 300;
+  alpha = 1.0;
+  hidden = false;
+  focusable = true;
+  spacing = 10;
+  padding = 5;
+  align = "center";
+  weight = 1.0;
+}
+
+// Test: Cloner widget
+cloner {
+  source = $page.model.items;
+  
+  container_x {
+    label {
+      caption = $self.title;
+    }
+    
+    label {
+      caption = $self.description;
+    }
+  }
+}
+
+// Test: Loader widget
+loader {
+  source = "content.view";
+  alt = "fallback.view";
+  args = $data;
+  time = 0.3;
+  effect = "blend";
+}

@@ -1,0 +1,120 @@
+/**
+ * Test: Expressions
+ * 
+ * Tests expression evaluation in GLW view files:
+ * - Static expressions (evaluated at parse time)
+ * - Dynamic expressions (evaluated at runtime)
+ * - Color expressions (hex and RGB)
+ * - Type coercion
+ * - Complex nested expressions
+ */
+
+container_y {
+  // Test: Static expressions (no property references)
+  container_x {
+    width = 100 + 50;           // = 150
+    height = 200 - 50;          // = 150
+    spacing = 10 * 2;           // = 20
+    padding = 100 / 4;          // = 25
+  }
+  
+  // Test: Dynamic expressions (with property references)
+  container_x {
+    width = $parent.width * 0.5;
+    height = $parent.height - 100;
+    alpha = $enabled ? 1.0 : 0.3;
+  }
+  
+  // Test: Hex color expressions
+  label {
+    color = "#FF0000";          // Red
+  }
+  
+  label {
+    color = "#00FF00";          // Green
+  }
+  
+  label {
+    color = "#0000FF";          // Blue
+  }
+  
+  label {
+    color = "#F00";             // Short form red
+  }
+  
+  // Test: RGB vector expressions
+  label {
+    color = [1.0, 0.0, 0.0];    // Red
+  }
+  
+  label {
+    color = [0.5, 0.5, 0.5];    // Gray
+  }
+  
+  // Test: Color arithmetic
+  label {
+    color = $baseColor * 0.5;   // Darken
+  }
+  
+  label {
+    color = $color1 + $color2;  // Add colors
+  }
+  
+  // Test: Type coercion
+  container_x {
+    // Integer to float
+    alpha = 1;                  // Becomes 1.0
+    
+    // Number to string
+    caption = "Value: " + 123;  // "Value: 123"
+    
+    // EM to pixels (dynamic)
+    size = 2 em + 10;
+  }
+  
+  // Test: Complex nested expressions
+  container_x {
+    width = ($parent.width - ($padding * 2)) * $scale;
+    
+    alpha = $enabled && $visible ? 
+            ($selected ? 1.0 : 0.8) : 
+            0.3;
+    
+    color = $selected ? 
+            ($focused ? [1, 1, 0] : [1, 0, 0]) : 
+            [0.5, 0.5, 0.5];
+  }
+  
+  // Test: Boolean conversion in expressions
+  container_x {
+    // Non-zero numbers are true
+    enabled = 1 && true;        // true
+    
+    // Zero is false
+    disabled = 0 || false;      // false
+    
+    // Empty string is false
+    hidden = "" ? true : false; // false
+    
+    // Non-empty string is true
+    visible = "text" ? true : false;  // true
+  }
+  
+  // Test: Null coalescing chains
+  label {
+    caption = $item.title ?? $item.name ?? "Untitled";
+    width = $custom.width ?? $default.width ?? 100;
+  }
+  
+  // Test: Mathematical expressions
+  container_x {
+    // Trigonometric-like calculations
+    offset = $base + ($amplitude * $factor);
+    
+    // Percentage calculations
+    width = $parent.width * 0.75;  // 75%
+    
+    // Clamping with ternary
+    value = $input > 100 ? 100 : ($input < 0 ? 0 : $input);
+  }
+}
