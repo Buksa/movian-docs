@@ -1,0 +1,58 @@
+// Advanced Skin - Directory/List Page
+// Standard list view for browsing content
+
+#import "skin://theme.view"
+
+widget(container_y, {
+  style: "PageContainer";
+  
+  // Page header with title
+  PageHeader($self.model.metadata.title ?? _("Directory"));
+  
+  // Search bar (if search is available)
+  widget(container_y, {
+    hidden: !$self.model.canFilter;
+    SearchBar($self.model.url + "?search=");
+  });
+  
+  // Main content area
+  widget(container_x, {
+    
+    // Content list
+    widget(container_y, {
+      filterConstraintY: true;
+      
+      widget(list_y, {
+        id: "dirlist";
+        
+        cloner($self.model.nodes, loader, {
+          source: "skin://items/list/" + $self.type + ".view";
+        });
+      });
+      
+      // Empty state
+      widget(container_y, {
+        hidden: $self.model.nodes.count > 0;
+        align: center;
+        spacing: $ui.spacingLarge;
+        
+        widget(icon, {
+          source: "skin://icons/ic_folder_open_48px.svg";
+          size: 4em;
+          color: $ui.colorTextSecondary;
+          alpha: 0.5;
+        });
+        
+        widget(label, {
+          caption: _("Empty directory");
+          size: $ui.fontSizeLarge;
+          color: $ui.colorTextSecondary;
+          align: center;
+        });
+      });
+    });
+    
+    // Scrollbar
+    ScrollBar("dirlist");
+  });
+});

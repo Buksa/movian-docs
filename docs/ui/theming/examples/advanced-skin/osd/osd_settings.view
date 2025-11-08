@@ -1,0 +1,47 @@
+// Advanced Skin - Settings Page Macro
+// Reusable macro for creating consistent settings pages
+
+#import "skin://theme.view"
+
+#define OSD_SETTINGS_MENU(NODES, TITLE, ID) {
+  widget(container_y, {
+    id: ID;
+    
+    // Page title
+    widget(label, {
+      style: "osdsettingtitle";
+      height: 3em;
+      align: center;
+      caption: TITLE;
+      size: $ui.fontSizeXLarge;
+    });
+    
+    // Back to main menu
+    onEvent(back, {
+      $clone.osdpage = 1;
+      focus("osd_main");
+    });
+    
+    onEvent(left, {
+      $clone.osdpage = 1;
+      focus("osd_main");
+    });
+    
+    // Settings list with scrollbar
+    widget(container_x, {
+      widget(list_y, {
+        navWrap: true;
+        id: "list";
+        
+        cloner(NODES, loader, {
+          hidden: !$self.enabled;
+          source: "skin://items/list/" + $self.type + ".view";
+          time: 0.3;
+          noInitialTransform: true;
+        });
+      });
+      
+      ScrollBar("list");
+    });
+  });
+}

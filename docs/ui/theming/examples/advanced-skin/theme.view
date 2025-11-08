@@ -1,0 +1,519 @@
+// Advanced Skin - Extended Macro Library
+// This file defines 15+ reusable UI macros for complex patterns
+
+// ============================================================================
+// VISUAL EFFECT MACROS
+// ============================================================================
+
+// ListItemBevel - Adds subtle shadow effect to list items
+// Creates a 3D bevel effect with light and dark lines
+#define ListItemBevel() {
+  widget(container_y, {
+    filterConstraintY: true;
+    filterConstraintX: true;
+    
+    // Light line on top
+    widget(quad, {
+      height: 1;
+      alpha: 0.15;
+    });
+    
+    space(1);
+    
+    // Dark line on bottom
+    widget(quad, {
+      height: 1;
+      color: 0;
+      alpha: 0.15;
+    });
+  });
+}
+
+// GridItemBevel - Shadow effect for grid items
+#define GridItemBevel() {
+  widget(container_y, {
+    filterConstraintY: true;
+    filterConstraintX: true;
+    
+    widget(quad, {
+      height: 2;
+      alpha: 0.2;
+    });
+    
+    space(1);
+    
+    widget(quad, {
+      height: 2;
+      color: 0;
+      alpha: 0.2;
+    });
+  });
+}
+
+// CardShadow - Card-style shadow effect
+#define CardShadow() {
+  widget(quad, {
+    color: 0;
+    alpha: 0.3;
+    margin: [2, 2, -2, -2];
+  });
+}
+
+// ============================================================================
+// INTERACTIVE STATE MACROS
+// ============================================================================
+
+// ListItemHighlight - Highlights list items on hover/focus
+// Uses additive blending for a subtle glow effect
+#define ListItemHighlight() {
+  widget(quad, {
+    fhpSpill: true;
+    additive: true;
+    alpha: 0.1 * isHovered() + 0.2 * isNavFocused();
+  });
+}
+
+// GridItemHighlight - Highlights grid items with smooth animation
+#define GridItemHighlight() {
+  widget(quad, {
+    fhpSpill: true;
+    additive: true;
+    alpha: 0.1 * isHovered() + 0.2 * iir(isNavFocused(), 4, true);
+  });
+}
+
+// GridItemHighlight2 - Alternative grid highlight with different timing
+#define GridItemHighlight2() {
+  widget(quad, {
+    fhpSpill: true;
+    additive: true;
+    alpha: 0.15 * isHovered() + 0.25 * iir(isNavFocused(), 6, true);
+  });
+}
+
+// ButtonHighlight - Button interaction states
+#define ButtonHighlight() {
+  widget(quad, {
+    additive: true;
+    alpha: 0.2 * isHovered() + 0.3 * isNavFocused();
+    color: $ui.color1;
+  });
+}
+
+// ============================================================================
+// NAVIGATION MACROS
+// ============================================================================
+
+// BackButton - Creates a back navigation button
+// Parameters:
+//   ENABLED - Whether the button is enabled (default: true)
+//   EVENT - Event to trigger on activation (default: back event)
+#define BackButton(ENABLED=true, EVENT=event("back")) {
+  widget(container_y, {
+    align: center;
+    width: 4em;
+    clickable: $ui.pointerVisible || ($ui.touch && ENABLED);
+    alpha: iir($ui.pointerVisible || ($ui.touch && ENABLED), 4);
+    onEvent(activate, EVENT);
+    navFocusable: false;
+    
+    widget(icon, {
+      color: 0.5 + iir(isHovered(), 4);
+      size: 2em;
+      source: "dataroot://res/svg/Left.svg";
+    });
+  });
+}
+
+// PageHeader - Creates a standardized page header with title and back button
+// Parameters:
+//   TITLE - The title text to display
+#define PageHeader(TITLE) {
+  widget(container_z, {
+    height: 3em;
+    zoffset: 10;
+    
+    // Semi-transparent background
+    widget(quad, {
+      color: $ui.colorSurface;
+      alpha: 0.95;
+    });
+    
+    // Border at bottom
+    widget(container_y, {
+      space(1);
+      widget(quad, {
+        height: 2;
+        color: $ui.color1;
+      });
+    });
+    
+    // Title text centered
+    widget(label, {
+      padding: [3em, 0];
+      align: center;
+      caption: TITLE;
+      size: $ui.fontSizeXLarge;
+      color: $ui.colorText;
+    });
+    
+    // Back button (only shown when navigation allows going back)
+    widget(container_x, {
+      hidden: !$nav.canGoBack;
+      BackButton();
+      space(1);
+    });
+  });
+}
+
+// PageHeader0 - Customizable page header
+// Parameters:
+//   CONTENTS - Custom widget contents for the header
+#define PageHeader0(CONTENTS) {
+  widget(container_z, {
+    height: 3em;
+    zoffset: 10;
+    
+    widget(quad, {
+      color: $ui.colorSurface;
+      alpha: 0.95;
+    });
+    
+    widget(container_y, {
+      space(1);
+      widget(quad, {
+        height: 2;
+        color: $ui.color1;
+      });
+    });
+    
+    CONTENTS;
+  });
+}
+
+// SidebarAction - Sidebar navigation item
+// Parameters:
+//   CAPTION - Text label
+//   ICON - Icon source path
+//   EVENT - Event to trigger on activation
+//   HIDDEN - Whether the item is hidden (default: false)
+#define SidebarAction(CAPTION, ICON, EVENT, HIDDEN=false) {
+  widget(container_z, {
+    hidden: HIDDEN;
+    height: 2.5em;
+    ListItemBevel();
+    ListItemHighlight();
+    focusable: true;
+    onEvent(activate, EVENT);
+    
+    widget(container_x, {
+      style: "ListItem";
+      spacing: $ui.spacingNormal;
+      
+      widget(icon, {
+        style: "ListItemIcon";
+        source: ICON;
+      });
+      
+      widget(label, {
+        filterConstraintX: true;
+        caption: CAPTION;
+        style: "ActionLabel";
+      });
+    });
+  });
+}
+
+// ============================================================================
+// UI CONTROL MACROS
+// ============================================================================
+
+// ScrollBar - Scrollbar indicator
+// Parameters:
+//   TARGET - Target list/container ID to bind to
+//   TOP_PAD - Top padding (default: 0)
+//   BOTTOM_PAD - Bottom padding (default: 0)
+#define ScrollBar(TARGET, TOP_PAD=0, BOTTOM_PAD=0) {
+  widget(slider_y, {
+    bind(TARGET);
+    width: 4;
+    focusable: canScroll();
+    alpha: iir(canScroll(), 16);
+    padding: [TOP_PAD, 0, BOTTOM_PAD, 0];
+    
+    widget(quad, {
+      color: $ui.color1;
+      alpha: 0.8;
+    });
+  });
+}
+
+// SearchBar - Search interface
+// Parameters:
+//   URLPREFIX - URL prefix for search
+//   TEXT - Placeholder text (optional)
+//   ICON - Icon source (optional)
+#define SearchBar(URLPREFIX, TEXT=void, ICON=void) {
+  widget(container_z, {
+    height: 3em;
+    
+    widget(quad, {
+      color: $ui.colorSurface;
+      alpha: 0.9;
+    });
+    
+    ListItemHighlight();
+    
+    widget(container_x, {
+      padding: [$ui.spacingNormal, $ui.spacingLarge];
+      spacing: $ui.spacingNormal;
+      
+      widget(icon, {
+        width: 2em;
+        source: select(ICON, ICON, "skin://icons/ic_search_48px.svg");
+        color: $ui.colorTextSecondary;
+      });
+      
+      widget(text, {
+        filterConstraintX: true;
+        description: select(TEXT, TEXT, _("Search..."));
+        onEvent(enter, navOpen(URLPREFIX + $self.text));
+        focusable: true;
+      });
+    });
+  });
+}
+
+// PlaydeckButton - Media control button
+// Parameters:
+//   ICON - Icon source path
+//   CAPTION - Button label
+//   EVENT - Event to trigger on activation
+//   ENABLED - Whether button is enabled (default: true)
+//   ID - Widget ID for focus targeting (optional)
+//   HIGHLIGHTED - Whether button is highlighted (default: false)
+#define PlaydeckButton(ICON, CAPTION, EVENT, ENABLED=true, ID=void, HIGHLIGHTED=false) {
+  widget(container_y, {
+    id: ID;
+    width: 4em;
+    spacing: $ui.spacingSmall;
+    align: center;
+    focusable: ENABLED;
+    alpha: select(ENABLED, 1, 0.3);
+    onEvent(activate, EVENT, ENABLED);
+    
+    widget(container_z, {
+      width: 3em;
+      height: 3em;
+      
+      ButtonHighlight();
+      
+      widget(quad, {
+        color: select(HIGHLIGHTED, $ui.colorAccent, $ui.colorSurface);
+        alpha: 0.8;
+      });
+      
+      widget(icon, {
+        source: ICON;
+        color: select(HIGHLIGHTED, $ui.colorText, $ui.colorTextSecondary);
+        size: 2em;
+        align: center;
+      });
+    });
+    
+    widget(label, {
+      caption: CAPTION;
+      size: $ui.fontSizeSmall;
+      align: center;
+      color: $ui.colorTextSecondary;
+    });
+  });
+}
+
+// SettingsItem - Settings list item
+// Parameters:
+//   CAPTION - Item label
+//   VALUE - Current value display
+//   EVENT - Event to trigger on activation
+#define SettingsItem(CAPTION, VALUE, EVENT) {
+  widget(container_z, {
+    height: 2.5em;
+    ListItemBevel();
+    ListItemHighlight();
+    focusable: true;
+    onEvent(activate, EVENT);
+    
+    widget(container_x, {
+      padding: [$ui.spacingNormal, $ui.spacingLarge];
+      
+      widget(label, {
+        filterConstraintX: true;
+        caption: CAPTION;
+        style: "NavSelectedText";
+      });
+      
+      space(1);
+      
+      widget(label, {
+        caption: VALUE;
+        style: "NavSelectedTextSecondary";
+      });
+    });
+  });
+}
+
+// ============================================================================
+// LAYOUT MACROS
+// ============================================================================
+
+// GridContainer - Grid layout wrapper
+// Parameters:
+//   COLUMNS - Number of columns
+//   SPACING - Spacing between items (default: 1em)
+#define GridContainer(COLUMNS, SPACING=1em) {
+  widget(grid, {
+    columns: COLUMNS;
+    spacing: SPACING;
+    filterConstraintX: true;
+    filterConstraintY: true;
+  });
+}
+
+// ListContainer - List layout wrapper
+// Parameters:
+//   ID - Widget ID for binding (optional)
+//   SPACING - Spacing between items (default: 0)
+#define ListContainer(ID=void, SPACING=0) {
+  widget(list_y, {
+    id: ID;
+    spacing: SPACING;
+    navWrap: false;
+    filterConstraintY: true;
+  });
+}
+
+// ============================================================================
+// SIDEBAR BUTTON MACROS (for OSD and media controls)
+// ============================================================================
+
+// SidebarButton - Icon-only button for compact controls
+// Parameters:
+//   ICON - Icon source path
+//   EVENT - Event to trigger on activation
+//   ENABLED - Whether button is enabled (default: true)
+#define SidebarButton(ICON, EVENT, ENABLED=true) {
+  widget(container_z, {
+    width: 2.5em;
+    height: 2.5em;
+    focusable: ENABLED;
+    alpha: select(ENABLED, 1, 0.3);
+    onEvent(activate, EVENT, ENABLED);
+    
+    ListItemBevel();
+    ListItemHighlight();
+    
+    widget(icon, {
+      source: ICON;
+      color: select(isNavFocused(), $ui.color1, $ui.colorTextSecondary);
+      align: center;
+    });
+  });
+}
+
+// SidebarButtonToggle - Toggle button with state indication
+// Parameters:
+//   ICON - Icon source path
+//   VALUE - Boolean value to toggle
+//   ENABLED - Whether button is enabled (default: true)
+#define SidebarButtonToggle(ICON, VALUE, ENABLED=true) {
+  widget(container_z, {
+    width: 2.5em;
+    height: 2.5em;
+    focusable: ENABLED;
+    alpha: select(ENABLED, 1, 0.3);
+    onEvent(activate, toggle(VALUE), ENABLED);
+    
+    ListItemBevel();
+    ListItemHighlight();
+    
+    widget(quad, {
+      color: $ui.colorAccent;
+      alpha: select(VALUE, 0.3, 0);
+    });
+    
+    widget(icon, {
+      source: ICON;
+      color: select(VALUE, $ui.colorAccent, $ui.colorTextSecondary);
+      align: center;
+    });
+  });
+}
+
+// SidebarInteger - Slider control for numeric values
+// Parameters:
+//   CAPTION - Label text
+//   ICON - Icon source path
+//   MIN - Minimum value
+//   MAX - Maximum value
+//   STEP - Step increment
+//   VALUE - Current value variable
+//   UNIT - Unit suffix (optional)
+//   HIDDEN - Whether control is hidden (default: false)
+#define SidebarInteger(CAPTION, ICON, MIN, MAX, STEP, VALUE, UNIT=void, HIDDEN=false) {
+  widget(container_z, {
+    hidden: HIDDEN;
+    height: 3em;
+    ListItemBevel();
+    ListItemHighlight();
+    focusable: true;
+    
+    widget(container_x, {
+      padding: [$ui.spacingNormal, $ui.spacingLarge];
+      spacing: $ui.spacingNormal;
+      
+      widget(icon, {
+        width: 2em;
+        source: ICON;
+        color: select(isNavFocused(), $ui.color1, $ui.colorTextSecondary);
+      });
+      
+      widget(label, {
+        filterConstraintX: true;
+        caption: CAPTION;
+        style: "NavSelectedText";
+      });
+      
+      widget(container_x, {
+        width: 10em;
+        spacing: $ui.spacingSmall;
+        
+        widget(label, {
+          caption: "-";
+          focusable: true;
+          onEvent(activate, {
+            VALUE = clamp(VALUE - STEP, MIN, MAX);
+          });
+        });
+        
+        widget(bar, {
+          color1: $ui.color1;
+          color2: $ui.color2;
+          fill: (VALUE - MIN) / (MAX - MIN);
+        });
+        
+        widget(label, {
+          caption: "+";
+          focusable: true;
+          onEvent(activate, {
+            VALUE = clamp(VALUE + STEP, MIN, MAX);
+          });
+        });
+      });
+      
+      widget(label, {
+        caption: select(UNIT, fmt("%d %s", VALUE, UNIT), fmt("%d", VALUE));
+        style: "NavSelectedTextSecondary";
+      });
+    });
+  });
+}

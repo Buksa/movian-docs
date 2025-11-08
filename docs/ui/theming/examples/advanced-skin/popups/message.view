@@ -1,0 +1,119 @@
+// Advanced Skin - Message/Alert Dialog
+
+#import "skin://theme.view"
+
+widget(container_z, {
+  
+  // Dimmed background
+  widget(quad, {
+    color: 0;
+    alpha: 0.8;
+  });
+  
+  // Dialog container
+  widget(container_y, {
+    align: center;
+    
+    widget(container_z, {
+      width: 30em;
+      
+      CardShadow();
+      
+      widget(quad, {
+        color: $ui.colorSurface;
+      });
+      
+      widget(border, {
+        color: translate($self.type, $ui.color1,
+                        "error", $ui.colorError,
+                        "warning", $ui.colorWarning,
+                        "info", $ui.color1);
+        border: 2;
+        margin: -2;
+      });
+      
+      widget(container_y, {
+        padding: $ui.spacingXLarge;
+        spacing: $ui.spacingLarge;
+        
+        // Icon
+        widget(container_x, {
+          align: center;
+          
+          widget(icon, {
+            size: 3em;
+            source: translate($self.type, "skin://icons/ic_info_48px.svg",
+                             "error", "skin://icons/ic_error_48px.svg",
+                             "warning", "skin://icons/ic_warning_48px.svg");
+            color: translate($self.type, $ui.color1,
+                            "error", $ui.colorError,
+                            "warning", $ui.colorWarning);
+          });
+        });
+        
+        // Title
+        widget(label, {
+          caption: $self.title ?? _("Message");
+          size: $ui.fontSizeXLarge;
+          color: $ui.colorText;
+          align: center;
+        });
+        
+        // Message
+        widget(label, {
+          caption: $self.message;
+          color: $ui.colorText;
+          align: center;
+          wrap: true;
+        });
+        
+        // Buttons
+        widget(container_x, {
+          spacing: $ui.spacingNormal;
+          align: center;
+          
+          // Cancel button (if needed)
+          widget(container_z, {
+            width: 8em;
+            height: 2.5em;
+            focusable: true;
+            hidden: !$self.cancel;
+            onEvent(activate, deliverEvent($self.eventSink, "cancel"));
+            
+            widget(quad, {
+              color: $ui.colorSurface;
+            });
+            
+            ButtonHighlight();
+            
+            widget(label, {
+              caption: _("Cancel");
+              align: center;
+              style: "NavSelectedText";
+            });
+          });
+          
+          // OK button
+          widget(container_z, {
+            width: 8em;
+            height: 2.5em;
+            focusable: true;
+            onEvent(activate, deliverEvent($self.eventSink, "ok"));
+            
+            widget(quad, {
+              color: $ui.color1;
+            });
+            
+            ButtonHighlight();
+            
+            widget(label, {
+              caption: _("OK");
+              align: center;
+              color: $ui.colorText;
+            });
+          });
+        });
+      });
+    });
+  });
+});

@@ -1,0 +1,79 @@
+// Advanced Skin - Subtitle Track Selection
+
+#import "skin://theme.view"
+
+widget(container_y, {
+  id: "osd_subs";
+  
+  // Page title
+  widget(label, {
+    style: "osdsettingtitle";
+    height: 3em;
+    align: center;
+    caption: _("Subtitles");
+    size: $ui.fontSizeXLarge;
+  });
+  
+  // Back to playdeck
+  onEvent(back, {
+    $clone.osdpage = 0;
+    focus("subtitles-btn");
+  }, $clone.osdpage);
+  
+  // Track list with scrollbar
+  widget(container_x, {
+    widget(list_y, {
+      id: "list";
+      
+      cloner($self.media.subtitle.sorted, container_z, {
+        height: 3em;
+        ListItemHighlight();
+        ListItemBevel();
+        focusable: true;
+        onEvent(activate, deliverEvent($parent.control, selectSubtitleTrack($self.url)));
+        
+        widget(container_x, {
+          padding: [$ui.spacingNormal, $ui.spacingLarge];
+          spacing: $ui.spacingNormal;
+          
+          // Current track indicator
+          widget(icon, {
+            width: 1.5em;
+            source: "skin://icons/ic_check_48px.svg";
+            alpha: iir($self.url == $parent.media.subtitle.current, 4);
+            color: $ui.colorSuccess;
+          });
+          
+          // Track info
+          widget(container_y, {
+            spacing: $ui.spacingSmall;
+            
+            widget(label, {
+              filterConstraintX: true;
+              caption: $self.title;
+              style: "NavSelectedText";
+            });
+            
+            widget(container_x, {
+              spacing: $ui.spacingNormal;
+              
+              widget(label, {
+                caption: $self.language;
+                style: "NavSelectedTextSecondary";
+                size: $ui.fontSizeSmall;
+              });
+              
+              widget(label, {
+                caption: $self.source;
+                style: "NavSelectedTextSecondary";
+                size: $ui.fontSizeSmall;
+              });
+            });
+          });
+        });
+      });
+    });
+    
+    ScrollBar("list");
+  });
+});

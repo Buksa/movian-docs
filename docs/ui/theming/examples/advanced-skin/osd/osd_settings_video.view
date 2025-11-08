@@ -1,0 +1,5 @@
+// Advanced Skin - Video Settings Page
+
+#import "skin://osd/osd_settings.view"
+
+OSD_SETTINGS_MENU($self.media.video.settings.nodes, _("Video settings"), "osd_settings_video");

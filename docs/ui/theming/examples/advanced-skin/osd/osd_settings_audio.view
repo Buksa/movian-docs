@@ -1,0 +1,5 @@
+// Advanced Skin - Audio Settings Page
+
+#import "skin://osd/osd_settings.view"
+
+OSD_SETTINGS_MENU($self.media.audio.settings.nodes, _("Audio settings"), "osd_settings_audio");

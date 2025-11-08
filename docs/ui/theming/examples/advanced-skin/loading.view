@@ -1,0 +1,61 @@
+// Advanced Skin - Enhanced Loading Screen
+// Displays an animated loading indicator with message
+
+#import "skin://theme.view"
+
+widget(container_z, {
+  
+  // Semi-transparent background
+  widget(quad, {
+    color: 0;
+    alpha: 0.7;
+  });
+  
+  // Loading content
+  widget(container_y, {
+    align: center;
+    spacing: $ui.spacingLarge;
+    
+    // Animated spinner
+    widget(container_z, {
+      width: 4em;
+      height: 4em;
+      
+      // Rotating circle
+      widget(icon, {
+        source: "dataroot://res/svg/Spinner.svg";
+        color: $ui.color1;
+        size: 4em;
+        angle: time() * 360;
+      });
+    });
+    
+    // Loading text
+    widget(label, {
+      caption: _("Loading...");
+      size: $ui.fontSizeLarge;
+      color: $ui.colorText;
+      align: center;
+    });
+    
+    // Progress bar (if available)
+    widget(container_z, {
+      width: 20em;
+      height: 0.5em;
+      hidden: !$nav.currentpage.model.loading.progress;
+      
+      widget(quad, {
+        color: $ui.colorSurface;
+        alpha: 0.5;
+      });
+      
+      widget(container_x, {
+        widget(quad, {
+          color: $ui.color1;
+          weight: $nav.currentpage.model.loading.progress;
+        });
+        space(1 - $nav.currentpage.model.loading.progress);
+      });
+    });
+  });
+});

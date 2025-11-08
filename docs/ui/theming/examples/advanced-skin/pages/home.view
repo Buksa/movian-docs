@@ -1,0 +1,52 @@
+// Advanced Skin - Home Page
+// Grid-based home page with featured content
+
+#import "skin://theme.view"
+
+widget(container_y, {
+  style: "PageContainer";
+  
+  // Page header
+  PageHeader(_("Home"));
+  
+  // Main content area
+  widget(container_x, {
+    
+    // Content grid
+    widget(container_y, {
+      filterConstraintY: true;
+      
+      widget(list_y, {
+        id: "homelist";
+        
+        cloner($self.model.nodes, loader, {
+          source: "skin://items/list/" + $self.type + ".view";
+        });
+      });
+      
+      // Empty state
+      widget(container_y, {
+        hidden: $self.model.nodes.count > 0;
+        align: center;
+        spacing: $ui.spacingLarge;
+        
+        widget(icon, {
+          source: "skin://icons/ic_home_48px.svg";
+          size: 4em;
+          color: $ui.colorTextSecondary;
+          alpha: 0.5;
+        });
+        
+        widget(label, {
+          caption: _("No content available");
+          size: $ui.fontSizeLarge;
+          color: $ui.colorTextSecondary;
+          align: center;
+        });
+      });
+    });
+    
+    // Scrollbar
+    ScrollBar("homelist");
+  });
+});

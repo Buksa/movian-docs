@@ -1,0 +1,155 @@
+// Advanced Skin - Authentication Dialog
+
+#import "skin://theme.view"
+
+widget(container_z, {
+  
+  // Dimmed background
+  widget(quad, {
+    color: 0;
+    alpha: 0.8;
+  });
+  
+  // Dialog container
+  widget(container_y, {
+    align: center;
+    
+    widget(container_z, {
+      width: 30em;
+      
+      CardShadow();
+      
+      widget(quad, {
+        color: $ui.colorSurface;
+      });
+      
+      widget(border, {
+        color: $ui.color1;
+        border: 2;
+        margin: -2;
+      });
+      
+      widget(container_y, {
+        padding: $ui.spacingXLarge;
+        spacing: $ui.spacingLarge;
+        
+        // Title
+        widget(label, {
+          caption: $self.title ?? _("Authentication Required");
+          size: $ui.fontSizeXLarge;
+          color: $ui.color1;
+          align: center;
+        });
+        
+        // Message
+        widget(label, {
+          caption: $self.message;
+          color: $ui.colorText;
+          align: center;
+          hidden: !$self.message;
+        });
+        
+        // Username field
+        widget(container_y, {
+          spacing: $ui.spacingSmall;
+          
+          widget(label, {
+            caption: _("Username:");
+            color: $ui.colorText;
+          });
+          
+          widget(container_z, {
+            height: 2.5em;
+            
+            widget(quad, {
+              color: $ui.colorBackground;
+            });
+            
+            ListItemHighlight();
+            
+            widget(text, {
+              padding: [$ui.spacingNormal, $ui.spacingLarge];
+              bind($self.username);
+              focusable: true;
+              description: _("Enter username");
+            });
+          });
+        });
+        
+        // Password field
+        widget(container_y, {
+          spacing: $ui.spacingSmall;
+          
+          widget(label, {
+            caption: _("Password:");
+            color: $ui.colorText;
+          });
+          
+          widget(container_z, {
+            height: 2.5em;
+            
+            widget(quad, {
+              color: $ui.colorBackground;
+            });
+            
+            ListItemHighlight();
+            
+            widget(text, {
+              padding: [$ui.spacingNormal, $ui.spacingLarge];
+              bind($self.password);
+              password: true;
+              focusable: true;
+              description: _("Enter password");
+            });
+          });
+        });
+        
+        // Buttons
+        widget(container_x, {
+          spacing: $ui.spacingNormal;
+          align: center;
+          
+          // Cancel button
+          widget(container_z, {
+            width: 8em;
+            height: 2.5em;
+            focusable: true;
+            onEvent(activate, deliverEvent($self.eventSink, "cancel"));
+            
+            widget(quad, {
+              color: $ui.colorSurface;
+            });
+            
+            ButtonHighlight();
+            
+            widget(label, {
+              caption: _("Cancel");
+              align: center;
+              style: "NavSelectedText";
+            });
+          });
+          
+          // OK button
+          widget(container_z, {
+            width: 8em;
+            height: 2.5em;
+            focusable: true;
+            onEvent(activate, deliverEvent($self.eventSink, "ok"));
+            
+            widget(quad, {
+              color: $ui.color1;
+            });
+            
+            ButtonHighlight();
+            
+            widget(label, {
+              caption: _("OK");
+              align: center;
+              color: $ui.colorText;
+            });
+          });
+        });
+      });
+    });
+  });
+});

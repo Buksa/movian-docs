@@ -1,0 +1,481 @@
+// Advanced Skin - Main Entry Point
+// This is the root view file with extended global configuration
+
+// ============================================================================
+// GLOBAL CONFIGURATION
+// ============================================================================
+
+// UI Sizing and Layout
+// --------------------
+$ui.sizeOffset = 4;
+$ui.xmargin = select($ui.aspect > 1, $ui.width / 100, 0.2em);
+$ui.ymargin = select($ui.aspect > 1, 0.2em, $ui.height / 100);
+
+// Screen Orientation Detection
+$ui.orientation = select($ui.aspect > 1, "landscape", "portrait");
+
+// Pointer and Touch Detection
+$ui.showPointerUI = $ui.pointerVisible || $ui.touch;
+
+// Color System
+// ------------
+// Primary colors
+$ui.color1 = "#4192ff";  // Primary blue
+$ui.color2 = "#306cbe";  // Darker blue
+$ui.color3 = "#c2ddff";  // Light blue
+
+// Semantic colors
+$ui.colorAccent = "#ff6b35";     // Accent orange
+$ui.colorSuccess = "#4caf50";    // Success green
+$ui.colorWarning = "#ff9800";    // Warning orange
+$ui.colorError = "#f44336";      // Error red
+$ui.colorBackground = "#1a1a1a"; // Dark background
+$ui.colorSurface = "#2a2a2a";    // Surface color
+$ui.colorText = "#ffffff";       // Primary text
+$ui.colorTextSecondary = "#b0b0b0"; // Secondary text
+
+// Typography
+// ----------
+$ui.fontSizeSmall = 0.8em;
+$ui.fontSizeNormal = 1em;
+$ui.fontSizeLarge = 1.2em;
+$ui.fontSizeXLarge = 1.5em;
+$ui.fontSizeXXLarge = 2em;
+
+// Spacing System
+// --------------
+$ui.spacingXSmall = 0.25em;
+$ui.spacingSmall = 0.5em;
+$ui.spacingNormal = 1em;
+$ui.spacingLarge = 1.5em;
+$ui.spacingXLarge = 2em;
+
+// Animation Settings
+// ------------------
+$ui.animSpeed = 4;        // Default animation speed
+$ui.animSpeedFast = 8;    // Fast animations
+$ui.animSpeedSlow = 2;    // Slow animations
+
+// UI State Variables
+// ------------------
+$ui.sysinfo = false;      // System info overlay
+$ui.mediainfo = false;    // Media info overlay
+$ui.logwindow = false;    // Log window
+$ui.showSidebar = false;  // Navigation sidebar
+$ui.osk.show = false;     // On-screen keyboard
+
+// ============================================================================
+// GLOBAL EVENT HANDLERS
+// ============================================================================
+
+// System Info Toggle
+onEvent(sysinfo, {
+  toggle($ui.sysinfo);
+});
+
+// Media Info Toggle
+onEvent(mediastats, {
+  toggle($ui.mediainfo);
+});
+
+// Log Window Toggle
+onEvent(logwindow, {
+  toggle($ui.logwindow);
+});
+
+// Log Window Back Handler
+onEvent(back, {
+  $ui.logwindow = false;
+}, $ui.logwindow);
+
+// Sidebar Toggle
+onEvent(menu, {
+  toggle($ui.showSidebar);
+}, !$core.media.current.type);
+
+// ============================================================================
+// GLOBAL STYLES
+// ============================================================================
+
+// Page container fade effect for layered pages
+style(PageContainer, {
+  alpha: 1 - iir(clamp(getLayer(), 0, 1), 4) * 0.9;
+});
+
+// Text color changes based on navigation focus
+style(NavSelectedText, {
+  color: select(isNavFocused(), 1, 0.8);
+});
+
+// Secondary text with reduced opacity
+style(NavSelectedTextSecondary, {
+  color: select(isNavFocused(), 0.9, 0.7);
+});
+
+// Button style with hover effect
+style(ButtonStyle, {
+  alpha: 0.8 + 0.2 * isHovered();
+  color: select(isNavFocused(), $ui.color1, $ui.colorText);
+});
+
+// Card style for content containers
+style(CardStyle, {
+  alpha: 0.9;
+});
+
+// OSD settings title style
+style(osdsettingtitle, {
+  color: $ui.color1;
+  size: $ui.fontSizeXLarge;
+});
+
+// List item style
+style(ListItem, {
+  padding: [$ui.spacingSmall, $ui.spacingNormal];
+});
+
+// List item icon style
+style(ListItemIcon, {
+  width: 2em;
+  color: select(isNavFocused(), $ui.color1, $ui.colorTextSecondary);
+});
+
+// Action label style
+style(ActionLabel, {
+  style: "NavSelectedText";
+  size: $ui.fontSizeNormal;
+});
+
+// ============================================================================
+// MAIN CONTAINER
+// ============================================================================
+
+widget(container_z, {
+
+  // Background Layer
+  // ----------------
+  widget(loader, {
+    source: "background.view";
+  });
+
+  // Loading Indicator
+  // -----------------
+  // Shows when current page is loading content
+  widget(loader, {
+    hidden: iir($nav.currentpage.model.loading, 8) < 0.001;
+    zoffset: -999;
+    alpha: iir($nav.currentpage.model.loading, 8);
+    source: "loading.view";
+  });
+
+  // Main Content Area
+  // -----------------
+  widget(underscan, {
+    widget(container_z, {
+
+      // Page System Layer
+      widget(layer, {
+        filterConstraintY: true;
+        
+        // Playfield manages page transitions
+        widget(playfield, {
+          effect: blend;
+          noInitialTransform: true;
+          alpha: 1 - iir(clamp(getLayer(), 0, 1), 7) * 0.66;
+
+          // Clone all navigation pages
+          cloner($nav.pages, container_z, {
+            widget(loader, {
+              noInitialTransform: true;
+              source: "skin://pages/" + $self.model.type + ".view";
+            });
+          });
+        });
+
+        // Popup System
+        // ------------
+        cloner($core.popups, loader, {
+          source: "popups/" + $self.type + ".view";
+        });
+
+        // Log Window
+        // ----------
+        widget(loader, {
+          autohide: true;
+          source: select($ui.logwindow, "log.view", "");
+        });
+
+        // On-Screen Keyboard
+        // ------------------
+        widget(loader, {
+          autohide: true;
+          source: select($ui.osk.show, "osk.view", "");
+        });
+      });
+
+      // Navigation Sidebar
+      // ------------------
+      widget(displacement, {
+        hidden: iir(!$ui.showSidebar, 3) > 0.99;
+        width: 22em;
+        
+        widget(container_z, {
+          // Dismiss on right arrow
+          onEvent(right, {
+            $ui.showSidebar = false;
+          }, true, false);
+          
+          // Semi-transparent background
+          widget(quad, {
+            color: 0;
+            alpha: iir($ui.showSidebar, 4) * 0.8;
+          });
+          
+          // Sidebar content
+          widget(loader, {
+            autohide: true;
+            alpha: iir($ui.showSidebar, 4);
+            source: select($ui.showSidebar, "components/sidebar.view", "");
+          });
+        });
+      });
+
+      // Bottom Area - Notifications and Media Controls
+      // -----------------------------------------------
+      widget(container_y, {
+        space(1);
+        widget(container_y, {
+          delta($ui.universeBottomHeight, getHeight());
+          expediteSubscriptions: true;
+
+          // Notifications
+          cloner($core.notifications.nodes, container_z, {
+            height: 3em;
+            
+            widget(quad, {
+              color: translate($self.type, $ui.colorBackground,
+                              "info", $ui.color1,
+                              "warning", $ui.colorWarning,
+                              "error", $ui.colorError);
+              alpha: 0.9;
+            });
+
+            widget(container_x, {
+              padding: [$ui.spacingNormal, $ui.spacingLarge];
+              spacing: $ui.spacingNormal;
+              
+              // Icon based on notification type
+              widget(icon, {
+                width: 2em;
+                source: translate($self.type, "skin://icons/ic_info_48px.svg",
+                                 "warning", "skin://icons/ic_warning_48px.svg",
+                                 "error", "skin://icons/ic_error_48px.svg");
+                color: $ui.colorText;
+              });
+              
+              widget(label, {
+                filterConstraintX: true;
+                caption: $self.text;
+                color: $ui.colorText;
+              });
+            });
+          });
+
+          // Clipboard Progress
+          cloner($core.clipboard.copyprogress, container_z, {
+            height: 3em;
+            
+            widget(quad, {
+              color: $ui.colorSurface;
+              alpha: 0.9;
+            });
+            
+            widget(container_x, {
+              padding: [$ui.spacingNormal, $ui.spacingLarge];
+              
+              widget(bar, {
+                color1: $ui.color1;
+                color2: $ui.color2;
+                fill: $self.progress;
+              });
+            });
+            
+            widget(label, {
+              padding: [$ui.spacingNormal, $ui.spacingLarge];
+              caption: fmt(_("Copying: %d%%"), $self.progress * 100);
+              align: center;
+            });
+          });
+
+          widget(dummy, {
+            height: 0;
+          });
+        });
+      });
+    });
+  });
+
+  // Volume Indicator Overlay
+  // -------------------------
+  widget(container_y, {
+    align: bottom;
+    spacing: $ui.spacingSmall;
+    padding: [0, $ui.spacingLarge];
+
+    widget(container_z, {
+      height: 1.5em;
+
+      // Mute Indicator
+      widget(container_x, {
+        alpha: iir($core.audio.mastermute, 7);
+        padding: [$ui.spacingLarge, 0];
+
+        widget(container_z, {
+          widget(quad, {
+            color: $ui.colorError;
+            alpha: 0.9;
+          });
+          
+          widget(border, {
+            color: $ui.colorText;
+            border: 2;
+            margin: -2;
+          });
+          
+          widget(container_x, {
+            padding: [$ui.spacingNormal, $ui.spacingLarge];
+            spacing: $ui.spacingNormal;
+            
+            widget(icon, {
+              width: 1.5em;
+              source: "skin://icons/ic_volume_off_48px.svg";
+              color: $ui.colorText;
+            });
+            
+            widget(label, {
+              caption: _("Audio muted");
+              align: center;
+              color: $ui.colorText;
+            });
+          });
+        });
+      });
+
+      // Volume Level Display
+      widget(container_x, {
+        alpha: iir(changed($core.audio.mastervolume, 2, true), 7);
+        align: center;
+        
+        widget(container_z, {
+          width: clamp($ui.width / 2, 20em, 40em);
+
+          widget(quad, {
+            color: $ui.colorSurface;
+            alpha: 0.95;
+          });
+
+          widget(border, {
+            color: $ui.color1;
+            border: 2;
+            margin: -2;
+          });
+
+          widget(container_x, {
+            padding: 2;
+            widget(bar, {
+              color1: $ui.color1;
+              color2: $ui.color2;
+              fill: ($core.audio.mastervolume + 75) / 87;
+            });
+          });
+
+          widget(container_x, {
+            padding: [$ui.spacingNormal, $ui.spacingLarge];
+            spacing: $ui.spacingNormal;
+            
+            widget(icon, {
+              width: 1.5em;
+              source: "skin://icons/ic_volume_up_48px.svg";
+              color: $ui.colorText;
+            });
+            
+            widget(label, {
+              caption: fmt(_("Volume: %d dB"), $core.audio.mastervolume);
+              align: center;
+              color: $ui.colorText;
+            });
+          });
+        });
+      });
+    });
+  });
+
+  // System Info Overlay
+  // -------------------
+  widget(container_z, {
+    hidden: !$ui.sysinfo;
+    
+    widget(quad, {
+      color: 0;
+      alpha: 0.8;
+    });
+    
+    widget(container_y, {
+      padding: $ui.spacingXLarge;
+      spacing: $ui.spacingNormal;
+      
+      widget(label, {
+        caption: _("System Information");
+        size: $ui.fontSizeXLarge;
+        color: $ui.color1;
+      });
+      
+      widget(label, {
+        caption: fmt(_("Version: %s"), $core.app.version);
+        color: $ui.colorText;
+      });
+      
+      widget(label, {
+        caption: fmt(_("Platform: %s"), $core.system.platform);
+        color: $ui.colorText;
+      });
+      
+      widget(label, {
+        caption: fmt(_("Screen: %dx%d"), $ui.width, $ui.height);
+        color: $ui.colorText;
+      });
+    });
+  });
+
+  // Media Info Overlay
+  // ------------------
+  widget(container_z, {
+    hidden: !$ui.mediainfo;
+    
+    widget(quad, {
+      color: 0;
+      alpha: 0.8;
+    });
+    
+    widget(container_y, {
+      padding: $ui.spacingXLarge;
+      spacing: $ui.spacingNormal;
+      
+      widget(label, {
+        caption: _("Media Information");
+        size: $ui.fontSizeXLarge;
+        color: $ui.color1;
+      });
+      
+      widget(label, {
+        caption: fmt(_("Type: %s"), $core.media.current.type);
+        color: $ui.colorText;
+      });
+      
+      widget(label, {
+        caption: fmt(_("Duration: %s"), value2duration($core.media.current.metadata.duration));
+        color: $ui.colorText;
+      });
+    });
+  });
+});

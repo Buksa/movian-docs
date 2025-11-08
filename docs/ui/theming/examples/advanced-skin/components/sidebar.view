@@ -1,0 +1,89 @@
+// Advanced Skin - Navigation Sidebar
+
+#import "skin://theme.view"
+
+widget(container_y, {
+  width: 22em;
+  padding: $ui.spacingLarge;
+  
+  // Sidebar header
+  widget(container_y, {
+    spacing: $ui.spacingNormal;
+    padding: [0, 0, $ui.spacingLarge, 0];
+    
+    widget(label, {
+      caption: _("Navigation");
+      size: $ui.fontSizeXLarge;
+      color: $ui.color1;
+    });
+    
+    widget(quad, {
+      height: 2;
+      color: $ui.color1;
+    });
+  });
+  
+  // Navigation items
+  widget(list_y, {
+    id: "sidebar_list";
+    spacing: $ui.spacingSmall;
+    navWrap: true;
+    
+    // Home
+    SidebarAction(_("Home"),
+                  "skin://icons/ic_home_48px.svg",
+                  navOpen("home://"));
+    
+    // Settings
+    SidebarAction(_("Settings"),
+                  "skin://icons/ic_settings_48px.svg",
+                  navOpen("settings://"));
+    
+    // Plugins
+    SidebarAction(_("Plugins"),
+                  "skin://icons/ic_extension_48px.svg",
+                  navOpen("plugins://"));
+    
+    // Divider
+    widget(quad, {
+      height: 2;
+      color: $ui.colorTextSecondary;
+      alpha: 0.3;
+      margin: [$ui.spacingNormal, 0];
+    });
+    
+    // System info toggle
+    SidebarAction(_("System Info"),
+                  "skin://icons/ic_info_48px.svg",
+                  toggle($ui.sysinfo));
+    
+    // Media info toggle
+    SidebarAction(_("Media Info"),
+                  "skin://icons/ic_videocam_48px.svg",
+                  toggle($ui.mediainfo));
+    
+    // Log window toggle
+    SidebarAction(_("Log Window"),
+                  "skin://icons/ic_bug_report_48px.svg",
+                  toggle($ui.logwindow));
+  });
+  
+  space(1);
+  
+  // Footer
+  widget(container_y, {
+    spacing: $ui.spacingSmall;
+    
+    widget(quad, {
+      height: 2;
+      color: $ui.color1;
+    });
+    
+    widget(label, {
+      caption: fmt(_("Movian %s"), $core.app.version);
+      size: $ui.fontSizeSmall;
+      color: $ui.colorTextSecondary;
+      align: center;
+    });
+  });
+});

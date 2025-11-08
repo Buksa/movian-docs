@@ -1,0 +1,96 @@
+// Advanced Skin - Video Playback Page
+// Full-featured video player with OSD and playdeck
+
+#import "skin://theme.view"
+
+// Initialize OSD state
+$clone.osdpage = 0;
+$clone.showPlaydeck = 0;
+
+// Video playback container
+widget(container_z, {
+  style: "PageContainer";
+  
+  // Video playback surface
+  widget(playfield, {
+    source: $self.source;
+  });
+  
+  // Menu button toggles OSD
+  onEvent(menu, {
+    $clone.osdpage = 1;
+    $clone.showPlaydeck = 1;
+    focus("osd_main");
+  }, !$clone.osdpage);
+  
+  onEvent(menu, {
+    $clone.osdpage = 0;
+    $clone.showPlaydeck = 0;
+  }, $clone.osdpage);
+  
+  // Back button navigation
+  onEvent(back, {
+    $clone.showPlaydeck = 0;
+  }, $clone.showPlaydeck && !$clone.osdpage);
+  
+  onEvent(back, {
+    $clone.osdpage = 0;
+  }, $clone.osdpage);
+  
+  // Playdeck (media controls)
+  widget(container_y, {
+    hidden: iir(!$clone.showPlaydeck && !$clone.osdpage, 3) > 0.99;
+    alpha: iir($clone.showPlaydeck || $clone.osdpage, 4);
+    
+    space(1);
+    
+    widget(loader, {
+      autohide: true;
+      source: select($clone.showPlaydeck || $clone.osdpage,
+                    "skin://playdecks/playdeck_video.view", "");
+    });
+  });
+  
+  // OSD System
+  widget(displacement, {
+    hidden: iir($clone.osdpage > 0, 3) < 0.01;
+    width: 22em;
+    scaling: [1.2 - iir($clone.osdpage > 0, 3) * 0.2,
+              1.2 - iir($clone.osdpage > 0, 3) * 0.2,
+              1];
+    
+    widget(container_z, {
+      onEvent(left, {
+        $clone.osdpage = 0;
+      }, true, false);
+      
+      // Semi-transparent background
+      widget(quad, {
+        color: 0;
+        alpha: iir($clone.osdpage > 0, 4) * 0.8;
+      });
+      
+      // OSD pages
+      widget(layer, {
+        // Main OSD menu
+        widget(loader, {
+          autohide: true;
+          alpha: iir($clone.osdpage == 1, 4);
+          source: select($clone.osdpage, "skin://osd/osd_main.view", "");
+        });
+        
+        // Settings and track selection pages
+        widget(loader, {
+          autohide: true;
+          source: translate($clone.osdpage, "",
+                            2, "skin://osd/osd_settings_subs.view",
+                            3, "skin://osd/osd_settings_audio.view",
+                            4, "skin://osd/osd_settings_video.view",
+                            100, "skin://osd/osd_subs.view",
+                            101, "skin://osd/osd_audio.view"
+                           );
+        });
+      });
+    });
+  });
+});
