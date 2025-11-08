@@ -147,6 +147,9 @@ nav:
     - Overview: tests/README.md
   - Meta:
     - Documentation Standards: meta/documentation-standards.md
+    - Update Procedures: meta/update-procedures.md
+    - Deployment Guide: meta/deployment-guide.md
+    - Deployment Checklist: meta/deployment-checklist.md
     - Accuracy Tracking: meta/accuracy-tracking.md
     - Source References: meta/source-references.md
 
