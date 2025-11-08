@@ -311,20 +311,37 @@ This document tracks the progress of the comprehensive Movian documentation proj
   - Comparison of architectural approaches
 - **Report**: [Task 6.3 Report](task-reports/task-6.3-report.md)
 
+### Task 7.1 - Macro System Documentation ✅
+- **Completed**: 2024-11-07
+- **Duration**: ~2 hours
+- **Deliverables**:
+  - `docs/ui/theming/macro-reference.md` - Comprehensive macro documentation (1,200+ lines)
+  - Complete analysis of all 11 macros from `theme.view`
+  - Visual effect macros: `ListItemBevel()`, `GridItemBevel()`
+  - Highlight macros: `ListItemHighlight()`, `GridItemHighlight()`, `GridItemHighlight2()`
+  - Navigation macros: `BackButton()`, `PageHeader()`, `PageHeader0()`
+  - UI control macros: `ScrollBar()`, `SearchBar()`
+  - Detailed parameter documentation with types and defaults
+  - Visual effect descriptions and technical implementation details
+  - 50+ usage examples demonstrating macro patterns
+  - Best practices and composition patterns
+  - Performance considerations and accessibility guidelines
+- **Report**: [Task 7.1 Macro Analysis Report](task-reports/task-7.1-macro-analysis-report.md)
+
 ## Current Task
 
-### Task 7.1 - Skin Creation Guide 🔄
+### Task 7.2 - Global Configuration Architecture 🔄
 - **Status**: Next in queue
 - **Assigned**: Pending
 - **Estimated Duration**: 2-3 hours
-- **Dependencies**: Completed skin analysis and debugging documentation
+- **Dependencies**: Completed macro analysis
 
 ## Upcoming Tasks (Next 5)
 
-1. **Task 7.1** - Skin Creation Guide
-2. **Task 7.2** - Complete Skin Examples
-3. **Task 7.3** - Media Player UI Components
-4. **Task 7.4** - Skins and Themes Relationship
+1. **Task 7.2** - Global Configuration Architecture (universe.view)
+2. **Task 7.3** - Skin Architecture and Component System
+3. **Task 7.4** - OSD System and Media Player Integration
+4. **Task 7.5** - Practical Skin Examples with Macro System
 5. **Task 8.1** - API Reference Index
 
 ## Key Metrics
@@ -332,8 +349,8 @@ This document tracks the progress of the comprehensive Movian documentation proj
 ### Documentation Coverage
 - **Architecture**: 100% complete (3/3 tasks)
 - **Plugin System**: 100% complete (6/6 tasks)
-- **UI System**: 90% complete (9/10 tasks)
-- **Theming System**: 33% complete (1/3 tasks)
+- **UI System**: 100% complete (10/10 tasks)
+- **Theming System**: 25% complete (1/4 tasks)
 - **Reference Documentation**: 33% complete (2/6 tasks)
 
 ### Quality Metrics
@@ -423,5 +440,12 @@ This progress document is updated after each task completion. For questions or s
 - ✅ Documented common issues across all Movian subsystems
 - ✅ Provided 100+ code examples showing problems and solutions
 
-**Last Updated**: 2024-11-06  
-**Next Update**: After Task 7.1 completion
+### Week of 2024-11-07
+- ✅ Completed comprehensive macro system documentation
+- ✅ Analyzed all 11 macros from theme.view with full technical details
+- ✅ Created 50+ usage examples demonstrating macro patterns
+- ✅ Documented visual effects, highlights, navigation, and UI control macros
+- ✅ Provided best practices and composition patterns for skin development
+
+**Last Updated**: 2024-11-07  
+**Next Update**: After Task 7.2 completion
