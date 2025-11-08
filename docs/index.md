@@ -133,7 +133,7 @@ Complete guide to creating JavaScript plugins for Movian.
   - [HTTP Client](plugins/api/http-api.md) - Network requests and content fetching
   - [Storage APIs](plugins/api/storage-api.md) - Persistent data and SQLite database
   - [Settings APIs](plugins/api/settings-api.md) - Plugin configuration and preferences
-- **[Working Examples](plugins/examples/README.md)** - Complete plugin implementations
+- **Working Examples** - Complete plugin implementations
   - [Hello World](plugins/examples/hello-world/README.md) - Basic plugin structure
   - [Content Provider](plugins/examples/content-provider/README.md) - Media source integration
   - [Search Plugin](plugins/examples/search-plugin/README.md) - Search functionality
@@ -145,7 +145,7 @@ Complete guide to creating JavaScript plugins for Movian.
 Master Movian's GLW rendering engine and create custom interfaces.
 
 - **[GLW Architecture](ui/glw-architecture.md)** - OpenGL Widget system internals
-- **[View Files](ui/view-files/README.md)** - XML-like UI definition language
+- **View Files** - XML-like UI definition language
   - [Syntax Reference](ui/view-files/syntax-reference.md) - Complete language specification
   - [Elements Reference](ui/view-files/elements-reference.md) - All available UI elements
   - [Attributes Reference](ui/view-files/attributes-reference.md) - Element properties and values
@@ -154,17 +154,17 @@ Master Movian's GLW rendering engine and create custom interfaces.
   - [Parser Analysis](ui/source-analysis/glw_view_parser.c.md) - Element and attribute parsing
   - [Lexer Analysis](ui/source-analysis/glw_view_lexer.c.md) - Token definitions and syntax
   - [Evaluator Analysis](ui/source-analysis/glw_view_eval.c.md) - Expression evaluation engine
-- **[Theming System](ui/theming/README.md)** - Create and customize skins
+- **[Theming System](ui/theming/skin-architecture.md)** - Create and customize skins
   - [Skin Structure](ui/theming/skin-structure.md) - Directory organization and file relationships
   - [Creating Skins](ui/theming/creating-skins.md) - Complete skin development workflow
   - [Theme Variables](ui/theming/theme-variables.md) - Customization and device adaptation
-- **[Widget Reference](ui/widgets/README.md)** - Available UI components
+- **Widget Reference** - Available UI components
   - [Containers](ui/widgets/container.md) - Layout and positioning widgets
   - [Text Elements](ui/widgets/text.md) - Typography and text rendering
   - [Images](ui/widgets/image.md) - Image display and manipulation
   - [Lists & Grids](ui/widgets/list.md) - Data presentation widgets
 
-#### 🎬 [Media System](media/README.md)
+#### 🎬 Media System
 Understanding Movian's media playback pipeline and backend architecture.
 
 - **[Pipeline Architecture](media/pipeline-architecture.md)** - Media processing flow

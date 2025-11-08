@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-08T21:45:20.611Z",
+  "timestamp": "2025-11-08T22:08:46.067Z",
   "summary": {
-    "totalLinks": 1096,
-    "validLinks": 1041,
+    "totalLinks": 1092,
+    "validLinks": 1035,
     "invalidLinks": 12,
     "externalLinks": 39,
-    "warnings": 86
+    "warnings": 90
   },
   "brokenLinks": [
     {
