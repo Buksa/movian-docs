@@ -954,12 +954,502 @@ width _=_ $model.width * 2;
 - Use static expressions where possible
 - Check for unnecessary re-evaluations
 
+## Built-in Expression Functions
+
+This section documents the most commonly used built-in functions in the GLW expression system. These functions enable smooth animations, conditional logic, and interactive UI behavior.
+
+### iir() - Infinite Impulse Response Filter
+
+**Purpose**: Creates smooth transitions and animations by applying a low-pass filter to value changes
+
+**Syntax**:
+```c
+iir(value, speed)
+iir(value, speed, springMode)
+```
+
+**Parameters**:
+- **`value`** (float|int|string|void): The target value to transition to
+  - Numeric values: Smoothly interpolated
+  - String/void: Treated as 0
+- **`speed`** (float): Transition speed factor (higher = slower transition)
+  - Typical range: 1-16
+  - Lower values = faster transitions
+  - Higher values = slower, smoother transitions
+- **`springMode`** (boolean, optional): Spring behavior mode
+  - `false` (default): Normal smooth transition
+  - `true`: Spring mode - instantly jumps up, smoothly falls down
+
+**Returns**: Float - The current interpolated value
+
+**Behavior**:
+- Applies exponential smoothing to value changes
+- Creates natural-feeling animations without explicit keyframes
+- Automatically triggers re-evaluation on value changes
+- Maintains state between evaluations in `t_extra_float`
+
+**Technical Details**:
+- **Source**: `movian/src/ui/glw/glw_view_eval.c:4161` (`glwf_iir`)
+- **Algorithm**: Low-pass filter using `glw_lp()` function
+- **Update Rate**: Depends on frame rate and speed parameter
+- **Precision**: Rounds to 0.001 for change detection
+
+**Common Use Cases**:
+
+**Smooth Fade In/Out**:
+```view
+alpha: iir($visible, 8);
+// Smoothly fades between 0 and 1 when $visible changes
+```
+
+**Loading Indicator**:
+```view
+widget(loader, {
+  hidden: iir($nav.currentpage.model.loading, 8) < 0.001;
+  source: "loading.view";
+});
+// Smooth fade-out when loading completes
+```
+
+**Focus Highlight**:
+```view
+color: iir(isFocused(), 4);
+// Smooth color transition on focus change
+```
+
+**Volume Bar Animation**:
+```view
+alpha: iir(changed($core.audio.mastervolume, 2, true), 7);
+// Fade in when volume changes, fade out after 2 seconds
+```
+
+**Spring Mode Example**:
+```view
+scale: iir($triggered, 10, true);
+// Instantly scales up, smoothly returns to normal
+```
+
+**Performance Notes**:
+- Only evaluates when widget is active (`GLW_ACTIVE` flag)
+- Triggers layout re-evaluation when value changes significantly
+- Efficient for frequently changing values
+
+**Speed Parameter Guidelines**:
+- **1-4**: Fast transitions (button presses, quick feedback)
+- **4-8**: Medium transitions (focus changes, UI state)
+- **8-16**: Slow transitions (loading indicators, ambient animations)
+- **16+**: Very slow transitions (background effects)
+
+### select() - Conditional Value Selection
+
+**Purpose**: Ternary conditional operator - returns one of two values based on a condition
+
+**Syntax**:
+```c
+select(condition, valueIfTrue, valueIfFalse)
+```
+
+**Parameters**:
+- **`condition`** (any): Expression evaluated as boolean
+  - Truthy: non-zero numbers, non-empty strings, `true`
+  - Falsy: 0, empty string, `void`, `false`
+- **`valueIfTrue`** (any): Value returned when condition is true
+- **`valueIfFalse`** (any): Value returned when condition is false
+
+**Returns**: The selected value (type depends on chosen branch)
+
+**Behavior**:
+- Evaluates condition first
+- Returns second argument if condition is truthy
+- Returns third argument if condition is falsy
+- Only evaluates the selected branch (lazy evaluation)
+
+**Technical Details**:
+- **Source**: `movian/src/ui/glw/glw_view_eval.c:5415` (`glwf_select`)
+- **Equivalent**: C ternary operator `condition ? true_val : false_val`
+- **Type Safety**: Return type can differ between branches
+
+**Common Use Cases**:
+
+**Conditional Visibility**:
+```view
+hidden: select($hasContent, false, true);
+// Show widget only when content exists
+```
+
+**Adaptive Opacity**:
+```view
+alpha: select($enabled, 1.0, 0.3);
+// Full opacity when enabled, dimmed when disabled
+```
+
+**Conditional Colors**:
+```view
+color: select(isFocused(), 1.0, 0.6);
+// Bright when focused, dimmed otherwise
+```
+
+**Orientation-Specific Layouts**:
+```view
+source: select($ui.orientation == "landscape",
+  "playdecks/landscape/tracks.view",
+  "playdecks/portrait/tracks.view"
+);
+```
+
+**Input Method Adaptation**:
+```view
+clickable: select($ui.pointerVisible, true, false);
+// Only clickable with mouse/pointer
+```
+
+**Nested select() for Multiple Conditions**:
+```view
+color: select($state == "error", [1,0,0],
+       select($state == "warning", [1,1,0],
+       select($state == "success", [0,1,0],
+       [0.5,0.5,0.5])));
+// Red for error, yellow for warning, green for success, gray otherwise
+```
+
+**Touch Target Sizing**:
+```view
+width: select($ui.touch, 3em, 2em);
+height: select($ui.touch, 3em, 2em);
+// Larger touch targets on touch devices
+```
+
+**Conditional Content**:
+```view
+caption: select($count > 0,
+  fmt("%d items", $count),
+  "No items"
+);
+```
+
+**Performance Notes**:
+- Very efficient - only evaluates selected branch
+- No overhead for unused branch
+- Ideal for conditional rendering
+
+**Best Practices**:
+- Use for simple binary choices
+- For multiple conditions, consider nested `select()` or state-based logic
+- Combine with `isVoid()` for null checking: `select(isVoid($value), default, $value)`
+
+### isNavFocused() - Navigation Focus Detection
+
+**Purpose**: Detects if the current widget has keyboard/navigation focus
+
+**Syntax**:
+```c
+isNavFocused()
+```
+
+**Parameters**: None
+
+**Returns**: Integer (0 or 1)
+- `1` (true): Widget has navigation focus AND keyboard mode is active
+- `0` (false): Widget does not have focus OR keyboard mode is inactive
+
+**Behavior**:
+- Checks if widget is in the focus path
+- Requires keyboard navigation mode to be active
+- Automatically triggers re-evaluation on focus changes
+- Sets `GLW_VIEW_EVAL_FHP_CHANGE` flag for dynamic updates
+
+**Technical Details**:
+- **Source**: `movian/src/ui/glw/glw_view_eval.c:5000` (`glwf_isFocused`)
+- **Alias**: `isFocused()` - same implementation
+- **Focus Check**: Uses `glw_is_focused(ec->w)` internal function
+- **Keyboard Mode**: Checks `ec->w->glw_root->gr_keyboard_mode`
+
+**Difference from isHovered()**:
+- `isNavFocused()`: Keyboard/gamepad navigation focus
+- `isHovered()`: Mouse pointer hover state
+- Both can be true simultaneously on hybrid input devices
+
+**Common Use Cases**:
+
+**Focus Highlight**:
+```view
+alpha: 0.1 * isHovered() + 0.2 * isNavFocused();
+// Subtle hover, stronger focus highlight
+```
+
+**Text Color on Focus**:
+```view
+style(NavSelectedText, {
+  color: select(isNavFocused(), 1, 0.8);
+});
+// Full brightness when focused, slightly dimmed otherwise
+```
+
+**Smooth Focus Transitions**:
+```view
+alpha: 0.1 * isHovered() + 0.2 * iir(isNavFocused(), 4, true);
+// Smooth transition with IIR filter
+```
+
+**Border Visibility**:
+```view
+widget(border, {
+  color: $ui.color1;
+  alpha: iir(isNavFocused() + isHovered(), 4);
+});
+// Border appears on focus or hover
+```
+
+**Icon Color Inversion**:
+```view
+widget(icon, {
+  source: "skin://icons/ic_search_48px.svg";
+  color: select(isNavFocused(), 0, 1);
+});
+// Inverted color when focused
+```
+
+**Backdrop Brightness**:
+```view
+style(GridBackdrop, {
+  color: 0.8 + iir(isNavFocused() + isHovered(), 4) * 0.4;
+});
+// Brighter backdrop on focus/hover
+```
+
+**Combined with Hover**:
+```view
+alpha: select(isHovered() || isNavFocused(), 1, 0.5);
+// Full opacity on either hover or focus
+```
+
+**Button State**:
+```view
+widget(quad, {
+  alpha: iir(0.3 + 0.3 * (isNavFocused() || isPressed()), 4) + isHovered();
+});
+// Complex interactive state combining focus, press, and hover
+```
+
+**Performance Notes**:
+- Lightweight check - minimal overhead
+- Automatically subscribes to focus change events
+- Only re-evaluates when focus path changes
+
+**Best Practices**:
+- Combine with `iir()` for smooth focus transitions
+- Use with `isHovered()` for comprehensive interactive feedback
+- Apply to interactive elements (buttons, list items, inputs)
+- Ensure sufficient visual distinction for accessibility
+
+### isHovered() - Mouse Hover Detection
+
+**Purpose**: Detects if the mouse pointer is currently hovering over the widget
+
+**Syntax**:
+```c
+isHovered()
+```
+
+**Parameters**: None
+
+**Returns**: Integer (0 or 1)
+- `1` (true): Mouse pointer is over the widget
+- `0` (false): Mouse pointer is not over the widget
+
+**Behavior**:
+- Checks current hover state of the widget
+- Automatically triggers re-evaluation on hover changes
+- Sets `GLW_VIEW_EVAL_FHP_CHANGE` flag for dynamic updates
+- Only relevant when pointer/mouse input is active
+
+**Technical Details**:
+- **Source**: `movian/src/ui/glw/glw_view_eval.c:5018` (`glwf_isHovered`)
+- **Hover Check**: Uses `glw_is_hovered(ec->w)` internal function
+- **Input Method**: Requires pointer device (mouse, touchpad)
+
+**Difference from isNavFocused()**:
+- `isHovered()`: Pointer position-based
+- `isNavFocused()`: Keyboard/gamepad navigation-based
+- Can be used together for hybrid input support
+
+**Common Use Cases**:
+
+**Hover Highlight**:
+```view
+alphaSelf: iir(isFocused() * 1, 8) + isHovered() * 0.1;
+// Strong focus highlight, subtle hover effect
+```
+
+**Combined Interactive State**:
+```view
+alpha: 0.1 * isHovered() + 0.2 * isNavFocused();
+// Different intensities for hover vs focus
+```
+
+**Button Feedback**:
+```view
+alpha: select(isHovered() || isFocused(), 1, 0.5);
+// Full opacity on hover or focus
+```
+
+**Clickable Indication**:
+```view
+widget(container_x, {
+  clickable: $ui.pointerVisible;
+  alpha: iir(0.3 + 0.3 * (isFocused() || isPressed()), 4) + isHovered();
+});
+// Visual feedback for clickable state
+```
+
+**Smooth Hover Transitions**:
+```view
+color: iir(0.6 + (isFocused() || isPressed() || isHovered()), 4);
+// Smooth color transition on any interaction
+```
+
+**Border on Hover**:
+```view
+widget(border, {
+  alpha: iir(isFocused() || isHovered(), 4) + 0.1;
+});
+// Border appears on hover or focus
+```
+
+**Conditional Rendering**:
+```view
+hidden: !($ui.pointerVisible && isHovered());
+// Only show when pointer is visible and hovering
+```
+
+**Adaptive UI Elements**:
+```view
+$ui.showTopIcons = $ui.pointerVisible || $ui.touch;
+// Show icons when pointer is active or touch interface
+```
+
+**Performance Notes**:
+- Lightweight check - minimal overhead
+- Automatically subscribes to hover change events
+- Only relevant when pointer input is available
+
+**Best Practices**:
+- Combine with `isNavFocused()` for comprehensive input support
+- Use `iir()` for smooth hover transitions
+- Check `$ui.pointerVisible` to adapt UI for pointer availability
+- Provide alternative feedback for non-pointer input methods
+
+**Input Method Considerations**:
+```view
+// Adapt for different input methods
+widget(button, {
+  // Larger touch targets
+  width: select($ui.touch, 3em, 2em);
+  
+  // Hover only with pointer
+  alpha: select($ui.pointerVisible,
+    0.5 + isHovered() * 0.5,
+    select(isNavFocused(), 1, 0.5)
+  );
+});
+```
+
+## Expression Function Patterns
+
+### Smooth Interactive Feedback
+
+Combine multiple functions for polished UI interactions:
+
+```view
+widget(container_x, {
+  focusable: true;
+  
+  // Smooth multi-state feedback
+  alpha: iir(
+    0.3 +                           // Base opacity
+    0.2 * isHovered() +             // Hover boost
+    0.3 * isNavFocused() +          // Focus boost
+    0.2 * isPressed(),              // Press boost
+    4                               // Smooth transition
+  );
+  
+  // Color state
+  color: select(isNavFocused(),
+    $ui.color1,                     // Focused color
+    select(isHovered(),
+      $ui.color2,                   // Hovered color
+      $ui.color3                    // Default color
+    )
+  );
+});
+```
+
+### Adaptive Layouts
+
+Respond to device capabilities and orientation:
+
+```view
+widget(loader, {
+  source: select($ui.orientation == "landscape",
+    select($ui.width > 1920,
+      "layouts/landscape-4k.view",
+      "layouts/landscape-hd.view"
+    ),
+    select($ui.touch,
+      "layouts/portrait-touch.view",
+      "layouts/portrait-keyboard.view"
+    )
+  );
+});
+```
+
+### Conditional Animations
+
+Animate only when appropriate:
+
+```view
+widget(container_y, {
+  // Fade in when loading completes
+  alpha: iir($nav.currentpage.model.loading, 8);
+  
+  // Smooth page transitions
+  translation: [
+    iir(select(isVisible(), 0, 100), 6),
+    0,
+    0
+  ];
+});
+```
+
+### State-Based Styling
+
+Create complex state-dependent styles:
+
+```view
+widget(quad, {
+  color: select($error, [1, 0, 0],
+         select($warning, [1, 1, 0],
+         select($success, [0, 1, 0],
+         [0.5, 0.5, 0.5])));
+  
+  alpha: iir(
+    select($error || $warning, 1.0, 0.5) *
+    (0.7 + 0.3 * isNavFocused()),
+    8
+  );
+});
+```
+
 ## Accuracy Status
 
 🟢 **Verified**: All expression syntax and behavior verified from source code  
 **Source Files**:
 - `glw_view_parser.c` - Expression parsing and RPN conversion
-- `glw_view_eval.c` - Expression evaluation engine
+- `glw_view_eval.c` - Expression evaluation engine and built-in functions
+  - `glwf_iir` (line 4161) - IIR filter implementation
+  - `glwf_select` (line 5415) - Conditional selection
+  - `glwf_isFocused` (line 5000) - Focus detection (isNavFocused alias)
+  - `glwf_isHovered` (line 5018) - Hover detection
 **Version**: Based on Movian source as of 2024-11-06
 
 ## See Also
@@ -967,4 +1457,6 @@ width _=_ $model.width * 2;
 - [Syntax Reference](syntax-reference.md) - Complete syntax guide
 - [Attributes Reference](attributes-reference.md) - All widget attributes
 - [Elements Reference](elements-reference.md) - Widget types
+- [Global Configuration](../theming/global-configuration.md) - System variables and integration
+- [Macro Reference](../theming/macro-reference.md) - Reusable UI macros
 - [Source Analysis](../source-analysis/glw_view_eval.c.md) - Technical details

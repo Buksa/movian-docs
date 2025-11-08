@@ -490,8 +490,52 @@ This progress document is updated after each task completion. For questions or s
 - ✅ Documented 8 core system integrations (navigation, audio, media, etc.)
 - ✅ Provided advanced patterns and best practices for skin development
 
+### Task 7.1 (Sub-task) - Expression System Functions Documentation ✅
+
+- **Completed**: 2024-11-07
+- **Duration**: ~2 hours
+- **Deliverables**:
+  - Enhanced `docs/ui/view-files/expressions.md` with comprehensive built-in function documentation
+  - Complete documentation of `iir()` - Infinite Impulse Response filter
+    - Syntax, parameters, and return values
+    - Technical implementation details from source code (line 4161)
+    - 8 practical usage examples
+    - Performance notes and speed parameter guidelines
+    - Spring mode behavior explanation
+  - Complete documentation of `select()` - Conditional value selection
+    - Ternary operator documentation
+    - Type handling and lazy evaluation
+    - 10+ usage examples including nested conditions
+    - Performance characteristics
+  - Complete documentation of `isNavFocused()` - Navigation focus detection
+    - Keyboard/gamepad focus detection
+    - Difference from `isHovered()`
+    - 8 practical examples
+    - Integration with other functions
+  - Complete documentation of `isHovered()` - Mouse hover detection
+    - Pointer-based interaction detection
+    - Input method considerations
+    - 8 usage examples
+    - Hybrid input support patterns
+  - Expression Function Patterns section
+    - Smooth interactive feedback patterns
+    - Adaptive layouts
+    - Conditional animations
+    - State-based styling
+  - 400+ lines of new documentation
+  - 30+ code examples
+  - Source code verification with line numbers
+- **Key Achievements**:
+  - All four core expression functions fully documented
+  - Source code analysis from `glw_view_eval.c`
+  - Real-world usage patterns from flat and old skins
+  - Technical implementation details verified
+  - Performance characteristics documented
+  - Best practices and patterns included
+- **Report**: [Task 7.1 Expression Functions Report](task-reports/task-7.1-expression-functions-report.md)
+
 **Last Updated**: 2024-11-07  
-**Next Update**: After Task 7.1 remaining sub-tasks completion
+**Next Update**: After Task 7.2 completion
 
 
 ### Task 7.1 (Sub-task) - Macro Reference Documentation Complete ✅
