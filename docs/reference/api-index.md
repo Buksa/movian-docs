@@ -827,4 +827,4 @@ if (page.model && page.model.metadata) {
 **Movian Version:** 4.8+  
 **Maintainer:** Movian Documentation Team
 
-For corrections or additions, please refer to the [contribution guidelines](../../CONTRIBUTING.md).
+For corrections or additions, please refer to the [contribution guidelines](../CONTRIBUTING.md).

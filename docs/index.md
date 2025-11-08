@@ -104,7 +104,7 @@ graph TB
 
 ### Core Documentation
 
-#### 🔧 [Installation & Build System](installation/)
+#### 🔧 [Installation & Build System](installation/README.md)
 Complete guides for building Movian from source on all supported platforms.
 
 - **[Requirements](installation/requirements.md)** - System dependencies and prerequisites
@@ -114,7 +114,7 @@ Complete guides for building Movian from source on all supported platforms.
 - **[Cross-Platform Builds](installation/cross-platform.md)** - Android, PS3, and Raspberry Pi
 - **[Troubleshooting](installation/troubleshooting.md)** - Common build issues and solutions
 
-#### 🏛️ [Architecture Documentation](architecture/)
+#### 🏛️ [Architecture Documentation](architecture/README.md)
 Deep dive into Movian's internal design and component interactions.
 
 - **[System Overview](architecture/overview.md)** - High-level architecture and design principles
@@ -123,48 +123,48 @@ Deep dive into Movian's internal design and component interactions.
 - **[Threading Model](architecture/threading.md)** - Concurrency patterns and synchronization
 - **[Memory Management](architecture/memory.md)** - Resource allocation and cleanup strategies
 
-#### 🔌 [Plugin Development](plugins/)
+#### 🔌 [Plugin Development](plugins/README.md)
 Complete guide to creating JavaScript plugins for Movian.
 
 - **[Getting Started](plugins/getting-started.md)** - Your first plugin in 15 minutes
 - **[Plugin Architecture](plugins/architecture.md)** - Lifecycle, manifest, and security model
-- **[ECMAScript API Reference](plugins/api/)** - Complete JavaScript API documentation
+- **[ECMAScript API Reference](plugins/api/README.md)** - Complete JavaScript API documentation
   - [Core APIs](plugins/api/core-api.md) - Service registration and page management
   - [HTTP Client](plugins/api/http-api.md) - Network requests and content fetching
   - [Storage APIs](plugins/api/storage-api.md) - Persistent data and SQLite database
   - [Settings APIs](plugins/api/settings-api.md) - Plugin configuration and preferences
-- **[Working Examples](plugins/examples/)** - Complete plugin implementations
-  - [Hello World](plugins/examples/hello-world/) - Basic plugin structure
-  - [Content Provider](plugins/examples/content-provider/) - Media source integration
-  - [Search Plugin](plugins/examples/search-plugin/) - Search functionality
-  - [Configurable Plugin](plugins/examples/configurable-plugin/) - Settings and preferences
-  - [Advanced UI Plugin](plugins/examples/advanced-ui-plugin/) - Custom interface elements
+- **[Working Examples](plugins/examples/README.md)** - Complete plugin implementations
+  - [Hello World](plugins/examples/hello-world/README.md) - Basic plugin structure
+  - [Content Provider](plugins/examples/content-provider/README.md) - Media source integration
+  - [Search Plugin](plugins/examples/search-plugin/README.md) - Search functionality
+  - [Configurable Plugin](plugins/examples/configurable-plugin/README.md) - Settings and preferences
+  - [Advanced UI Plugin](plugins/examples/advanced-ui-plugin/README.md) - Custom interface elements
 - **[Best Practices](plugins/best-practices.md)** - Patterns, performance, and debugging
 
-#### 🎨 [UI System & Theming](ui/)
+#### 🎨 [UI System & Theming](ui/README.md)
 Master Movian's GLW rendering engine and create custom interfaces.
 
 - **[GLW Architecture](ui/glw-architecture.md)** - OpenGL Widget system internals
-- **[View Files](ui/view-files/)** - XML-like UI definition language
+- **[View Files](ui/view-files/README.md)** - XML-like UI definition language
   - [Syntax Reference](ui/view-files/syntax-reference.md) - Complete language specification
   - [Elements Reference](ui/view-files/elements-reference.md) - All available UI elements
   - [Attributes Reference](ui/view-files/attributes-reference.md) - Element properties and values
   - [Expression System](ui/view-files/expressions.md) - Dynamic values and data binding
-- **[Source Code Analysis](ui/source-analysis/)** - Deep dive into GLW implementation
+- **[Source Code Analysis](ui/source-analysis/README.md)** - Deep dive into GLW implementation
   - [Parser Analysis](ui/source-analysis/glw_view_parser.c.md) - Element and attribute parsing
   - [Lexer Analysis](ui/source-analysis/glw_view_lexer.c.md) - Token definitions and syntax
   - [Evaluator Analysis](ui/source-analysis/glw_view_eval.c.md) - Expression evaluation engine
-- **[Theming System](ui/theming/)** - Create and customize skins
+- **[Theming System](ui/theming/README.md)** - Create and customize skins
   - [Skin Structure](ui/theming/skin-structure.md) - Directory organization and file relationships
   - [Creating Skins](ui/theming/creating-skins.md) - Complete skin development workflow
   - [Theme Variables](ui/theming/theme-variables.md) - Customization and device adaptation
-- **[Widget Reference](ui/widgets/)** - Available UI components
+- **[Widget Reference](ui/widgets/README.md)** - Available UI components
   - [Containers](ui/widgets/container.md) - Layout and positioning widgets
   - [Text Elements](ui/widgets/text.md) - Typography and text rendering
   - [Images](ui/widgets/image.md) - Image display and manipulation
   - [Lists & Grids](ui/widgets/list.md) - Data presentation widgets
 
-#### 🎬 [Media System](media/)
+#### 🎬 [Media System](media/README.md)
 Understanding Movian's media playback pipeline and backend architecture.
 
 - **[Pipeline Architecture](media/pipeline-architecture.md)** - Media processing flow
@@ -174,7 +174,7 @@ Understanding Movian's media playback pipeline and backend architecture.
 
 ### Reference Documentation
 
-#### 📖 [Complete API Reference](reference/)
+#### 📖 [Complete API Reference](reference/README.md)
 Comprehensive reference materials for quick lookup.
 
 - **[API Index](reference/api-index.md)** - All JavaScript APIs with signatures
@@ -184,7 +184,7 @@ Comprehensive reference materials for quick lookup.
 - **[FAQ](reference/faq.md)** - Frequently asked questions
 - **[Troubleshooting](reference/troubleshooting.md)** - Common issues and solutions
 
-#### 🛠️ [Developer Tools](guides/)
+#### 🛠️ [Developer Tools](guides/README.md)
 Practical guides for development workflows.
 
 - **[Development Setup](guides/development-setup.md)** - IDE configuration and debugging tools

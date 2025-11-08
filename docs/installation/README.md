@@ -149,7 +149,7 @@ For detailed information about Movian's build system:
 | **Visual Studio Code** | All | [VSCode Setup](../guides/development-setup.md#visual-studio-code) |
 | **CLion** | All | [CLion Setup](../guides/development-setup.md#clion) |
 | **Xcode** | macOS | [Xcode Setup](../guides/development-setup.md#xcode) |
-| **Code::Blocks** | Linux/Windows | [Code::Blocks Setup](../guides/development-setup.md#code-blocks) |
+| **Code::Blocks** | Linux/Windows | [Code::Blocks Setup](../guides/development-setup.md#codeblocks) |
 
 ### Debugging Tools
 

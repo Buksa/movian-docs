@@ -499,5 +499,5 @@ Lists support pagination for large datasets:
 - [Container Widgets](container.md) - Basic layout containers
 - [Grid Layouts](grid.md) - Grid-based layouts
 - [Scroll System](../glw-architecture.md#rendering-pipeline) - Scrolling internals
-- [Focus Management](../glw-architecture.md#focus) - Focus system
+- [Focus Management](../glw-architecture.md#focus-management) - Focus system
 - [View File Syntax](../view-files/syntax-reference.md) - Complete syntax reference

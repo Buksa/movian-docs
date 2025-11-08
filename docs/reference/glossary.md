@@ -74,7 +74,7 @@ Component that separates multiplexed media streams into individual audio, video,
 JavaScript execution environment that runs plugin code. Provides sandboxed access to native Movian functionality through JavaScript APIs.
 
 **Source Location**: `movian/src/ecmascript/`  
-**Related Terms**: [Plugin System](#plugin-system), [API](#api)  
+**Related Terms**: [Plugin System](#plugin-system), [API](#api-application-programming-interface)  
 **Documentation**: [Plugin Development](../plugins/)
 
 ### Event System
@@ -360,7 +360,7 @@ Individual UI element in the GLW system, such as containers, text labels, images
 #### **Plugin Development**
 - [Plugin System](#plugin-system)
 - [ECMAScript Runtime](#ecmascript-runtime)
-- [API](#api)
+- [API](#api-application-programming-interface)
 - [Manifest](#manifest-plugin)
 - [Sandboxing](#sandboxing)
 

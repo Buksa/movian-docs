@@ -793,4 +793,4 @@ When in doubt, refer to existing high-quality documentation as examples, and alw
 - [Glossary](../reference/glossary.md) - Standard terminology
 - [Accuracy Tracking](accuracy-tracking.md) - Verification status
 - [Source References](source-references.md) - Source code mapping
-- [Contributing Guide](../../CONTRIBUTING.md) - How to contribute
+- [Contributing Guide](../CONTRIBUTING.md) - How to contribute
