@@ -1070,5 +1070,71 @@ This progress document is updated after each task completion. For questions or s
   - Displacement animation: Scaling and positioning for slide-in effect
 - **Report**: [Task 7.3 OSD Analysis Report](task-reports/task-7.3-osd-analysis-report.md)
 
+### Task 7.3 (Sub-task) - Document All 6 OSD View Files ✅
+- **Completed**: 2024-11-07
+- **Duration**: ~2 hours
+- **Deliverables**:
+  - `docs/media/osd-view-files-reference.md` - Comprehensive OSD view files reference (600+ lines)
+  - Complete documentation of all 6 OSD view files:
+    - `osd_main.view` - Main OSD menu with sidebar navigation
+    - `osd_settings.view` - Reusable settings page macro
+    - `osd_settings_audio.view` - Audio settings implementation
+    - `osd_settings_subs.view` - Subtitle settings implementation
+    - `osd_settings_video.view` - Video settings implementation
+    - `osd_audio.view` - Audio track selection (single-line layout)
+    - `osd_subs.view` - Subtitle track selection (multi-line layout)
+  - Complete OSD architecture overview with file organization
+  - Page state management system with complete mapping table
+  - Navigation flow diagram (Mermaid)
+  - Detailed reference for each view file with complete source code
+  - OSD integration patterns (page loading, focus management, event delivery)
+  - Visual feedback system documentation
+  - Common patterns and best practices
+  - Customization guide for adding new pages and modifying displays
+  - Troubleshooting section with common issues and solutions
+- **Key Features**:
+  - Page state management: `$clone.osdpage` with 7 states (0, 1, 2, 3, 4, 100, 101)
+  - Macro-based architecture: `OSD_SETTINGS_MENU(NODES, TITLE, ID)` for all settings pages
+  - Focus management: Explicit `focus("target_id")` calls for navigation
+  - Data-driven UI: `cloner()` with dynamic item loading
+  - Track indicators: Check icon (current) and favorite icon (manual selection)
+  - Smooth animations: `iir()` function for all transitions
+  - Scrollbar integration: Consistent 4px scrollbar with auto-hide
+  - Event delivery: `deliverEvent($parent.control, selectAudioTrack($self.url))`
+- **Documentation Sections**:
+  - OSD Architecture (file organization, page state, navigation flow)
+  - View File Detailed Reference (all 6 files with complete source)
+  - OSD Integration Patterns (loading, focus, events, visual feedback)
+  - Common Patterns and Best Practices (5 key patterns)
+  - Customization Guide (adding pages, modifying displays, settings)
+  - Troubleshooting (common issues and debugging tips)
+- **Key Achievements**:
+  - 100% coverage of all 6 OSD view files
+  - Complete source code included for each file
+  - All interactions and navigation flows documented
+  - Macro system fully explained with parameter documentation
+  - Track selection differences documented (audio vs subtitle)
+  - Integration patterns with video playback system
+  - Customization examples for extending OSD
+  - Troubleshooting guidance for common issues
+- **Technical Insights**:
+  - Macro-based code reuse: Single `OSD_SETTINGS_MENU` macro used for 3 settings pages
+  - Page number system: 0-4 for core pages, 100+ for track selection
+  - Focus coordination: Page change + focus ensures proper navigation
+  - Data-driven settings: UI automatically adapts to available settings
+  - Visual feedback consistency: Same macros across all pages
+  - Track display differences: Single-line (audio) vs multi-line (subtitle)
+  - Conditional loading: `autohide: true` with `select()` and `translate()`
+  - Event delivery pattern: Centralized media control system
+- **Source Files Analyzed**:
+  - `movian/glwskins/flat/osd/osd_main.view` (42 lines)
+  - `movian/glwskins/flat/osd/osd_settings.view` (48 lines)
+  - `movian/glwskins/flat/osd/osd_settings_audio.view` (4 lines)
+  - `movian/glwskins/flat/osd/osd_settings_subs.view` (4 lines)
+  - `movian/glwskins/flat/osd/osd_settings_video.view` (4 lines)
+  - `movian/glwskins/flat/osd/osd_audio.view` (88 lines)
+  - `movian/glwskins/flat/osd/osd_subs.view` (103 lines)
+- **Report**: [Task 7.3 OSD Files Report](task-reports/task-7.3-subtask-osd-files-report.md)
+
 **Last Updated**: 2024-11-07  
 **Next Task**: Task 7.4 - Create practical skin examples with macro system
