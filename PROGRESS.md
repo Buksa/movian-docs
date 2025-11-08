@@ -775,3 +775,101 @@ This progress document is updated after each task completion. For questions or s
   - Integration with existing skin architecture documentation
   - Source code references: universe.view (lines 114-127 for notifications, 128-154 for progress)
 - **Report**: [Task 7.2 Notification Systems Report](task-reports/task-7.2-notification-systems-report.md)
+
+### Task 7.2 - Skin Architecture and Component System Documentation ✅
+
+- **Completed**: 2024-11-07
+- **Duration**: Multiple sessions across component analysis
+- **Deliverables**:
+  - Complete `docs/ui/theming/skin-architecture.md` (3010 lines)
+  - Comprehensive architectural documentation of Movian's skin system
+  - 15 major documentation sections:
+    1. Root Entry Point: universe.view
+       - Purpose and responsibility as orchestration layer
+       - Complete architectural structure with Mermaid diagram
+       - Root container structure with z-order layering
+       - Key architectural patterns
+    2. Component Loading System
+       - Static loading for always-present components
+       - Conditional loading with `select()` and `translate()`
+       - Animated loading with smooth transitions
+       - Dynamic loading with cloner for data-driven UI
+    3. Page Management System
+       - Complete page system architecture
+       - Navigation pages using `cloner($nav.pages, container_z, {...})`
+       - Loading states with `$nav.currentpage.model.loading`
+       - Page layer management with `getLayer()` function
+       - Context variables and dynamic page loading
+       - Navigation stack behavior
+    4. Popup and Overlay System
+       - Core popup system using `cloner($core.popups, loader, {...})`
+       - Dynamic type resolution and lifecycle
+       - Complete popup types (message, auth, filepicker, text, resume)
+       - Popup component patterns and event sink communication
+       - Click-outside-to-cancel and data binding patterns
+    5. System Window Overlays
+       - Log window system with conditional loading
+       - Complete log window implementation with color-coded logs
+       - On-screen keyboard (OSK) system
+       - Complete OSK implementation with layout selection
+       - Auto-hide patterns and event handling
+    6. Playdeck System
+       - Media player UI architecture
+       - Adaptive layout system (landscape/portrait)
+       - Media type detection and adaptation
+    7. Notification System
+       - Complete notification architecture using `cloner($core.notifications.nodes, ...)`
+       - Notification lifecycle with sequence diagram
+       - Customization patterns (icons, type-based styling, animations)
+    8. Progress Indicator System
+       - Clipboard progress using `cloner($core.clipboard.copyprogress, ...)`
+       - Progress bar calculation and visual structure
+       - Progress lifecycle with sequence diagram
+       - Customization patterns and use cases
+    9. System Overlays
+       - Audio volume display with auto-hide
+       - Mute indicator and clock display
+    10. Information Displays
+        - Media info and system info overlays
+    11. Underscan and Screen Safety
+        - Underscan system for TV compatibility
+        - Underscan adjustment UI
+    12. Component Communication Patterns
+        - Event-based communication
+        - State variables (`$ui.*`, `$core.*`, `$nav.*`)
+        - Data flow patterns
+    13. Performance Optimization Patterns
+        - Layout constraints and smooth interpolation
+        - Conditional rendering and optimization
+    14. Best Practices
+        - Component organization, loading strategy
+        - State management, performance, event handling
+    15. Troubleshooting
+        - Common issues and solutions
+  - 100+ code examples from actual source files
+  - 5 Mermaid diagrams (architecture, sequence flows)
+  - Complete source code analysis of 10+ view files
+- **Key Achievements**:
+  - Complete architectural documentation from root to leaf components
+  - All component loading patterns documented with examples
+  - Full page management system with lifecycle documentation
+  - Complete popup and overlay system coverage
+  - Notification and progress indicator systems fully documented
+  - Performance optimization patterns and best practices
+  - Integration with all related documentation
+  - Production-ready documentation for skin developers
+- **Source References**:
+  - `movian/glwskins/flat/universe.view` - Root entry point
+  - `movian/glwskins/flat/log.view` - Log window
+  - `movian/glwskins/flat/osk.view` - On-screen keyboard
+  - `movian/glwskins/flat/popups/*.view` - All popup types
+  - `movian/glwskins/flat/popups/common.view` - Shared components
+  - `movian/glwskins/flat/theme.view` - Macro definitions
+- **Report**: [Task 7.2 Report](task-reports/task-7.2-report.md)
+- **Related Reports**:
+  - [Universe Entry Point](task-reports/task-7.2-universe-entry-point-report.md)
+  - [Component Loading](task-reports/task-7.2-component-loading-report.md)
+  - [Page Management](task-reports/task-7.2-page-management-report.md)
+  - [Popup and Overlay System](task-reports/task-7.2-popup-overlay-system-report.md)
+  - [Notification Systems](task-reports/task-7.2-notification-systems-report.md)
+
