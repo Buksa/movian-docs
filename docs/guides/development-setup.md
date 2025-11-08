@@ -86,7 +86,7 @@ Create `.vscode/launch.json`:
 1. Open project folder
 2. CLion auto-detects CMake configuration
 3. Set build configuration to Debug
-4. Configure run configuration with `--debug` flag
+4. Configure run configuration with debug flags (see [Command-Line Options](command-line-options.md))
 
 ### Xcode
 

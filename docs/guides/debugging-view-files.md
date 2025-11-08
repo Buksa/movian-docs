@@ -562,7 +562,9 @@ Build views incrementally:
 ### 1. Setup Development Environment
 
 **Enable Debug Logging**:
-- Start Movian with debug flags
+- Start Movian with debug flags (see [Command-Line Options](command-line-options.md))
+- Use `-d` for general debug output
+- Use `--debug-glw` for GLW-specific debugging
 - Monitor log output in real-time
 - Use log filtering for relevant messages
 

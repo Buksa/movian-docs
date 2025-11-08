@@ -129,6 +129,7 @@ nav:
     - OSD View Files Reference: media/osd-view-files-reference.md
   - Guides:
     - Overview: guides/README.md
+    - Command-Line Options: guides/command-line-options.md
     - Debugging View Files: guides/debugging-view-files.md
     - Performance Optimization: guides/performance-optimization.md
     - Skin Template Generator: guides/skin-template-generator.md

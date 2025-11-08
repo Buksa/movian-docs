@@ -2405,3 +2405,46 @@ This progress document is updated after each task completion. For questions or s
 
 **Last Updated**: 2025-11-08  
 **Next Update**: After next task completion
+
+
+### Task 10.5 - Document Command-Line Options and Debug Flags ✅
+
+- **Completed**: 2025-11-08
+- **Duration**: ~2 hours
+- **Deliverables**:
+  - `docs/guides/command-line-options.md` - Complete command-line reference (700+ lines)
+  - Comprehensive documentation of all 30+ command-line options from `movian/src/main.c`
+  - Updated `mkdocs.yml` navigation with new guide
+  - Updated `docs/guides/README.md` with command-line options link
+  - Updated `docs/guides/development-setup.md` with reference to debug flags
+  - Updated `docs/guides/debugging-view-files.md` with specific debug flag examples
+  - Updated `.kiro/specs/movian-documentation/requirements.md` with new acceptance criterion 4.8
+  - Updated `.kiro/specs/movian-documentation/design.md` with command-line documentation component
+- **Options Documented**:
+  - **General**: `-h`, `--help`
+  - **Debug & Logging**: `-d`, `--libav-log`, `--debug-glw`, `--show-usage-events`, `-L`, `--syslog`
+  - **UI Options**: `--no-ui`, `--fullscreen`, `--ui`, `--skin`, `-v`
+  - **Path Configuration**: `--cache`, `--persistent`
+  - **Network**: `--proxy`, `--disable-upnp`, `--disable-sd`
+  - **Plugin Development**: `-p`, `--plugin-repo`, `--disable-upgrades`, `--bypass-ecmascript-acl`, `--ecmascript`
+  - **Advanced Debug**: `--pointer-is-touch`, `--stdin`
+  - **System Control**: `--with-standby`, `--with-poweroff`, `--with-logout`, `--with-restart`, `--without-exit`, `--with-openshell`
+  - **Internal**: `--showtime-shell-fd`, `--upgrade-path`, `--vmir-bitcode`, `-psn` (macOS)
+- **Key Features**:
+  - Complete source code analysis of `parse_opts()` function
+  - Documented `gconf_t` global configuration structure
+  - 5 common usage scenarios (development, kiosk, headless, testing, debugging)
+  - Security warnings for dangerous options (`--bypass-ecmascript-acl`)
+  - Platform-specific notes and conditional compilation flags
+  - Cross-references to related documentation
+  - Environment variables documentation
+- **Impact**:
+  - Fills critical gap in developer reference documentation
+  - Enables proper debugging and development workflows
+  - Provides foundation for troubleshooting guides
+  - Completes Requirement 4.8
+- **Report**: [Task 10.5 Report](task-reports/task-10.5-report.md)
+- **Requirements Addressed**: 4.8
+
+**Last Updated**: 2025-11-08  
+**Next Update**: Project complete - no further tasks planned

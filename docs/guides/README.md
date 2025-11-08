@@ -6,6 +6,7 @@ Step-by-step tutorials and guides for Movian development.
 
 - [Installation Guide](installation.md) - Setting up your development environment
 - [Development Setup](development-setup.md) - IDE configuration and tools
+- [Command-Line Options](command-line-options.md) - Complete reference for all startup options and debug flags
 - [Building Your First Plugin](building-first-plugin.md) - Complete plugin tutorial
 - [Customizing the UI](customizing-ui.md) - Creating custom [themes](../reference/glossary.md#theme) and layouts
 
