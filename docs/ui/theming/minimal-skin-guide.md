@@ -624,6 +624,7 @@ To create a complete skin, add:
 
 - **Full example**: See `movian-docs/docs/ui/theming/examples/minimal-skin/`
 - **Complete skin**: Study `movian/glwskins/flat/` for advanced patterns
+- **Best practices**: See [Skin Performance Best Practices Guide](../../guides/skin-performance-best-practices.md)
 - **Documentation**: Refer to the complete Movian theming guide
 
 ## Summary

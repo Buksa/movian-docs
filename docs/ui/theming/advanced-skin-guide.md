@@ -855,6 +855,8 @@ advanced-skin/
 3. **Consistent Styling**: Use global styles and variables
 4. **Error Handling**: Handle missing data gracefully
 
+> **📖 For comprehensive best practices**, see the [Skin Performance Best Practices Guide](../../guides/skin-performance-best-practices.md) which covers performance optimization, maintainability principles, resource management, animation best practices, and common pitfalls in detail.
+
 ## Conclusion
 
 The advanced skin example demonstrates a complete, production-ready skin with all the features needed for a professional Movian theme. By following these patterns and best practices, you can create sophisticated, maintainable skins that provide an excellent user experience.

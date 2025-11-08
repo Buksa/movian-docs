@@ -90,6 +90,11 @@ nav:
     - Overview: ui/README.md
     - Examples: ui/examples/README.md
     - Source Analysis: ui/source-analysis/README.md
+  - Guides:
+    - Overview: guides/README.md
+    - Debugging View Files: guides/debugging-view-files.md
+    - Skin Template Generator: guides/skin-template-generator.md
+    - Skin Performance Best Practices: guides/skin-performance-best-practices.md
   - Reference:
     - Glossary: reference/glossary.md
   - Testing:
