@@ -1,0 +1,18 @@
+// Minimal Skin - Background Component
+// Displays the background image or gradient
+
+widget(container_z, {
+
+  // Main backdrop
+  // Uses page metadata background, or falls back to a gradient
+  widget(backdrop, {
+    source: $nav.currentpage.model.metadata.background ??
+      $nav.currentpage.glw.background ??
+      $core.glw.background ??
+      "pixmap:gradient:30,30,30:10,10,10";
+
+    zoffset: -1500;
+    alpha: iir(1 - $ui.fullwindow, 4);
+    maxIntensity: 0.4;
+  });
+});

@@ -1,0 +1,88 @@
+// Minimal Skin - Macro Definitions
+// This file defines reusable UI macros for consistent styling
+
+// ListItemBevel - Adds subtle shadow effect to list items
+// Creates a 3D bevel effect with light and dark lines
+#define ListItemBevel() {
+  widget(container_y, {
+    filterConstraintY: true;
+    filterConstraintX: true;
+    
+    // Light line on top
+    widget(quad, {
+      height: 1;
+      alpha: 0.15;
+    });
+    
+    space(1);
+    
+    // Dark line on bottom
+    widget(quad, {
+      height: 1;
+      color: 0;
+      alpha: 0.15;
+    });
+  });
+}
+
+// ListItemHighlight - Highlights list items on hover/focus
+// Uses additive blending for a subtle glow effect
+#define ListItemHighlight() {
+  widget(quad, {
+    fhpSpill: true;
+    additive: true;
+    alpha: 0.1 * isHovered() + 0.2 * isNavFocused();
+  });
+}
+
+// BackButton - Creates a back navigation button
+// Parameters:
+//   ENABLED - Whether the button is enabled (default: true)
+//   EVENT - Event to trigger on activation (default: back event)
+#define BackButton(ENABLED=true, EVENT=event("back")) {
+  widget(container_y, {
+    align: center;
+    width: 4em;
+    clickable: $ui.pointerVisible || ($ui.touch && ENABLED);
+    alpha: iir($ui.pointerVisible || ($ui.touch && ENABLED), 4);
+    onEvent(activate, EVENT);
+    navFocusable: false;
+    
+    widget(icon, {
+      color: 0.5 + iir(isHovered(), 4);
+      size: 2em;
+      source: "dataroot://res/svg/Left.svg";
+    });
+  });
+}
+
+// PageHeader - Creates a standardized page header with title and back button
+// Parameters:
+//   TITLE - The title text to display
+#define PageHeader(TITLE) {
+  widget(container_z, {
+    height: 3em;
+    zoffset: 10;
+    
+    // Semi-transparent background
+    widget(quad, {
+      color: 0;
+      alpha: 0.2;
+    });
+    
+    // Title text centered
+    widget(label, {
+      padding: [3em, 0];
+      align: center;
+      caption: TITLE;
+      size: 1.5em;
+    });
+    
+    // Back button (only shown when navigation allows going back)
+    widget(container_x, {
+      hidden: !$nav.canGoBack;
+      BackButton();
+      space(1);
+    });
+  });
+}

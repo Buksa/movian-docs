@@ -1,0 +1,184 @@
+// Minimal Skin - Main Entry Point
+// This is the root view file that sets up the entire skin
+
+// Global Configuration
+// -------------------
+
+// UI sizing and margins
+$ui.sizeOffset = 4;
+$ui.xmargin = select($ui.aspect > 1, $ui.width / 100, 0.2em);
+
+// Detect screen orientation
+$ui.orientation = select($ui.aspect > 1, "landscape", "portrait");
+
+// Color scheme - customize these for your skin
+$ui.color1 = "#4192ff";  // Primary blue
+$ui.color2 = "#306cbe";  // Darker blue
+$ui.color3 = "#c2ddff";  // Light blue
+
+// Global Event Handlers
+// ---------------------
+
+// Toggle system info overlay
+onEvent(sysinfo, {
+  toggle($ui.sysinfo);
+});
+
+// Toggle media info overlay
+onEvent(mediastats, {
+  toggle($ui.mediainfo);
+});
+
+// Global Styles
+// -------------
+
+// Page container fade effect for layered pages
+style(PageContainer, {
+  alpha: 1 - iir(clamp(getLayer(), 0, 1), 4) * 0.9;
+});
+
+// Text color changes based on navigation focus
+style(NavSelectedText, {
+  color: select(isNavFocused(), 1, 0.8);
+});
+
+// Main Container
+// --------------
+
+widget(container_z, {
+
+  // Background layer
+  widget(loader, {
+    source: "background.view";
+  });
+
+  // Loading indicator
+  // Shows when current page is loading content
+  widget(loader, {
+    hidden: iir($nav.currentpage.model.loading, 8) < 0.001;
+    zoffset: -999;
+    alpha: iir($nav.currentpage.model.loading, 8);
+    source: "loading.view";
+  });
+
+  // Main content area with underscan (safe area for TV displays)
+  widget(underscan, {
+    widget(container_z, {
+
+      // Page system layer
+      widget(layer, {
+        filterConstraintY: true;
+        
+        // Playfield manages page transitions
+        widget(playfield, {
+          effect: blend;
+          noInitialTransform: true;
+          alpha: 1 - iir(clamp(getLayer(), 0, 1), 7) * 0.66;
+
+          // Clone all navigation pages
+          cloner($nav.pages, container_z, {
+            widget(loader, {
+              noInitialTransform: true;
+              source: "skin://pages/" + $self.model.type + ".view";
+            });
+          });
+        });
+
+        // Popup system
+        cloner($core.popups, loader, {
+          source: "popups/" + $self.type + ".view";
+        });
+      });
+
+      // Bottom area for notifications and media controls
+      widget(container_y, {
+        space(1);
+        widget(container_y, {
+          delta($ui.universeBottomHeight, getHeight());
+          expediteSubscriptions: true;
+
+          // Notifications
+          cloner($core.notifications.nodes, container_z, {
+            widget(quad, {
+              color: 0;
+              alpha: 0.6;
+            });
+
+            widget(label, {
+              padding: [2em, 0.5em];
+              caption: $self.text;
+            });
+          });
+
+          widget(dummy, {
+            height: 0;
+          });
+        });
+      });
+    });
+  });
+
+  // Volume indicator overlay
+  widget(container_y, {
+    align: bottom;
+    spacing: 0.1em;
+    padding: [0, 1em];
+
+    widget(container_z, {
+      height: 1.3em;
+
+      // Mute indicator
+      widget(container_x, {
+        alpha: iir($core.audio.mastermute, 7);
+        padding: [2em, 0];
+
+        widget(container_z, {
+          widget(quad, {
+            color: 0;
+            alpha: 0.8;
+          });
+          widget(label, {
+            padding: [1em, 0];
+            caption: _("Audio muted");
+            align: center;
+          });
+        });
+      });
+
+      // Volume level display
+      widget(container_x, {
+        alpha: iir(changed($core.audio.mastervolume, 2, true), 7);
+        align: center;
+        
+        widget(container_z, {
+          width: $ui.width / 2;
+
+          widget(quad, {
+            color: 0;
+            alpha: 0.8;
+          });
+
+          widget(border, {
+            color: $ui.color3;
+            border: 1;
+            margin: -1;
+          });
+
+          widget(container_x, {
+            padding: 1;
+            widget(bar, {
+              color1: $ui.color1;
+              color2: $ui.color2;
+              fill: ($core.audio.mastervolume + 75) / 87;
+            });
+          });
+
+          widget(label, {
+            caption: fmt(_("Master volume: %d dB"), $core.audio.mastervolume);
+            align: center;
+          });
+        });
+      });
+    });
+  });
+});

@@ -1,0 +1,70 @@
+// Minimal Skin - Home Page
+// Simple home page displaying available services
+
+// Import macro definitions
+#import "skin://theme.view"
+
+// Main container
+widget(container_z, {
+
+  // Content area
+  widget(layer, {
+    widget(clip, {
+      
+      widget(container_z, {
+
+        // Service grid
+        widget(array, {
+          id: "main";
+
+          clipOffsetTop: 3em;
+          scrollThresholdTop: 3em;
+
+          margin: [$ui.xmargin, 0em];
+
+          // Grid layout: 5 columns on landscape, 2 on portrait
+          childTilesX: $ui.aspect > 1 ? 5 : 2;
+          childTilesY: 4;
+
+          // Clone all available services
+          cloner($core.services.stable, container_z, {
+
+            focusable: true;
+            ListItemHighlight();
+            onEvent(activate, navOpen($self.url, void, $self));
+
+            widget(container_y, {
+
+              spacing: 0.5em;
+              padding: 0.5em;
+
+              // Service icon with press effect
+              widget(displacement, {
+                scaling: [1,1,1] - [0.11,0.1,0] * iir(isPressed(), 4, true);
+                
+                widget(icon, {
+                  source: $self.icon ?? "dataroot://res/svg/Settings.svg";
+                  saturation: iir(isPressed(), 4, true) * 0.66;
+                  size: 3em;
+                });
+              });
+
+              // Service title
+              widget(label, {
+                align: center;
+                caption: $self.title;
+                size: 1.2em;
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  // Page header
+  widget(container_y, {
+    align: top;
+    PageHeader(_("Home"));
+  });
+});
