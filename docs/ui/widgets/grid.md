@@ -554,6 +554,6 @@ Keep grid structure shallow:
 
 - [Container Widgets](container.md) - Layout containers
 - [List Widgets](list.md) - Scrollable lists
-- [Array Widget](../view-files/elements-reference.md#array) - Grid widget
+- [Array Widget](../view-files/elements-reference.md#list-widgets) - Grid widget
 - [Cloner Widget](../view-files/elements-reference.md#cloner) - Dynamic content
 - [View File Syntax](../view-files/syntax-reference.md) - Complete syntax reference

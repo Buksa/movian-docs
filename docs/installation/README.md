@@ -146,10 +146,10 @@ For detailed information about Movian's build system:
 
 | IDE | Platform | Setup Guide |
 |-----|----------|-------------|
-| **Visual Studio Code** | All | [VSCode Setup](development-setup.md#vscode) |
-| **CLion** | All | [CLion Setup](development-setup.md#clion) |
-| **Xcode** | macOS | [Xcode Setup](development-setup.md#xcode) |
-| **Code::Blocks** | Linux/Windows | [Code::Blocks Setup](development-setup.md#codeblocks) |
+| **Visual Studio Code** | All | [VSCode Setup](../guides/development-setup.md#visual-studio-code) |
+| **CLion** | All | [CLion Setup](../guides/development-setup.md#clion) |
+| **Xcode** | macOS | [Xcode Setup](../guides/development-setup.md#xcode) |
+| **Code::Blocks** | Linux/Windows | [Code::Blocks Setup](../guides/development-setup.md#code-blocks) |
 
 ### Debugging Tools
 
@@ -190,7 +190,7 @@ For detailed information about Movian's build system:
 
 ### Contributing
 - [Contributing Guide](../CONTRIBUTING.md) - How to contribute to Movian
-- [Development Workflow](development-setup.md) - Setting up for development
+- [Development Workflow](../guides/development-setup.md) - Setting up for development
 - [Plugin Development](../plugins/getting-started.md) - Creating plugins
 
 ---

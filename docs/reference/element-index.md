@@ -544,7 +544,7 @@ Add borders to visualize layout:
 ### Related Documentation
 
 - **[Elements Reference](../ui/view-files/elements-reference.md)** - Detailed element documentation
-- **[Attributes Reference](attributes-reference.md)** - Complete attribute catalog
+- **[Attributes Reference](attribute-index.md)** - Complete attribute catalog
 - **[Syntax Reference](../ui/view-files/syntax-reference.md)** - View file syntax
 - **[Widget Documentation](../ui/widgets/)** - Widget-specific guides
 - **[GLW Architecture](../ui/glw-architecture.md)** - System architecture

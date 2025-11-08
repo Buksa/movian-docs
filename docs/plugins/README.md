@@ -28,6 +28,6 @@ Complete guide for developing Movian plugins using JavaScript.
 ## Best Practices
 
 - [Development Patterns](best-practices.md) - Recommended approaches
-- [Error Handling](error-handling.md) - Robust error management
-- [Performance](performance.md) - Optimization techniques
-- [Security](security.md) - Safe plugin development
+- [Error Handling](api/error-handling.md) - Robust error management
+- [Performance](api/performance.md) - Optimization techniques
+- [Security](api/security.md) - Safe plugin development

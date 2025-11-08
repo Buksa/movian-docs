@@ -96,6 +96,13 @@ cmake .. -G Xcode
 open movian.xcodeproj
 ```
 
+### Code::Blocks
+
+1. Open Code::Blocks
+2. File → Open → Select `movian` directory
+3. Build → Build Project
+4. Configure debugger in Settings → Debugger
+
 ## Building from Source
 
 ### Clone Repository

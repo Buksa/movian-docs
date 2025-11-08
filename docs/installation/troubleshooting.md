@@ -653,7 +653,7 @@ fi
 
 - **GitHub Issues**: [Report bugs and build issues](https://github.com/andoma/movian/issues)
 - **Community Forum**: [General discussion and help](https://movian.tv/forum)
-- **Documentation**: [Complete documentation](../README.md)
+- **Documentation**: [Complete documentation](../index.md)
 
 ### Information to Include
 

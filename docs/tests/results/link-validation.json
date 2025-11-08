@@ -1,854 +1,110 @@
 {
-  "timestamp": "2025-11-08T10:04:07.200Z",
+  "timestamp": "2025-11-08T21:45:20.611Z",
   "summary": {
-    "totalLinks": 867,
-    "validLinks": 713,
-    "invalidLinks": 105,
-    "externalLinks": 21,
-    "warnings": 98
+    "totalLinks": 1096,
+    "validLinks": 1041,
+    "invalidLinks": 12,
+    "externalLinks": 39,
+    "warnings": 86
   },
   "brokenLinks": [
     {
-      "text": "Threading Model",
-      "url": "threading-model.md",
+      "text": "i",
+      "url": "rm->resources[i]",
       "type": "internal",
-      "location": "architecture\\README.md",
-      "line": 10
-    },
-    {
-      "text": "Memory Management",
-      "url": "memory-management.md",
-      "type": "internal",
-      "location": "architecture\\README.md",
-      "line": 11
-    },
-    {
-      "text": "Installation Guide",
-      "url": "installation.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 7
-    },
-    {
-      "text": "Development Setup",
-      "url": "development-setup.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 8
-    },
-    {
-      "text": "Building Your First Plugin",
-      "url": "building-first-plugin.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 9
-    },
-    {
-      "text": "Customizing the UI",
-      "url": "customizing-ui.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 10
-    },
-    {
-      "text": "Debugging Plugins",
-      "url": "debugging-plugins.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 14
-    },
-    {
-      "text": "Plugin Development Workflow",
-      "url": "plugin-workflow.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 21
-    },
-    {
-      "text": "Theme Development Workflow",
-      "url": "theme-workflow.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 22
-    },
-    {
-      "text": "Contributing to Movian",
-      "url": "contributing-to-movian.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 23
-    },
-    {
-      "text": "Android Development",
-      "url": "android-development.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 27
-    },
-    {
-      "text": "iOS Development",
-      "url": "ios-development.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 28
-    },
-    {
-      "text": "Desktop Development",
-      "url": "desktop-development.md",
-      "type": "internal",
-      "location": "guides\\README.md",
-      "line": 29
-    },
-    {
-      "text": "Your First Plugin",
-      "url": "plugins/getting-started.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 102
-    },
-    {
-      "text": "Customizing the UI",
-      "url": "ui/getting-started.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 103
-    },
-    {
-      "text": "Requirements",
-      "url": "installation/requirements.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 110
-    },
-    {
-      "text": "Windows Build Guide",
-      "url": "installation/windows.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 113
-    },
-    {
-      "text": "Cross-Platform Builds",
-      "url": "installation/cross-platform.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 114
-    },
-    {
-      "text": "Memory Management",
-      "url": "architecture/memory.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 124
-    },
-    {
-      "text": "Getting Started",
-      "url": "plugins/getting-started.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 129
-    },
-    {
-      "text": "Creating Skins",
-      "url": "ui/theming/creating-skins.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 159
-    },
-    {
-      "text": "Pipeline Architecture",
-      "url": "media/pipeline-architecture.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 170
-    },
-    {
-      "text": "Codec Support",
-      "url": "media/codecs.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 171
-    },
-    {
-      "text": "Streaming Protocols",
-      "url": "media/streaming.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 172
-    },
-    {
-      "text": "Subtitle System",
-      "url": "media/subtitles.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 173
-    },
-    {
-      "text": "Development Setup",
-      "url": "guides/development-setup.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 190
-    },
-    {
-      "text": "Plugin Debugging",
-      "url": "guides/debugging-plugins.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 191
-    },
-    {
-      "text": "Contributing Guide",
-      "url": "CONTRIBUTING.md",
-      "type": "internal",
-      "location": "index.md",
-      "line": 244
-    },
-    {
-      "text": "LICENSE",
-      "url": "../movian/LICENSE",
-      "type": "internal",
-      "location": "index.md",
-      "line": 248
-    },
-    {
-      "text": "GLW",
-      "url": "referenc[component](reference/glossary.md#component",
-      "type": "internal",
-      "location": "index.md",
-      "line": 266
-    },
-    {
-      "text": "Plugin Development Guide",
-      "url": "../plugins/getting-started.md",
-      "type": "internal",
-      "location": "installation\\linux.md",
-      "line": 517
-    },
-    {
-      "text": "UI Theming",
-      "url": "../ui/getting-started.md",
-      "type": "internal",
-      "location": "installation\\linux.md",
-      "line": 518
-    },
-    {
-      "text": "Plugin Development Guide",
-      "url": "../plugins/getting-started.md",
-      "type": "internal",
-      "location": "installation\\macos.md",
-      "line": 556
-    },
-    {
-      "text": "UI Theming",
-      "url": "../ui/getting-started.md",
-      "type": "internal",
-      "location": "installation\\macos.md",
-      "line": 557
-    },
-    {
-      "text": "Windows Guide",
-      "url": "windows.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 12
-    },
-    {
-      "text": "Cross-Platform Guide",
-      "url": "cross-platform.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 13
-    },
-    {
-      "text": "Cross-Platform Guide",
-      "url": "cross-platform.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 14
-    },
-    {
-      "text": "Cross-Platform Guide",
-      "url": "cross-platform.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 15
-    },
-    {
-      "text": "Windows Installation",
-      "url": "windows.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 120
-    },
-    {
-      "text": "Cross-Platform Builds",
-      "url": "cross-platform.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 127
-    },
-    {
-      "text": "Dependencies Reference",
-      "url": "dependencies.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 138
-    },
-    {
-      "text": "VSCode Setup",
-      "url": "development-setup.md#vscode",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 147
-    },
-    {
-      "text": "CLion Setup",
-      "url": "development-setup.md#clion",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 148
-    },
-    {
-      "text": "Xcode Setup",
-      "url": "development-setup.md#xcode",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 149
-    },
-    {
-      "text": "Code::Blocks Setup",
-      "url": "development-setup.md#codeblocks",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 150
-    },
-    {
-      "text": "Contributing Guide",
-      "url": "../CONTRIBUTING.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 190
-    },
-    {
-      "text": "Development Workflow",
-      "url": "development-setup.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 191
-    },
-    {
-      "text": "Plugin Development",
-      "url": "../plugins/getting-started.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 192
-    },
-    {
-      "text": "plugin development",
-      "url": "../plugins/getting-started.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 200
-    },
-    {
-      "text": "UI customization",
-      "url": "../ui/getting-started.md",
-      "type": "internal",
-      "location": "installation\\README.md",
-      "line": 200
-    },
-    {
-      "text": "Complete documentation",
-      "url": "../README.md",
-      "type": "internal",
-      "location": "installation\\troubleshooting.md",
-      "line": 656
+      "location": "architecture/memory.md",
+      "line": 354
     },
     {
       "text": "Related Document 1",
-      "url": "../path/to/doc.md",
+      "url": "RELATIVE_PATH_TO_DOC",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 92
     },
     {
       "text": "Related Document 2",
-      "url": "../path/to/doc.md",
+      "url": "RELATIVE_PATH_TO_DOC",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 93
     },
     {
       "text": "ECMAScript specification",
-      "url": "url",
+      "url": "URL_HERE",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 187
     },
     {
       "text": "Related Function",
-      "url": "link",
+      "url": "LINK_HERE",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 241
     },
     {
       "text": "Related Guide",
-      "url": "link",
+      "url": "LINK_HERE",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 242
     },
     {
       "text": "new_api",
-      "url": "link",
+      "url": "LINK_HERE",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 385
     },
     {
       "text": "Related Term",
-      "url": "link",
+      "url": "LINK_HERE",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 446
     },
     {
       "text": "new_api",
-      "url": "link",
+      "url": "LINK_HERE",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 478
     },
     {
       "text": "Migration Guide",
-      "url": "link",
+      "url": "LINK_HERE",
       "type": "internal",
-      "location": "meta\\documentation-standards.md",
+      "location": "meta/documentation-standards.md",
       "line": 478
     },
     {
-      "text": "HTTP & Networking Guide",
-      "url": "../guides/http-networking.md",
-      "type": "internal",
-      "location": "meta\\documentation-standards.md",
-      "line": 691
-    },
-    {
-      "text": "HTML Parsing",
-      "url": "html-modules-comparison.md",
-      "type": "internal",
-      "location": "meta\\documentation-standards.md",
-      "line": 692
-    },
-    {
-      "text": "Advanced Plugin Examples",
-      "url": "../examples/advanced-ui-plugin/README.md",
-      "type": "internal",
-      "location": "meta\\documentation-standards.md",
-      "line": 776
-    },
-    {
       "text": "Related Section",
-      "url": "../related/page.md",
+      "url": "RELATED_PAGE_LINK",
       "type": "internal",
-      "location": "meta\\update-procedures.md",
+      "location": "meta/update-procedures.md",
       "line": 340
-    },
-    {
-      "text": "Plugin Development Guide",
-      "url": "../getting-started.md",
-      "type": "internal",
-      "location": "plugins\\api\\core-api.md",
-      "line": 755
     },
     {
       "text": "\"'",
       "url": "[^\"']*",
       "type": "internal",
-      "location": "plugins\\api\\http-api.md",
+      "location": "plugins/api/http-api.md",
       "line": 584
-    },
-    {
-      "text": "Property System",
-      "url": "../advanced/properties.md",
-      "type": "internal",
-      "location": "plugins\\api\\settings-api.md",
-      "line": 723
-    },
-    {
-      "text": "Plugin Development Guide",
-      "url": "../getting-started.md",
-      "type": "internal",
-      "location": "plugins\\api\\storage-api.md",
-      "line": 1086
-    },
-    {
-      "text": "Property System Guide",
-      "url": "../../api/prop-api.md",
-      "type": "internal",
-      "location": "plugins\\examples\\advanced-ui-plugin\\README.md",
-      "line": 200
-    },
-    {
-      "text": "Plugin Development Guide",
-      "url": "../../getting-started.md",
-      "type": "internal",
-      "location": "plugins\\examples\\configurable-plugin\\README.md",
-      "line": 222
-    },
-    {
-      "text": "Property System",
-      "url": "../../advanced/properties.md",
-      "type": "internal",
-      "location": "plugins\\examples\\configurable-plugin\\README.md",
-      "line": 224
-    },
-    {
-      "text": "Page API Reference",
-      "url": "../../api/page-api.md",
-      "type": "internal",
-      "location": "plugins\\examples\\content-provider\\README.md",
-      "line": 803
-    },
-    {
-      "text": "API Reference",
-      "url": "../../api/README.md",
-      "type": "internal",
-      "location": "plugins\\examples\\hello-world\\README.md",
-      "line": 202
-    },
-    {
-      "text": "Page API",
-      "url": "../../api/page-api.md",
-      "type": "internal",
-      "location": "plugins\\examples\\hello-world\\README.md",
-      "line": 204
-    },
-    {
-      "text": "Page API Reference",
-      "url": "../../api/page-api.md",
-      "type": "internal",
-      "location": "plugins\\examples\\search-plugin\\README.md",
-      "line": 444
-    },
-    {
-      "text": "Plugin Basics",
-      "url": "getting-started.md",
-      "type": "internal",
-      "location": "plugins\\README.md",
-      "line": 7
-    },
-    {
-      "text": "Page API",
-      "url": "api/page-api.md",
-      "type": "internal",
-      "location": "plugins\\README.md",
-      "line": 17
-    },
-    {
-      "text": "SQLite API",
-      "url": "api/sqlite-api.md",
-      "type": "internal",
-      "location": "plugins\\README.md",
-      "line": 18
-    },
-    {
-      "text": "Error Handling",
-      "url": "error-handling.md",
-      "type": "internal",
-      "location": "plugins\\README.md",
-      "line": 31
-    },
-    {
-      "text": "Performance",
-      "url": "performance.md",
-      "type": "internal",
-      "location": "plugins\\README.md",
-      "line": 32
-    },
-    {
-      "text": "Security",
-      "url": "security.md",
-      "type": "internal",
-      "location": "plugins\\README.md",
-      "line": 33
-    },
-    {
-      "text": "Getting Started Guide",
-      "url": "../plugins/getting-started.md",
-      "type": "internal",
-      "location": "reference\\api-index.md",
-      "line": 799
-    },
-    {
-      "text": "Attributes Reference",
-      "url": "attributes-reference.md",
-      "type": "internal",
-      "location": "reference\\element-index.md",
-      "line": 547
-    },
-    {
-      "text": "Page API Reference",
-      "url": "../plugins/api/page-api.md",
-      "type": "internal",
-      "location": "reference\\faq.md",
-      "line": 540
-    },
-    {
-      "text": "Creating Skins Guide",
-      "url": "../ui/theming/creating-skins.md",
-      "type": "internal",
-      "location": "reference\\faq.md",
-      "line": 628
-    },
-    {
-      "text": "Widget Reference",
-      "url": "../ui/view-files/widget-reference.md",
-      "type": "internal",
-      "location": "reference\\faq.md",
-      "line": 770
-    },
-    {
-      "text": "Cross-Platform Guide",
-      "url": "../installation/cross-platform.md",
-      "type": "internal",
-      "location": "reference\\faq.md",
-      "line": 974
-    },
-    {
-      "text": "Contributing Guide",
-      "url": "../CONTRIBUTING.md",
-      "type": "internal",
-      "location": "reference\\faq.md",
-      "line": 1749
-    },
-    {
-      "text": "Codec Support",
-      "url": "../media/codecs.md",
-      "type": "internal",
-      "location": "reference\\glossary.md",
-      "line": 44
-    },
-    {
-      "text": "Pipeline Architecture",
-      "url": "../media/pipeline-architecture.md",
-      "type": "internal",
-      "location": "reference\\glossary.md",
-      "line": 168
-    },
-    {
-      "text": "Page API",
-      "url": "../plugins/api/page-api.md",
-      "type": "internal",
-      "location": "reference\\glossary.md",
-      "line": 198
-    },
-    {
-      "text": "Preprocessor",
-      "url": "../ui/view-files/preprocessor.md",
-      "type": "internal",
-      "location": "reference\\glossary.md",
-      "line": 224
-    },
-    {
-      "text": "SQLite API",
-      "url": "../plugins/api/sqlite-api.md",
-      "type": "internal",
-      "location": "reference\\glossary.md",
-      "line": 273
-    },
-    {
-      "text": "Element Reference",
-      "url": "element-reference.md",
-      "type": "internal",
-      "location": "reference\\README.md",
-      "line": 8
-    },
-    {
-      "text": "Attribute Reference",
-      "url": "attribute-reference.md",
-      "type": "internal",
-      "location": "reference\\README.md",
-      "line": 9
-    },
-    {
-      "text": "Page API",
-      "url": "../plugins/api/page-api.md",
-      "type": "internal",
-      "location": "reference\\README.md",
-      "line": 23
-    },
-    {
-      "text": "SQLite API",
-      "url": "../plugins/api/sqlite-api.md",
-      "type": "internal",
-      "location": "reference\\README.md",
-      "line": 25
-    },
-    {
-      "text": "Widget Reference",
-      "url": "view-files/widget-reference.md",
-      "type": "internal",
-      "location": "ui\\README.md",
-      "line": 18
-    },
-    {
-      "text": "Properties Reference",
-      "url": "view-files/properties-reference.md",
-      "type": "internal",
-      "location": "ui\\README.md",
-      "line": 19
-    },
-    {
-      "text": "Preprocessor",
-      "url": "view-files/preprocessor.md",
-      "type": "internal",
-      "location": "ui\\README.md",
-      "line": 21
-    },
-    {
-      "text": "Creating Skins",
-      "url": "theming/creating-skins.md",
-      "type": "internal",
-      "location": "ui\\README.md",
-      "line": 27
-    },
-    {
-      "text": "Custom Widgets",
-      "url": "widgets/custom-widgets.md",
-      "type": "internal",
-      "location": "ui\\README.md",
-      "line": 38
-    },
-    {
-      "text": "Creating Custom Skins",
-      "url": "creating-skins.md",
-      "type": "internal",
-      "location": "ui\\theming\\skin-structure.md",
-      "line": 606
-    },
-    {
-      "text": "Creating Custom Skins",
-      "url": "creating-skins.md",
-      "type": "internal",
-      "location": "ui\\theming\\theme-variables.md",
-      "line": 741
-    },
-    {
-      "text": "Property System",
-      "url": "../../plugins/api/prop-api.md",
-      "type": "internal",
-      "location": "ui\\widgets\\text.md",
-      "line": 505
     }
   ],
   "errors": [
-    "Broken internal link in architecture\\README.md:10: threading-model.md",
-    "Broken internal link in architecture\\README.md:11: memory-management.md",
-    "Broken internal link in guides\\README.md:7: installation.md",
-    "Broken internal link in guides\\README.md:8: development-setup.md",
-    "Broken internal link in guides\\README.md:9: building-first-plugin.md",
-    "Broken internal link in guides\\README.md:10: customizing-ui.md",
-    "Broken internal link in guides\\README.md:14: debugging-plugins.md",
-    "Broken internal link in guides\\README.md:21: plugin-workflow.md",
-    "Broken internal link in guides\\README.md:22: theme-workflow.md",
-    "Broken internal link in guides\\README.md:23: contributing-to-movian.md",
-    "Broken internal link in guides\\README.md:27: android-development.md",
-    "Broken internal link in guides\\README.md:28: ios-development.md",
-    "Broken internal link in guides\\README.md:29: desktop-development.md",
-    "Broken internal link in index.md:102: plugins/getting-started.md",
-    "Broken internal link in index.md:103: ui/getting-started.md",
-    "Broken internal link in index.md:110: installation/requirements.md",
-    "Broken internal link in index.md:113: installation/windows.md",
-    "Broken internal link in index.md:114: installation/cross-platform.md",
-    "Broken internal link in index.md:124: architecture/memory.md",
-    "Broken internal link in index.md:129: plugins/getting-started.md",
-    "Broken internal link in index.md:159: ui/theming/creating-skins.md",
-    "Broken internal link in index.md:170: media/pipeline-architecture.md",
-    "Broken internal link in index.md:171: media/codecs.md",
-    "Broken internal link in index.md:172: media/streaming.md",
-    "Broken internal link in index.md:173: media/subtitles.md",
-    "Broken internal link in index.md:190: guides/development-setup.md",
-    "Broken internal link in index.md:191: guides/debugging-plugins.md",
-    "Broken internal link in index.md:244: CONTRIBUTING.md",
-    "Broken internal link in index.md:248: ../movian/LICENSE",
-    "Broken internal link in index.md:266: referenc[component](reference/glossary.md#component",
-    "Broken internal link in installation\\linux.md:517: ../plugins/getting-started.md",
-    "Broken internal link in installation\\linux.md:518: ../ui/getting-started.md",
-    "Broken internal link in installation\\macos.md:556: ../plugins/getting-started.md",
-    "Broken internal link in installation\\macos.md:557: ../ui/getting-started.md",
-    "Broken internal link in installation\\README.md:12: windows.md",
-    "Broken internal link in installation\\README.md:13: cross-platform.md",
-    "Broken internal link in installation\\README.md:14: cross-platform.md",
-    "Broken internal link in installation\\README.md:15: cross-platform.md",
-    "Broken internal link in installation\\README.md:120: windows.md",
-    "Broken internal link in installation\\README.md:127: cross-platform.md",
-    "Broken internal link in installation\\README.md:138: dependencies.md",
-    "Broken internal link in installation\\README.md:147: development-setup.md#vscode",
-    "Broken internal link in installation\\README.md:148: development-setup.md#clion",
-    "Broken internal link in installation\\README.md:149: development-setup.md#xcode",
-    "Broken internal link in installation\\README.md:150: development-setup.md#codeblocks",
-    "Broken internal link in installation\\README.md:190: ../CONTRIBUTING.md",
-    "Broken internal link in installation\\README.md:191: development-setup.md",
-    "Broken internal link in installation\\README.md:192: ../plugins/getting-started.md",
-    "Broken internal link in installation\\README.md:200: ../plugins/getting-started.md",
-    "Broken internal link in installation\\README.md:200: ../ui/getting-started.md",
-    "Broken internal link in installation\\troubleshooting.md:656: ../README.md",
-    "Broken internal link in meta\\documentation-standards.md:92: ../path/to/doc.md",
-    "Broken internal link in meta\\documentation-standards.md:93: ../path/to/doc.md",
-    "Broken internal link in meta\\documentation-standards.md:187: url",
-    "Broken internal link in meta\\documentation-standards.md:241: link",
-    "Broken internal link in meta\\documentation-standards.md:242: link",
-    "Broken internal link in meta\\documentation-standards.md:385: link",
-    "Broken internal link in meta\\documentation-standards.md:446: link",
-    "Broken internal link in meta\\documentation-standards.md:478: link",
-    "Broken internal link in meta\\documentation-standards.md:478: link",
-    "Broken internal link in meta\\documentation-standards.md:691: ../guides/http-networking.md",
-    "Broken internal link in meta\\documentation-standards.md:692: html-modules-comparison.md",
-    "Broken internal link in meta\\documentation-standards.md:776: ../examples/advanced-ui-plugin/README.md",
-    "Broken internal link in meta\\update-procedures.md:340: ../related/page.md",
-    "Broken internal link in plugins\\api\\core-api.md:755: ../getting-started.md",
-    "Broken internal link in plugins\\api\\http-api.md:584: [^\"']*",
-    "Broken internal link in plugins\\api\\settings-api.md:723: ../advanced/properties.md",
-    "Broken internal link in plugins\\api\\storage-api.md:1086: ../getting-started.md",
-    "Broken internal link in plugins\\examples\\advanced-ui-plugin\\README.md:200: ../../api/prop-api.md",
-    "Broken internal link in plugins\\examples\\configurable-plugin\\README.md:222: ../../getting-started.md",
-    "Broken internal link in plugins\\examples\\configurable-plugin\\README.md:224: ../../advanced/properties.md",
-    "Broken internal link in plugins\\examples\\content-provider\\README.md:803: ../../api/page-api.md",
-    "Broken internal link in plugins\\examples\\hello-world\\README.md:202: ../../api/README.md",
-    "Broken internal link in plugins\\examples\\hello-world\\README.md:204: ../../api/page-api.md",
-    "Broken internal link in plugins\\examples\\search-plugin\\README.md:444: ../../api/page-api.md",
-    "Broken internal link in plugins\\README.md:7: getting-started.md",
-    "Broken internal link in plugins\\README.md:17: api/page-api.md",
-    "Broken internal link in plugins\\README.md:18: api/sqlite-api.md",
-    "Broken internal link in plugins\\README.md:31: error-handling.md",
-    "Broken internal link in plugins\\README.md:32: performance.md",
-    "Broken internal link in plugins\\README.md:33: security.md",
-    "Broken internal link in reference\\api-index.md:799: ../plugins/getting-started.md",
-    "Broken internal link in reference\\element-index.md:547: attributes-reference.md",
-    "Broken internal link in reference\\faq.md:540: ../plugins/api/page-api.md",
-    "Broken internal link in reference\\faq.md:628: ../ui/theming/creating-skins.md",
-    "Broken internal link in reference\\faq.md:770: ../ui/view-files/widget-reference.md",
-    "Broken internal link in reference\\faq.md:974: ../installation/cross-platform.md",
-    "Broken internal link in reference\\faq.md:1749: ../CONTRIBUTING.md",
-    "Broken internal link in reference\\glossary.md:44: ../media/codecs.md",
-    "Broken internal link in reference\\glossary.md:168: ../media/pipeline-architecture.md",
-    "Broken internal link in reference\\glossary.md:198: ../plugins/api/page-api.md",
-    "Broken internal link in reference\\glossary.md:224: ../ui/view-files/preprocessor.md",
-    "Broken internal link in reference\\glossary.md:273: ../plugins/api/sqlite-api.md",
-    "Broken internal link in reference\\README.md:8: element-reference.md",
-    "Broken internal link in reference\\README.md:9: attribute-reference.md",
-    "Broken internal link in reference\\README.md:23: ../plugins/api/page-api.md",
-    "Broken internal link in reference\\README.md:25: ../plugins/api/sqlite-api.md",
-    "Broken internal link in ui\\README.md:18: view-files/widget-reference.md",
-    "Broken internal link in ui\\README.md:19: view-files/properties-reference.md",
-    "Broken internal link in ui\\README.md:21: view-files/preprocessor.md",
-    "Broken internal link in ui\\README.md:27: theming/creating-skins.md",
-    "Broken internal link in ui\\README.md:38: widgets/custom-widgets.md",
-    "Broken internal link in ui\\theming\\skin-structure.md:606: creating-skins.md",
-    "Broken internal link in ui\\theming\\theme-variables.md:741: creating-skins.md",
-    "Broken internal link in ui\\widgets\\text.md:505: ../../plugins/api/prop-api.md"
+    "Broken internal link in architecture/memory.md:354: rm->resources[i]",
+    "Broken internal link in meta/documentation-standards.md:92: RELATIVE_PATH_TO_DOC",
+    "Broken internal link in meta/documentation-standards.md:93: RELATIVE_PATH_TO_DOC",
+    "Broken internal link in meta/documentation-standards.md:187: URL_HERE",
+    "Broken internal link in meta/documentation-standards.md:241: LINK_HERE",
+    "Broken internal link in meta/documentation-standards.md:242: LINK_HERE",
+    "Broken internal link in meta/documentation-standards.md:385: LINK_HERE",
+    "Broken internal link in meta/documentation-standards.md:446: LINK_HERE",
+    "Broken internal link in meta/documentation-standards.md:478: LINK_HERE",
+    "Broken internal link in meta/documentation-standards.md:478: LINK_HERE",
+    "Broken internal link in meta/update-procedures.md:340: RELATED_PAGE_LINK",
+    "Broken internal link in plugins/api/http-api.md:584: [^\"']*"
   ]
 }

@@ -151,8 +151,8 @@ var x = 10;
 Use relative links for internal documentation:
 
 ```markdown
-[Plugin API](../plugins/api/core-api.md)
-[Getting Started](getting-started.md)
+[Plugin API](plugins/api/core-api.md)
+[Getting Started](plugins/getting-started.md)
 ```
 
 Use absolute URLs for external links:

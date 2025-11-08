@@ -720,4 +720,4 @@ function safeKVSet(url, domain, key, value) {
 - [Plugin API Overview](core-api.md) - Core plugin APIs
 - [HTTP API](http-api.md) - Network requests and data fetching
 - [Plugin Examples](../examples/) - Working examples with settings
-- [Property System](../advanced/properties.md) - Advanced property binding
+- [Property System](prop-api.md) - Advanced property binding

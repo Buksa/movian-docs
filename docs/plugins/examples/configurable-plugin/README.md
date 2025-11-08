@@ -221,7 +221,7 @@ var advancedMode = settings.createBool('advancedMode', 'Advanced Mode', false,
 - [Settings API Reference](../../api/settings-api.md) - Complete API documentation
 - [Plugin Development Guide](../../getting-started.md) - Basic plugin development
 - [Storage Best Practices](../../best-practices.md) - Data storage recommendations
-- [Property System](../../advanced/properties.md) - Advanced property binding
+- [Property System](../../api/prop-api.md) - Advanced property binding
 
 ## Troubleshooting
 

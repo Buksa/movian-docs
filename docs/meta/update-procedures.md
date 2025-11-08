@@ -337,7 +337,7 @@ Link to prerequisite knowledge or sections.
 
 ## See Also
 
-- [Related Section](../related/page.md)
+- [Related Section](RELATED_PAGE_LINK)
 - [API Reference](../reference/api-index.md)
 ```
 

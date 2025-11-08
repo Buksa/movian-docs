@@ -89,8 +89,8 @@ Things to avoid and why.
 
 ## See Also
 
-- [Related Document 1](../path/to/doc.md)
-- [Related Document 2](../path/to/doc.md)
+- [Related Document 1](RELATIVE_PATH_TO_DOC)
+- [Related Document 2](RELATIVE_PATH_TO_DOC)
 ```
 
 ## Writing Style Guidelines
@@ -184,7 +184,7 @@ Term
 
 - Use descriptive text: `[Movian GitHub Repository](https://github.com/andoma/movian)`
 - Avoid "click here" or "this link"
-- Include context: "See the [ECMAScript specification](url) for details"
+- Include context: "See the [ECMAScript specification](URL_HERE) for details"
 
 #### Source Code References
 
@@ -238,8 +238,8 @@ var result = function_name("value", 42, {
 **Version**: Movian 4.8+
 
 **See Also**:
-- [Related Function](link)
-- [Related Guide](link)
+- [Related Function](LINK_HERE)
+- [Related Guide](LINK_HERE)
 ```
 
 ### Code Examples
@@ -382,7 +382,7 @@ Always specify version applicability:
 ```markdown
 **Version**: Movian 4.8+
 
-**Deprecated**: This API is deprecated as of Movian 5.0. Use [new_api](link) instead.
+**Deprecated**: This API is deprecated as of Movian 5.0. Use [new_api](LINK_HERE) instead.
 
 **Experimental**: This feature is experimental and may change in future versions.
 ```
@@ -443,7 +443,7 @@ Use admonitions to highlight important information:
   
   **Example**: Practical example showing the term in use.
   
-  **See Also**: [Related Term](link)
+  **See Also**: [Related Term](LINK_HERE)
 ```
 
 ### Common Terms
@@ -475,7 +475,7 @@ When documenting deprecated features:
 !!! warning "Deprecated"
     This API is deprecated as of Movian 5.0 and will be removed in Movian 6.0.
     
-    **Migration**: Use [new_api](link) instead. See [Migration Guide](link) for details.
+    **Migration**: Use [new_api](LINK_HERE) instead. See [Migration Guide](LINK_HERE) for details.
     
     **Reason**: Explanation of why feature was deprecated.
 ```
@@ -689,7 +689,7 @@ if (response.statuscode === 200) {
 
 **See Also**:
 - [HTTP & Networking Guide](../guides/http-networking.md)
-- [HTML Parsing](html-modules-comparison.md)
+- [HTML Parsing](../plugins/api/html-modules-comparison.md)
 ```
 
 ### Good Tutorial Example
@@ -773,7 +773,7 @@ In `index.js`, register your content provider:
 - Implement search feature
 - Add settings for customization
 
-See [Advanced Plugin Examples](../examples/advanced-ui-plugin/README.md) for more features.
+See [Advanced Plugin Examples](../plugins/examples/advanced-ui-plugin/README.md) for more features.
 ```
 
 ## Conclusion

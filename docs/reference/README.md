@@ -6,7 +6,7 @@ Quick reference materials for Movian development.
 
 - [Complete API Index](api-index.md) - All [APIs](glossary.md#api-application-programming-interface) organized [by category](glossary.md#by-category)
 - [Element Reference](element-reference.md) - All view file elements
-- [Attribute Reference](attribute-reference.md) - All element attributes
+- [Attribute Reference](attribute-index.md) - All element attributes
 
 ## General References
 

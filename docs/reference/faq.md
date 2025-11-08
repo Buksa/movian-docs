@@ -13,11 +13,11 @@ This FAQ addresses common questions from developers working with Movian. For spe
 - [General Questions](#general-questions)
 - [Getting Started](#getting-started)
 - [Plugin Development](#plugin-development)
-- [View Files & UI](#view-files--ui)
-- [Build & Installation](#build--installation)
+- [View Files & UI](#view-files-ui)
+- [Build & Installation](#build-installation)
 - [Platform-Specific](#platform-specific)
-- [Performance & Optimization](#performance--optimization)
-- [Architecture & Design](#architecture--design)
+- [Performance & Optimization](#performance-optimization)
+- [Architecture & Design](#architecture-design)
 
 ---
 

@@ -245,7 +245,7 @@ See our [Contributing Guide](CONTRIBUTING.md) for detailed information.
 
 ## 📄 License
 
-Movian is licensed under the GNU General Public License v3.0. See the [LICENSE](../movian/LICENSE) file for details.
+Movian is licensed under the GNU General Public License v3.0. See the LICENSE file in the Movian source repository for details.
 
 This documentation is licensed under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
 
@@ -263,4 +263,4 @@ This documentation is licensed under [Creative Commons Attribution 4.0 Internati
 **Movian Version Compatibility**: 4.8+  
 **Accuracy Status**: 🟢 Verified from source code analysis
 
-*This documentation is actively maintained and updated with each Movian release. For the most current information, always refer to the latest version.*[APIs](reference/glossary.md#api-application-programming-interface)[widgets](reference/glossary.md#widget)[widgets](reference/glossary.md#widget)[components](reference/glossary.md#component)[GLW](reference/glossary.md#glw-opengl-widget)[Widget](reference/glossary.md#widget)[OpenGL](reference/glossary.md#opengl)[GLW](referenc[component](reference/glossary.md#component)y.md#glw-opengl-widget)[SQLite](reference/glossary.md#sqlite)[API](reference/glossary.md#api-application-programming-interface)[manifest](reference/glossary.md#manifest-plugin)[Lifecycle](reference/glossary.md#lifecycle)
+*This documentation is actively maintained and updated with each Movian release. For the most current information, always refer to the latest version.*
