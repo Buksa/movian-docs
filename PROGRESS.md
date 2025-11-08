@@ -614,3 +614,29 @@ This progress document is updated after each task completion. For questions or s
   - Comparison tables for similar macros
   - Integration with existing theming documentation
 - **Report**: [Task 7.1 Macro Reference Completion](task-reports/task-7.1-macro-reference-completion.md)
+
+### Task 7.2 (Sub-task) - Component Loading System Documentation ✅
+
+- **Completed**: 2024-11-07
+- **Duration**: ~30 minutes (verification and documentation)
+- **Deliverables**:
+  - Verified comprehensive component loading documentation in `docs/ui/theming/skin-architecture.md`
+  - Complete documentation of three loading mechanisms:
+    - Static loading: `widget(loader, { source: "background.view" })`
+    - Conditional loading: `widget(loader, { autohide: true, source: select(...) })`
+    - Animated loading: `widget(loader, { time: 0.1, effect: blend })`
+  - All patterns verified from actual source code (universe.view lines 48, 88-92, 293-304)
+  - Advanced patterns documented (translate(), dynamic path construction)
+  - Integration with cloner system for data-driven loading
+  - Performance optimization patterns
+  - Use cases and best practices for each loading type
+  - 243-line completion report with comprehensive analysis
+- **Key Achievements**:
+  - 100% coverage of all three loading mechanisms
+  - All patterns verified from working flat skin code
+  - Clear characteristics and use cases for each type
+  - Advanced conditional patterns with translate()
+  - Integration with page, popup, and playdeck systems
+  - Performance optimization guidance
+  - Troubleshooting patterns documented
+- **Report**: [Task 7.2 Component Loading Report](task-reports/task-7.2-component-loading-report.md)
