@@ -1812,11 +1812,19 @@ showKeyboard({
    - Lifecycle management
    - Performance optimization
 
-## Playdeck System
+## Playdeck System and Media Adaptation
 
-### Media Player UI Architecture
+### Overview
 
-The playdeck system provides media player controls and information display:
+The **playdeck system** is Movian's adaptive media player UI that provides context-aware controls and information display for active media playback. The system automatically adapts to both **media type** (tracks vs. radio) and **device orientation** (landscape vs. portrait), ensuring optimal user experience across different playback scenarios and screen configurations.
+
+**Source Reference**: `movian/glwskins/flat/universe.view` (lines 108-113), `movian/glwskins/flat/playdecks/`
+
+### Core Architecture
+
+#### Integration in universe.view
+
+The playdeck system is integrated into the main UI hierarchy as a conditional overlay:
 
 ```view
 widget(loader, {
@@ -1828,32 +1836,44 @@ widget(loader, {
 });
 ```
 
-### Adaptive Layout System
+**Location in Hierarchy**:
+- Positioned within the main `underscan` container
+- Rendered above page content but below popups
+- Z-order ensures visibility without blocking critical UI elements
 
-**Orientation-Based Loading**:
+**Key Attributes**:
+- `autohide: true` - Automatically shows/hides based on media playback state
+- Dynamic source path construction based on media type and orientation
+- Seamless appearance/disappearance when media starts/stops
 
+### Multi-Dimensional Adaptation System
+
+The playdeck system uses a **two-dimensional adaptation matrix** to select the appropriate UI:
+
+```mermaid
+graph TB
+    A[Media Playback Active] --> B{Media Type?}
+    B -->|tracks| C{Orientation?}
+    B -->|radio| D{Orientation?}
+    B -->|none/other| E[No Playdeck]
+    
+    C -->|landscape| F[playdecks/landscape/tracks.view]
+    C -->|portrait| G[playdecks/portrait/tracks.view]
+    
+    D -->|landscape| H[playdecks/landscape/radio.view]
+    D -->|portrait| I[playdecks/portrait/radio.view]
+    
+    F --> J[Full Controls + Seek]
+    G --> J
+    H --> K[Simplified Controls]
+    I --> K
 ```
-playdecks/
-├── landscape/
-│   ├── tracks.view
-│   └── radio.view
-└── portrait/
-    ├── tracks.view
-    └── radio.view
-```
 
-**Orientation Detection**:
-```view
-$ui.orientation = select($ui.aspect > 1, "landscape", "portrait");
-```
+#### Dimension 1: Media Type Detection
 
-- `$ui.aspect` - Screen aspect ratio (width/height)
-- `> 1` - Landscape (wider than tall)
-- `≤ 1` - Portrait (taller than wide)
+**Media Type Variable**: `$core.media.current.type`
 
-### Media Type Detection
-
-The playdeck system adapts to media type:
+The `translate()` function provides multi-way conditional loading:
 
 ```view
 translate($core.media.current.type, "",
@@ -1862,32 +1882,786 @@ translate($core.media.current.type, "",
 );
 ```
 
-**Media Types**:
-- `"tracks"` - Audio tracks with full controls
-- `"radio"` - Radio streams with simplified controls
-- `""` (empty) - No media playing, no playdeck
+**Translation Function Syntax**:
+```view
+translate(value, default, match1, result1, match2, result2, ...)
+```
 
-### Playdeck Components
+**Parameters**:
+- **`value`**: `$core.media.current.type` - Current media type from core system
+- **`default`**: `""` (empty string) - No playdeck when no media playing
+- **`match1, result1`**: `"tracks"`, `"playdecks/..." + "/tracks.view"` - Track playback
+- **`match2, result2`**: `"radio"`, `"playdecks/..." + "/radio.view"` - Radio streaming
 
-Playdecks typically include:
+**Media Type Characteristics**:
 
-**Control Elements**:
-- Play/pause button
-- Previous/next track
-- Seek bar
-- Volume control
-- Shuffle/repeat toggles
+**`"tracks"` - Audio Track Playback**:
+- **Use Case**: Local files, streaming music, podcasts, audiobooks
+- **Features**: Full playback controls with seeking capability
+- **UI Elements**:
+  - Seek bar with time display
+  - Previous/next track buttons
+  - Play/pause toggle
+  - Shuffle and repeat controls
+  - Album artwork display
+  - Track metadata (artist, title, album)
+  - Duration and current position
 
-**Information Display**:
-- Track title and artist
-- Album artwork
-- Duration and position
-- Metadata (bitrate, format)
+**`"radio"` - Radio Stream Playback**:
+- **Use Case**: Internet radio, live streams, continuous broadcasts
+- **Features**: Simplified controls without seeking
+- **UI Elements**:
+  - Play/pause toggle
+  - Station information
+  - Current program/song info
+  - Album artwork (if available)
+  - No seek bar (streams are live)
+  - Limited skip functionality
 
-**Shared Components** (`playdeck_include.view`):
-- Common UI elements
-- Shared macros
-- Consistent styling
+**`""` (empty) - No Media**:
+- **Condition**: No active media playback
+- **Behavior**: Playdeck hidden via `autohide: true`
+- **Result**: Clean UI without media controls
+
+#### Dimension 2: Orientation Detection
+
+**Orientation Variable**: `$ui.orientation`
+
+Defined in `universe.view` global configuration:
+
+```view
+$ui.orientation = select($ui.aspect > 1, "landscape", "portrait");
+```
+
+**Calculation Logic**:
+- **`$ui.aspect`**: Screen aspect ratio (width ÷ height)
+- **`> 1`**: Width greater than height → `"landscape"`
+- **`≤ 1`**: Height greater than or equal to width → `"portrait"`
+
+**Orientation Characteristics**:
+
+**Landscape Mode** (`$ui.aspect > 1`):
+- **Typical Devices**: TVs, desktop monitors, tablets in horizontal position
+- **Screen Dimensions**: Wider than tall (e.g., 16:9, 21:9)
+- **Layout Strategy**: Horizontal arrangement with controls on left, info on right
+- **Space Utilization**: Maximize horizontal space for controls and metadata
+
+**Portrait Mode** (`$ui.aspect ≤ 1`):
+- **Typical Devices**: Smartphones, tablets in vertical position
+- **Screen Dimensions**: Taller than wide (e.g., 9:16, 9:18)
+- **Layout Strategy**: Vertical stacking with controls centered
+- **Space Utilization**: Compact vertical layout with essential controls
+
+### Directory Structure and File Organization
+
+```
+playdecks/
+├── playdeck_include.view          # Shared macros and components
+├── landscape/                     # Horizontal orientation layouts
+│   ├── tracks.view               # Full track controls (landscape)
+│   └── radio.view                # Radio controls (landscape)
+└── portrait/                      # Vertical orientation layouts
+    ├── tracks.view               # Full track controls (portrait)
+    └── radio.view                # Radio controls (portrait)
+```
+
+**File Naming Convention**:
+- **Directory**: Orientation name (`landscape/`, `portrait/`)
+- **Filename**: Media type name (`tracks.view`, `radio.view`)
+- **Shared**: Common components in root (`playdeck_include.view`)
+
+### Shared Component System: playdeck_include.view
+
+#### Purpose and Architecture
+
+The `playdeck_include.view` file provides **reusable macros and components** shared across all playdeck variants, ensuring consistent behavior and reducing code duplication.
+
+**Source Reference**: `movian/glwskins/flat/playdecks/playdeck_include.view`
+
+**Import Pattern**:
+```view
+#import "skin://playdecks/playdeck_include.view"
+```
+
+All playdeck view files import this shared component library.
+
+#### Macro Definitions
+
+**1. PLAYDECK_BUTTON - Standard Control Button**
+
+```view
+#define PLAYDECK_BUTTON(ICON, EVENT, ENABLED) {
+  widget(container_z, {
+    style: "playdeckButtonContainer";
+    onEvent(activate, EVENT);
+    clickable: ENABLED;
+
+    GridItemHighlight2();
+
+    widget(icon, {
+      style: "playdeckButtonIcon";
+      source: ICON;
+      alpha: 0.7 * iir(ENABLED, 8) + 0.3;
+    });
+  });
+}
+```
+
+**Parameters**:
+- **`ICON`**: Icon file path (e.g., `"skin://icons/ic_play_arrow_48px.svg"`)
+- **`EVENT`**: Action to perform on activation (e.g., `deliverEvent(...)`)
+- **`ENABLED`**: Boolean condition for button availability
+
+**Features**:
+- **Visual Feedback**: `GridItemHighlight2()` macro for hover/focus states
+- **Conditional Opacity**: Disabled buttons shown at 30% opacity, enabled fade to 100%
+- **Smooth Transitions**: `iir(ENABLED, 8)` provides smooth enable/disable animation
+- **Clickable State**: Button only responds to clicks when enabled
+
+**Usage Example**:
+```view
+PLAYDECK_BUTTON("skin://icons/ic_skip_next_48px.svg",
+                deliverEvent($core.media.current.eventSink, "NextTrack"),
+                $core.media.current.canSkipForward);
+```
+
+**2. PLAYDECK_BUTTON2 - Alternative Button Style**
+
+```view
+#define PLAYDECK_BUTTON2(ICON, EVENT, ENABLED) {
+  widget(container_z, {
+    style: "playdeckButtonContainer";
+    onEvent(activate, EVENT);
+    clickable: ENABLED;
+
+    GridItemHighlight2();
+
+    widget(icon, {
+      style: "playdeckButtonIcon";
+      source: ICON;
+      alpha: iir(ENABLED, 4);
+    });
+  });
+}
+```
+
+**Differences from PLAYDECK_BUTTON**:
+- **Faster Animation**: `iir(ENABLED, 4)` vs. `iir(ENABLED, 8)` - quicker response
+- **Binary Opacity**: Fully visible when enabled, fully hidden when disabled
+- **No Minimum Opacity**: Disabled buttons completely invisible
+
+**Use Case**: Buttons that should completely disappear when unavailable (e.g., "show more" button)
+
+**3. PLAYDECK_BUTTON_TOGGLE - Toggle State Button**
+
+```view
+#define PLAYDECK_BUTTON_TOGGLE(ICON, VALUE, ENABLED) {
+  widget(container_z, {
+    style: "playdeckButtonContainer";
+    onEvent(activate, {
+      toggle(VALUE);
+    });
+
+    clickable: ENABLED;
+
+    GridItemHighlight2();
+
+    widget(icon, {
+      style: "playdeckButtonIcon";
+      source: ICON;
+      color: select(VALUE, 1, 0.3);
+      alpha: 0.7 * iir(ENABLED, 8) + 0.3;
+    });
+  });
+}
+```
+
+**Parameters**:
+- **`ICON`**: Icon file path
+- **`VALUE`**: Boolean variable to toggle (e.g., `$core.media.current.repeat`)
+- **`ENABLED`**: Whether toggle is available
+
+**Features**:
+- **Automatic Toggle**: `toggle(VALUE)` flips boolean state on activation
+- **Visual State Indication**: 
+  - Active (VALUE = true): Full color (color: 1)
+  - Inactive (VALUE = false): Dimmed (color: 0.3)
+- **Conditional Availability**: Respects ENABLED parameter
+
+**Usage Example**:
+```view
+PLAYDECK_BUTTON_TOGGLE("dataroot://res/svg/Repeat.svg",
+                       $core.media.current.repeat,
+                       $core.media.current.canRepeat);
+```
+
+**4. PLAYDECK_BUTTON_ROW - Complete Control Set**
+
+```view
+#define PLAYDECK_BUTTON_ROW() {
+  PLAYDECK_BUTTON("skin://icons/ic_list_48px.svg",
+                  navOpen("playqueue:"),
+                  $core.playqueue.active);
+
+  PLAYDECK_BUTTON("skin://icons/ic_skip_previous_48px.svg",
+                  deliverEvent($core.media.current.eventSink, "PreviousTrack"),
+                  $core.media.current.canSkipBackward);
+
+  PLAYDECK_BUTTON(translate($core.media.current.playstatus,
+                            "skin://icons/ic_pause_48px.svg",
+                            "pause",
+                            "skin://icons/ic_play_arrow_48px.svg"),
+                  deliverEvent($core.media.current.eventSink, "PlayPause"),
+                  $core.media.current.canPause);
+
+  PLAYDECK_BUTTON("skin://icons/ic_skip_next_48px.svg",
+                  deliverEvent($core.media.current.eventSink, "NextTrack"),
+                  $core.media.current.canSkipForward);
+
+  PLAYDECK_BUTTON_TOGGLE("dataroot://res/svg/Repeat.svg",
+                         $core.media.current.repeat,
+                         $core.media.current.canRepeat);
+
+  PLAYDECK_BUTTON_TOGGLE("dataroot://res/svg/Shuffle.svg",
+                         $core.media.current.shuffle,
+                         $core.media.current.canShuffle);
+}
+```
+
+**Complete Control Set**:
+
+1. **Play Queue Button**:
+   - Opens playback queue view
+   - Enabled when queue is active
+   - Icon: List icon
+
+2. **Previous Track Button**:
+   - Skips to previous track
+   - Enabled when backward skip available
+   - Icon: Skip previous icon
+
+3. **Play/Pause Button**:
+   - Toggles playback state
+   - **Dynamic Icon**: Shows pause icon when playing, play icon when paused
+   - Uses `translate()` to switch icons based on `$core.media.current.playstatus`
+   - Enabled when pause capability available
+
+4. **Next Track Button**:
+   - Skips to next track
+   - Enabled when forward skip available
+   - Icon: Skip next icon
+
+5. **Repeat Toggle**:
+   - Cycles through repeat modes
+   - Visual indication of active state
+   - Icon: Repeat symbol
+
+6. **Shuffle Toggle**:
+   - Enables/disables shuffle mode
+   - Visual indication of active state
+   - Icon: Shuffle symbol
+
+**5. PLAYDECK_BUTTONS - Expandable Button Container**
+
+```view
+#define PLAYDECK_BUTTONS() {
+  widget(deck, {
+    PLAYDECK_BUTTON2("skin://icons/ic_more_horiz_48px.svg",
+                     {
+                       $ui.showAllPlaydeckButtons = 1;
+                     }, $ui.showTopIcons);
+
+    widget(container_x, {
+      PLAYDECK_BUTTON_ROW();
+    });
+
+    page: $ui.showAllPlaydeckButtons;
+  });
+}
+```
+
+**Deck Widget Behavior**:
+- **Page 0**: Shows "more" button (collapsed state)
+- **Page 1**: Shows full button row (expanded state)
+- **Page Control**: `$ui.showAllPlaydeckButtons` variable
+
+**Interaction Flow**:
+1. **Initial State**: Deck shows page 0 (more button)
+2. **User Clicks More**: `$ui.showAllPlaydeckButtons = 1`
+3. **Deck Switches**: Animates to page 1 (full controls)
+4. **User Clicks Label**: `$ui.showAllPlaydeckButtons = 0` (in playdeck views)
+5. **Deck Returns**: Animates back to page 0
+
+**Purpose**: Space-saving design for compact layouts
+
+### Media System Integration
+
+#### Core Media Variables
+
+The playdeck system integrates with Movian's core media system through the `$core.media.current` object:
+
+**Playback State**:
+```view
+$core.media.current.type              // Media type: "tracks", "radio", etc.
+$core.media.current.playstatus        // "play", "pause", "stop"
+$core.media.current.currenttime       // Current position (seconds)
+```
+
+**Capabilities**:
+```view
+$core.media.current.canPause          // Can pause playback
+$core.media.current.canSeek           // Can seek within media
+$core.media.current.canSkipForward    // Can skip to next
+$core.media.current.canSkipBackward   // Can skip to previous
+$core.media.current.canRepeat         // Repeat mode available
+$core.media.current.canShuffle        // Shuffle mode available
+```
+
+**Metadata**:
+```view
+$core.media.current.metadata.title         // Track/stream title
+$core.media.current.metadata.artist        // Artist name
+$core.media.current.metadata.album         // Album name
+$core.media.current.metadata.album_art     // Album artwork URL
+$core.media.current.metadata.duration      // Total duration (seconds)
+```
+
+**Control Interface**:
+```view
+$core.media.current.eventSink         // Event delivery target
+$core.media.current.repeat            // Repeat mode state (boolean)
+$core.media.current.shuffle           // Shuffle mode state (boolean)
+```
+
+**Radio-Specific**:
+```view
+$core.media.current.radioinfo         // Current program/song info
+```
+
+**Play Queue**:
+```view
+$core.playqueue.active                // Play queue available
+```
+
+#### Event Delivery System
+
+**deliverEvent() Function**:
+```view
+deliverEvent($core.media.current.eventSink, "EventName")
+```
+
+**Common Media Events**:
+- **`"PlayPause"`**: Toggle play/pause state
+- **`"NextTrack"`**: Skip to next track
+- **`"PreviousTrack"`**: Skip to previous track
+- **`"Stop"`**: Stop playback
+- **`"Seek"`**: Seek to position (with parameter)
+
+**Example Usage**:
+```view
+onEvent(activate, deliverEvent($core.media.current.eventSink, "PlayPause"));
+```
+
+### Landscape Layout Implementation
+
+#### Tracks View (Landscape)
+
+**Source Reference**: `movian/glwskins/flat/playdecks/landscape/tracks.view`
+
+**Layout Strategy**: Horizontal bar at bottom of screen with controls on left, metadata in center, seek bar, and album art on right.
+
+**Complete Structure**:
+```view
+#import "skin://playdecks/playdeck_include.view"
+
+style(playdeckButtonContainer, {
+  width: 2em;
+});
+
+widget(container_z, {
+  widget(quad, {
+    color: 0;
+    alpha: 0.8;
+  });
+
+  widget(container_x, {
+    height: 2em;
+    padding: [0.5em, 0, 2em, 1];
+
+    PLAYDECK_BUTTONS();
+
+    widget(dummy, {
+      width: 0.5em;
+    });
+
+    widget(label, {
+      clickable: true;
+      focusOnClick: false;
+      onEvent(activate, {
+        $ui.showAllPlaydeckButtons = 0;
+      });
+
+      maxWidth: $ui.width / 3;
+      caption: join(" • ",
+                    $core.media.current.metadata.artist,
+                    $core.media.current.metadata.title);
+      style: "playdeckText";
+    });
+
+    widget(label, {
+      hidden: !$core.media.current.canSeek;
+      width: 4em;
+      caption: value2duration($view.tentativeSeekPosition ??
+                              $core.media.current.currenttime);
+      align: right;
+      padding:[0,0,0.5em,0];
+    });
+
+    widget(container_z, {
+      hidden: !$core.media.current.canSeek;
+      widget(container_y, {
+        align: center;
+        widget(container_z, {
+          height: 3;
+          widget(container_y, {
+            padding: 1;
+            widget(quad, {
+              alpha: 0.3;
+              additive: true;
+            });
+          });
+        });
+      });
+
+      widget(slider_x, {
+        knobOverEdges: true;
+        tentative: $view.tentativeSeekPosition;
+        alwaysGrabKnob: true;
+        clickable: true;
+        bind($core.media.current.currenttime);
+        max: $core.media.current.metadata.duration;
+        widget(icon, {
+          source: "skin://icons/dot.png";
+        });
+        widget(container_y, {
+          space(1);
+          widget(quad, {
+            height: 3;
+            alpha: 0.9;
+            additive: true;
+          });
+          space(1);
+        });
+      });
+    });
+
+    widget(label, {
+      hidden: !$core.media.current.canSeek;
+      width: 3em;
+      caption: value2duration($core.media.current.metadata.duration);
+      padding:[0.5em,0,0,0];
+    });
+
+    widget(container_x, {
+      hidden: isVoid($core.media.current.metadata.album_art);
+      width: 5em;
+      padding: [0, -4em, 0, 0];
+      widget(image, {
+        zoffset: 100;
+        source: $core.media.current.metadata.album_art);
+      });
+    });
+  });
+});
+```
+
+**Component Breakdown**:
+
+1. **Background Layer**:
+   ```view
+   widget(quad, {
+     color: 0;      // Black
+     alpha: 0.8;    // 80% opacity
+   });
+   ```
+   - Semi-transparent black background
+   - Ensures text readability over any content
+
+2. **Control Buttons** (Left):
+   ```view
+   PLAYDECK_BUTTONS();
+   ```
+   - Expandable button deck
+   - Compact "more" button or full control row
+
+3. **Metadata Display** (Center-Left):
+   ```view
+   widget(label, {
+     maxWidth: $ui.width / 3;
+     caption: join(" • ", artist, title);
+   });
+   ```
+   - Artist and title separated by bullet
+   - Clickable to collapse button deck
+   - Limited to 1/3 screen width
+
+4. **Current Time** (Center):
+   ```view
+   widget(label, {
+     hidden: !$core.media.current.canSeek;
+     caption: value2duration($view.tentativeSeekPosition ?? currenttime);
+   });
+   ```
+   - Shows current playback position
+   - Updates during seeking (tentative position)
+   - Hidden for non-seekable media
+
+5. **Seek Bar** (Center):
+   ```view
+   widget(slider_x, {
+     bind($core.media.current.currenttime);
+     max: $core.media.current.metadata.duration;
+     tentative: $view.tentativeSeekPosition;
+   });
+   ```
+   - Interactive seek control
+   - Bound to current time
+   - Tentative position preview during drag
+
+6. **Total Duration** (Center-Right):
+   ```view
+   widget(label, {
+     caption: value2duration(duration);
+   });
+   ```
+   - Total track duration
+   - Fixed position on right of seek bar
+
+7. **Album Artwork** (Right):
+   ```view
+   widget(image, {
+     zoffset: 100;
+     source: $core.media.current.metadata.album_art;
+   });
+   ```
+   - Elevated z-order (appears above other elements)
+   - Hidden if no artwork available
+   - Negative padding creates overlap effect
+
+#### Radio View (Landscape)
+
+**Source Reference**: `movian/glwskins/flat/playdecks/landscape/radio.view`
+
+**Differences from Tracks View**:
+- **No Seek Bar**: Radio streams are live, seeking not applicable
+- **Simplified Metadata**: Title and radio info instead of artist/title
+- **Lighter Background**: `alpha: 0.2` vs. `0.8` for less intrusive appearance
+- **No Time Display**: Current time and duration not relevant for streams
+
+**Key Sections**:
+```view
+widget(label, {
+  caption: join(" • ",
+                $core.media.current.metadata.title,
+                $core.media.current.radioinfo),
+});
+```
+
+### Portrait Layout Implementation
+
+#### Tracks View (Portrait)
+
+**Source Reference**: `movian/glwskins/flat/playdecks/portrait/tracks.view`
+
+**Layout Strategy**: Vertical stacking with background artwork, centered controls, and metadata overlay.
+
+**Key Differences from Landscape**:
+
+1. **Background Artwork**:
+   ```view
+   widget(image, {
+     aspectConstraint: true;
+     alpha: 0.5;
+     source: $core.media.current.metadata.album_art;
+   });
+   ```
+   - Full-width background image
+   - 50% opacity for subtle effect
+   - Aspect ratio maintained
+
+2. **Vertical Layout**:
+   ```view
+   widget(container_y, {
+     align: center;
+     height: 4em;
+     
+     // Controls row
+     widget(container_x, {
+       PLAYDECK_BUTTON_ROW();
+     });
+     
+     // Metadata label
+     widget(label, { ... });
+     
+     // Seek bar and times
+     widget(container_x, { ... });
+   });
+   ```
+
+3. **Centered Controls**:
+   - Buttons arranged horizontally in center
+   - Metadata below controls
+   - Seek bar at bottom
+
+4. **Text Shadows**:
+   ```view
+   widget(label, {
+     shadow: true;
+   });
+   ```
+   - Ensures readability over background artwork
+
+5. **Compact Button Sizing**:
+   ```view
+   style(playdeckButtonContainer, {
+     width: 2em;
+     height: 2em;
+   });
+   
+   style(playdeckButtonIcon, {
+     size: 1.2em;
+   });
+   ```
+   - Smaller buttons for limited horizontal space
+
+#### Radio View (Portrait)
+
+**Source Reference**: `movian/glwskins/flat/playdecks/portrait/radio.view`
+
+**Similar to Portrait Tracks** but:
+- No seek bar or time displays
+- Simplified metadata (title + radio info)
+- Same background artwork treatment
+- Same vertical layout strategy
+
+### Adaptation Patterns and Best Practices
+
+#### Responsive Design Principles
+
+**1. Conditional Element Visibility**:
+```view
+hidden: !$core.media.current.canSeek;
+hidden: isVoid($core.media.current.metadata.album_art);
+```
+- Show/hide elements based on capabilities
+- Graceful degradation for missing data
+
+**2. Dynamic Sizing**:
+```view
+maxWidth: $ui.width / 3;
+width: select($ui.aspect > 1, $ui.width / 2, $ui.width - 4em);
+```
+- Proportional sizing based on screen dimensions
+- Aspect ratio-aware calculations
+
+**3. Orientation-Specific Styling**:
+```view
+// In landscape/tracks.view
+style(playdeckButtonContainer, {
+  width: 2em;
+});
+
+// In portrait/tracks.view
+style(playdeckButtonContainer, {
+  width: 2em;
+  height: 2em;
+});
+```
+- Override styles per orientation
+- Optimize for available space
+
+**4. Smooth State Transitions**:
+```view
+alpha: iir($core.media.current.canSeek, 8);
+alpha: 0.7 * iir(ENABLED, 8) + 0.3;
+```
+- Use `iir()` for smooth animations
+- Prevent jarring state changes
+
+#### Common Customization Patterns
+
+**Adding Custom Controls**:
+```view
+#define PLAYDECK_BUTTON_ROW() {
+  // Standard controls...
+  
+  // Add custom button
+  PLAYDECK_BUTTON("skin://icons/custom_icon.svg",
+                  deliverEvent($core.media.current.eventSink, "CustomEvent"),
+                  $core.media.current.customCapability);
+}
+```
+
+**Alternative Metadata Display**:
+```view
+widget(container_y, {
+  widget(label, {
+    caption: $core.media.current.metadata.title;
+    style: "playdeckTitleLarge";
+  });
+  widget(label, {
+    caption: $core.media.current.metadata.artist;
+    style: "playdeckArtistSmall";
+  });
+});
+```
+
+**Custom Seek Bar Styling**:
+```view
+widget(slider_x, {
+  bind($core.media.current.currenttime);
+  max: $core.media.current.metadata.duration;
+  
+  widget(quad, {
+    color: $ui.color1;  // Custom color
+    height: 5;          // Thicker bar
+  });
+});
+```
+
+**Conditional Layout Switching**:
+```view
+widget(deck, {
+  // Compact layout
+  widget(container_x, {
+    // Minimal controls
+  });
+  
+  // Expanded layout
+  widget(container_y, {
+    // Full controls with metadata
+  });
+  
+  page: $ui.playdeckExpanded;
+});
+```
+
+### Performance Considerations
+
+**Efficient Updates**:
+- Bind directly to media variables: `bind($core.media.current.currenttime)`
+- Use `iir()` for smooth interpolation without excessive updates
+- Conditional rendering with `hidden` instead of conditional loading
+
+**Resource Management**:
+- Album artwork loaded on-demand
+- Automatic cleanup when media stops (via `autohide`)
+- Shared macros reduce code duplication
+
+**Rendering Optimization**:
+- Z-order management prevents unnecessary redraws
+- `filterConstraintX/Y` limits layout recalculation
+- Hardware-accelerated transitions with `effect: blend`
 
 ## Notification System
 
