@@ -678,3 +678,53 @@ This progress document is updated after each task completion. For questions or s
   - Integration with existing skin architecture documentation
   - Source code verification (universe.view lines 68-82)
 - **Report**: [Task 7.2 Page Management Report](task-reports/task-7.2-page-management-report.md)
+
+### Task 7.2 (Sub-task) - Popup and Overlay System Documentation ✅
+
+- **Completed**: 2024-11-07
+- **Duration**: ~1.5 hours
+- **Deliverables**:
+  - Enhanced `docs/ui/theming/skin-architecture.md` with comprehensive popup and overlay system documentation
+  - Complete documentation of `cloner($core.popups, loader, { ... })` pattern
+    - Modal popup system architecture with dynamic type resolution
+    - Context variables and popup lifecycle (6-step event flow)
+    - Complete popup types documentation:
+      - Message dialogs with custom button arrays
+      - Authentication dialogs with username/password/domain fields
+      - File picker, text input, and resume dialogs
+    - Popup component patterns from `popups/common.view`:
+      - `PopupBackdrop()` macro with shadow effect
+      - `popupButton()` macro system with convenience wrappers
+      - Style definitions and group containers
+    - Event sink pattern with bidirectional communication
+    - Click-outside-to-cancel implementation
+    - Data binding in popups
+  - Complete documentation of system window overlays:
+    - Log window system with `select($ui.logwindow, "log.view", "")`
+      - Conditional loading pattern with autohide
+      - Event handling (toggle and back button)
+      - Complete `log.view` implementation with scrollable log display
+      - Color-coded severity levels (DEBUG/INFO/ERROR)
+      - Bottom gravity and clipping configuration
+    - On-screen keyboard (OSK) with `select($ui.osk.show, "osk.view", "")`
+      - Automatic activation on text input focus
+      - OSK state management (shift, caps, shifted)
+      - Complete `osk.view` implementation with text input field
+      - Action icons (navigation, clear, cancel, submit)
+      - Dynamic keyboard layout loading
+      - Layout selection system
+      - Event handling and integration patterns
+  - System window characteristics and common patterns
+  - 800+ lines of new documentation added
+  - 30+ code examples from actual source files
+  - Complete source code analysis of 6 view files
+- **Key Achievements**:
+  - 100% coverage of all three required components (popups, log window, OSK)
+  - Complete popup system architecture with all popup types
+  - Detailed event sink pattern explanation
+  - Full log window implementation with all features
+  - Complete OSK system with state management and layouts
+  - All patterns verified from actual source code
+  - Integration with existing skin architecture documentation
+  - Source code references: universe.view (lines 83-93), popups/*.view, log.view, osk.view
+- **Report**: [Task 7.2 Popup and Overlay System Report](task-reports/task-7.2-popup-overlay-system-report.md)
