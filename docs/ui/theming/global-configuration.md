@@ -281,7 +281,174 @@ widget(label, {
 
 ## Core System Integrations
 
-The `universe.view` file integrates with multiple core Movian systems through variable bindings and component loading.
+The `universe.view` file integrates with multiple core Movian systems through variable bindings and component loading. This section documents the key system variables and their usage patterns.
+
+### System Integration Variables Reference
+
+Movian exposes several namespaces for system integration. These variables provide read-only access to core system state and enable skins to respond to system changes dynamically.
+
+#### Navigation System (`$nav.*`)
+
+The navigation system manages the page stack and navigation state.
+
+**`$nav.pages`**  
+**Type**: Collection  
+**Description**: Array of all pages in the navigation stack  
+**Usage**: Iterate through pages to render navigation history  
+**Example**:
+```view
+cloner($nav.pages, container_z, {
+  widget(loader, {
+    source: "skin://pages/" + $self.model.type + ".view";
+  });
+});
+```
+
+**`$nav.currentpage.model.loading`**  
+**Type**: Boolean  
+**Description**: Loading state of the current page  
+**Usage**: Show/hide loading indicators  
+**Example**:
+```view
+widget(loader, {
+  hidden: iir($nav.currentpage.model.loading, 8) < 0.001;
+  source: "loading.view";
+});
+```
+
+**`$nav.canGoBack`**  
+**Type**: Boolean  
+**Description**: Indicates if back navigation is possible  
+**Usage**: Enable/disable back buttons, conditional navigation UI  
+**Example**:
+```view
+widget(icon, {
+  hidden: !$nav.canGoBack;
+  source: "skin://icons/ic_arrow_back_48px.svg";
+  focusable: $nav.canGoBack;
+});
+```
+
+#### Audio System (`$core.audio.*`)
+
+The audio system provides access to volume and mute state.
+
+**`$core.audio.mastervolume`**  
+**Type**: Float (dB)  
+**Range**: -75 to +12 dB  
+**Description**: Master audio volume level in decibels  
+**Usage**: Volume bars, level indicators, audio UI  
+**Example**:
+```view
+widget(bar, {
+  fill: ($core.audio.mastervolume + 75) / 87;  // Normalize to 0-1
+  color1: $ui.color1;
+  color2: $ui.color2;
+});
+```
+
+**Normalization Formula**: `(volume + 75) / 87`
+- Converts -75 to +12 dB range to 0.0 to 1.0 range
+- -75 dB (minimum) → 0.0 (0%)
+- 0 dB (unity) → 0.86 (86%)
+- +12 dB (maximum) → 1.0 (100%)
+
+**`$core.audio.mastermute`**  
+**Type**: Boolean  
+**Description**: Master audio mute state  
+**Usage**: Mute indicators, audio UI state  
+**Example**:
+```view
+widget(container_x, {
+  alpha: iir($core.audio.mastermute, 7);  // Smooth fade
+  widget(icon, {
+    source: "skin://icons/ic_volume_off_48px.svg";
+  });
+  widget(label, {
+    caption: _("Audio muted");
+  });
+});
+```
+
+#### Media System (`$core.media.*`)
+
+The media system provides information about currently playing media.
+
+**`$core.media.current.type`**  
+**Type**: String  
+**Description**: Type of currently playing media  
+**Values**: `"tracks"`, `"radio"`, `"video"`, `""` (nothing playing)  
+**Usage**: Load media-specific UI components (playdecks)  
+**Example**:
+```view
+widget(loader, {
+  autohide: true;
+  source: translate($core.media.current.type, "",
+    "tracks", "playdecks/" + $ui.orientation + "/tracks.view",
+    "radio",  "playdecks/" + $ui.orientation + "/radio.view",
+    "video",  "playdecks/" + $ui.orientation + "/video.view"
+  );
+});
+```
+
+**`$core.stpp.remoteControlled`**  
+**Type**: Boolean  
+**Description**: Indicates if device is being remotely controlled  
+**Usage**: Disable screensaver, show remote control indicators  
+**Example**:
+```view
+delta($ui.disableScreensaver, $core.stpp.remoteControlled);
+```
+
+**STPP**: Showtime Protocol for remote control and synchronization
+
+#### UI State System (`$ui.*`)
+
+The UI state system tracks user interface state and input methods.
+
+**`$ui.pointerVisible`**  
+**Type**: Boolean  
+**Description**: Indicates if mouse pointer is visible/active  
+**Usage**: Show/hide pointer-specific UI elements, adapt interaction patterns  
+**Example**:
+```view
+widget(container_x, {
+  clickable: $ui.pointerVisible;  // Only clickable with pointer
+  focusable: true;                // Always keyboard navigable
+});
+
+$ui.showTopIcons = $ui.pointerVisible || $ui.touch;
+```
+
+**`$ui.touch`**  
+**Type**: Boolean  
+**Description**: Indicates if touch input is available/active  
+**Usage**: Adapt UI for touch interaction, show touch-specific controls  
+**Example**:
+```view
+widget(button, {
+  width: select($ui.touch, 3em, 2em);   // Larger touch targets
+  height: select($ui.touch, 3em, 2em);
+});
+```
+
+**`$ui.orientation`**  
+**Type**: String  
+**Values**: `"landscape"`, `"portrait"`  
+**Description**: Current device orientation (calculated from aspect ratio)  
+**Calculation**: `select($ui.aspect > 1, "landscape", "portrait")`  
+**Usage**: Load orientation-specific layouts and components  
+**Example**:
+```view
+widget(loader, {
+  source: "playdecks/" + $ui.orientation + "/tracks.view";
+});
+```
+
+**Related Variables**:
+- **`$ui.aspect`**: Screen aspect ratio (width/height)
+- **`$ui.width`**: Screen width in pixels
+- **`$ui.height`**: Screen height in pixels
 
 ### Navigation System Integration
 
