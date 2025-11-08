@@ -1335,3 +1335,80 @@ This progress document is updated after each task completion. For questions or s
   - Complements existing OSD-related documentation (osd-view-files-reference.md, playdeck-system.md, audio-video-ui.md)
 - **Report**: [Task 7.3 OSD System Documentation Report](task-reports/task-7.3-osd-system-doc-report.md)
 
+
+
+### Task 7.4 (Sub-task) - Minimal Skin Example Creation ✅
+- **Completed**: 2024-11-07
+- **Duration**: ~2 hours
+- **Deliverables**:
+  - `docs/ui/theming/examples/minimal-skin/` - Complete minimal skin example (6 files, 500+ lines)
+    - `README.md` - Overview and installation instructions (120 lines)
+    - `universe.view` - Main entry point with global configuration (180 lines)
+    - `theme.view` - Essential macro definitions (80 lines)
+    - `background.view` - Background component (15 lines)
+    - `loading.view` - Loading screen with throbber (60 lines)
+    - `pages/home.view` - Simple home page with service grid (70 lines)
+  - `docs/ui/theming/minimal-skin-guide.md` - Comprehensive creation guide (1,163 lines)
+    - Complete walkthrough of minimal skin creation
+    - Detailed explanation of each component
+    - Essential patterns and techniques
+    - Installation and testing instructions
+    - Customization examples
+    - Debugging tips
+- **Key Features**:
+  - Essential macros from real patterns:
+    - `ListItemBevel()` - Subtle 3D shadow effect
+    - `ListItemHighlight()` - Hover and focus highlighting
+    - `BackButton(ENABLED, EVENT)` - Consistent back navigation
+    - `PageHeader(TITLE)` - Standardized page header
+  - Core structure based on flat skin:
+    - Global configuration (UI variables, colors, orientation)
+    - Event handlers (sysinfo, mediastats)
+    - Style definitions (PageContainer, NavSelectedText)
+    - Component loading system
+    - Page system with navigation
+    - Volume indicator overlay
+  - Basic components:
+    - Background with fallback chain
+    - Loading screen with throbber and status
+    - Home page with service grid
+  - Production-ready code:
+    - Can be installed and used in Movian
+    - Fully functional navigation
+    - Responsive layout (5 columns landscape, 2 portrait)
+    - Smooth animations with `iir()`
+    - Press effects and hover states
+- **Documentation Sections**:
+  - Overview and file structure
+  - Core components (universe.view, theme.view, background, loading, home page)
+  - Essential patterns (animations, conditional display, layout, focus, data binding)
+  - Installation and testing
+  - Customization (colors, macros, pages)
+  - Next steps for expansion
+- **Key Achievements**:
+  - 100% functional minimal skin
+  - All essential macros implemented
+  - Real patterns from production code
+  - Complete installation instructions
+  - Comprehensive guide with line-by-line explanations
+  - Clear path for customization and expansion
+  - Educational value for beginners
+  - Starting point for custom skin development
+- **Technical Highlights**:
+  - Macro system: 4 essential macros with parameters
+  - Animation patterns: `iir()` for smooth transitions
+  - Data binding: `cloner($core.services.stable, ...)`
+  - Responsive layout: Orientation-based grid columns
+  - Press effects: `displacement` with scaling
+  - Focus handling: `isNavFocused()` and `isHovered()`
+  - Conditional display: `hidden`, `select()`, `translate()`
+  - Z-ordering: `zoffset` for layering
+- **Source References**:
+  - Based on patterns from `movian/glwskins/flat/`
+  - Follows conventions from Task 7.1 (macro system)
+  - Integrates with Task 7.2 (skin architecture)
+  - Complements existing theming documentation
+- **Report**: [Task 7.4 Minimal Skin Report](task-reports/task-7.4-minimal-skin-report.md)
+
+**Last Updated**: 2024-11-07  
+**Next Task**: Task 7.4 (remaining sub-tasks) - Create advanced skin example
