@@ -233,9 +233,15 @@ cloner($core.clipboard.copyprogress, container_z, {
 
 ## Page Management System
 
-### Page Architecture
+### Overview
 
-The page system is the core of Movian's navigation and content display:
+The page management system is the core of Movian's navigation and content display architecture. It manages a stack of pages, handles navigation transitions, provides visual feedback during loading, and ensures smooth user experience through sophisticated layering and animation techniques.
+
+**Source Reference**: `movian/glwskins/flat/universe.view` (lines 68-82)
+
+### Complete Page System Architecture
+
+The page system consists of three primary components working together:
 
 ```view
 widget(layer, {
@@ -257,15 +263,381 @@ widget(layer, {
 });
 ```
 
+### Navigation Pages: `cloner($nav.pages, container_z, { ... })`
+
+#### Purpose and Functionality
+
+The `cloner($nav.pages, container_z, { ... })` pattern is the heart of Movian's page system. It creates a **data-driven navigation stack** where each page in the navigation history is represented as a widget in a z-ordered container.
+
+#### How It Works
+
+**Data Source**: `$nav.pages`
+- **Type**: Array of page objects maintained by Movian's core navigation system
+- **Content**: Each element represents a page in the navigation stack
+- **Order**: Index 0 is the oldest page (bottom of stack), last index is current page (top of stack)
+- **Dynamic**: Automatically updated when user navigates forward or backward
+
+**Container Type**: `container_z`
+- **Purpose**: Stacks pages in z-order (depth)
+- **Behavior**: Children are layered on top of each other
+- **Visibility**: All pages remain in memory and rendered (with varying alpha)
+- **Performance**: Enables instant back navigation without reloading
+
+**Template Structure**:
+```view
+cloner($nav.pages, container_z, {
+  widget(loader, {
+    noInitialTransform: true;
+    source: "skin://pages/" + $self.model.type + ".view";
+  });
+});
+```
+
+#### Context Variables in Cloner
+
+Within the cloner template, special variables provide access to page data:
+
+**`$self` - Current Page Object**:
+```view
+$self.model.type          // Page type: "directory", "video", "settings", etc.
+$self.model.metadata      // Page metadata (background, custom view)
+$self.model.contents      // Content type: "tracks", "album", "images"
+$self.model.loading       // Loading state (boolean)
+$self.url                 // Page URL
+```
+
+**`$parent` - Container Reference**:
+```view
+$parent.model             // Parent container model
+$parent.url               // Parent URL
+```
+
+**`$clone` - Clone-Specific State**:
+```view
+$clone.index              // Index in the cloner array
+$clone.total              // Total number of clones
+```
+
+#### Dynamic Page Loading
+
+The page loader uses **runtime path construction** to load the appropriate view file:
+
+```view
+source: "skin://pages/" + $self.model.type + ".view";
+```
+
+**Example Resolution**:
+- User opens a directory → `$self.model.type = "directory"` → loads `"skin://pages/directory.view"`
+- User plays video → `$self.model.type = "video"` → loads `"skin://pages/video.view"`
+- User opens settings → `$self.model.type = "settings"` → loads `"skin://pages/settings.view"`
+
+**Fallback Mechanism**:
+If a specific page type view doesn't exist, Movian may:
+1. Use a default/generic page view
+2. Display an error page
+3. Fall back to a simpler representation
+
+#### Navigation Stack Behavior
+
+**Forward Navigation**:
+1. User navigates to new page
+2. New page object added to `$nav.pages` array
+3. Cloner creates new widget for the page
+4. Playfield animates transition (blend effect)
+5. Previous page remains in stack (dimmed)
+
+**Backward Navigation**:
+1. User presses back button
+2. Current page removed from `$nav.pages` array
+3. Cloner destroys current page widget
+4. Playfield animates to previous page
+5. Previous page becomes active (alpha restored)
+
+**Stack Visualization**:
+```
+$nav.pages = [
+  { type: "home", ... },        // Index 0 - Bottom layer (most dimmed)
+  { type: "directory", ... },   // Index 1 - Middle layer (dimmed)
+  { type: "video", ... }        // Index 2 - Top layer (current, full alpha)
+]
+```
+
+### Loading States: `$nav.currentpage.model.loading`
+
+#### Purpose
+
+The `$nav.currentpage.model.loading` variable provides **real-time loading state** for the currently active page, enabling visual feedback during content loading operations.
+
+#### Variable Details
+
+**Full Path**: `$nav.currentpage.model.loading`
+- **`$nav`**: Global navigation system object
+- **`currentpage`**: Reference to the topmost page in `$nav.pages`
+- **`model`**: Page's data model
+- **`loading`**: Boolean or numeric loading state
+
+**Type**: Boolean (0 or 1) or numeric (0.0 to 1.0)
+- `0` or `false` - Page fully loaded
+- `1` or `true` - Page currently loading
+- May represent loading progress (0.0 to 1.0)
+
+#### Loading Indicator Implementation
+
+The loading indicator in `universe.view` demonstrates sophisticated use of this variable:
+
+```view
+widget(loader, {
+  hidden: iir($nav.currentpage.model.loading, 8) < 0.001;
+  zoffset: -999;
+  alpha: iir($nav.currentpage.model.loading, 8);
+  source: selectedElement(vectorize($core.glw.views.standard.loading))
+    ?? "loading.view";
+});
+```
+
+**Breakdown**:
+
+1. **Visibility Control**:
+   ```view
+   hidden: iir($nav.currentpage.model.loading, 8) < 0.001;
+   ```
+   - `iir(..., 8)` - Smooth interpolation with speed 8
+   - `< 0.001` - Hidden when value nearly zero
+   - **Effect**: Loading indicator fades out smoothly after loading completes
+
+2. **Z-Order Positioning**:
+   ```view
+   zoffset: -999;
+   ```
+   - Places loading indicator behind main content
+   - Prevents blocking interaction with loaded content
+   - Visible through transparent areas
+
+3. **Opacity Animation**:
+   ```view
+   alpha: iir($nav.currentpage.model.loading, 8);
+   ```
+   - Alpha directly tied to loading state
+   - Smooth fade in when loading starts
+   - Smooth fade out when loading completes
+   - Speed 8 provides quick but smooth transition
+
+4. **Custom Loading View**:
+   ```view
+   source: selectedElement(vectorize($core.glw.views.standard.loading))
+     ?? "loading.view";
+   ```
+   - `$core.glw.views.standard.loading` - System-defined loading view
+   - `??` - Null coalescing operator
+   - Falls back to `"loading.view"` if no custom view defined
+   - Allows plugins to provide custom loading animations
+
+#### Loading State Lifecycle
+
+**State Transitions**:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle: Page loaded
+    Idle --> Loading: User navigates
+    Loading --> Idle: Content ready
+    Loading --> Error: Load failed
+    Error --> Idle: Retry/dismiss
+```
+
+**Timeline Example**:
+```
+t=0.0s: User clicks link
+        $nav.currentpage.model.loading = 1
+        Loading indicator alpha: 0 → 1 (smooth)
+
+t=0.5s: Network request in progress
+        $nav.currentpage.model.loading = 1
+        Loading indicator visible
+
+t=2.0s: Content received, parsing
+        $nav.currentpage.model.loading = 1
+        Loading indicator still visible
+
+t=2.5s: Page ready
+        $nav.currentpage.model.loading = 0
+        Loading indicator alpha: 1 → 0 (smooth)
+
+t=3.0s: Fade complete
+        Loading indicator hidden
+```
+
+#### Usage Patterns
+
+**In Page Views**:
+```view
+// Show loading spinner in page
+widget(container_z, {
+  widget(loader, {
+    alpha: $self.model.loading;
+    source: "spinner.view";
+  });
+  
+  widget(container_y, {
+    alpha: 1 - $self.model.loading;
+    // Page content...
+  });
+});
+```
+
+**Conditional Content Display**:
+```view
+// Hide content while loading
+widget(container_y, {
+  hidden: $nav.currentpage.model.loading;
+  // Content that should only show when loaded
+});
+```
+
+**Progress Indication**:
+```view
+// Show progress bar
+widget(bar, {
+  fill: $nav.currentpage.model.loading;
+  color1: $ui.color1;
+  color2: $ui.color2;
+});
+```
+
+### Page Layer Management: `getLayer()`
+
+#### Purpose and Functionality
+
+The `getLayer()` function returns the **depth of the current page** in the navigation stack, enabling visual effects that differentiate between active and background pages.
+
+#### Function Details
+
+**Signature**: `getLayer()`
+- **Parameters**: None
+- **Returns**: Integer representing page depth
+  - `0` - Current/active page (top of stack)
+  - `1` - Previous page (one level back)
+  - `2` - Two pages back
+  - `n` - n pages back in history
+
+**Context**: Must be called within a page widget context (inside cloner template)
+
+#### Layer-Based Alpha Dimming
+
+The primary use of `getLayer()` is to **dim background pages** for visual hierarchy:
+
+```view
+widget(playfield, {
+  effect: blend;
+  noInitialTransform: true;
+  alpha: 1 - iir(clamp(getLayer(), 0, 1), 7) * 0.66;
+  
+  cloner($nav.pages, container_z, {
+    // Page widgets...
+  });
+});
+```
+
+**Formula Breakdown**:
+
+```view
+alpha: 1 - iir(clamp(getLayer(), 0, 1), 7) * 0.66;
+```
+
+1. **`getLayer()`** - Get page depth (0, 1, 2, ...)
+2. **`clamp(getLayer(), 0, 1)`** - Limit to range [0, 1]
+   - Current page (0) → 0
+   - Background pages (1+) → 1
+3. **`iir(..., 7)`** - Smooth interpolation with speed 7
+   - Prevents abrupt alpha changes
+   - Creates smooth fade during navigation
+4. **`* 0.66`** - Multiply by 66%
+   - Background pages dimmed by 66%
+5. **`1 - ...`** - Invert for alpha calculation
+   - Current page: `1 - 0 = 1.0` (fully opaque)
+   - Background pages: `1 - 0.66 = 0.34` (34% opacity)
+
+**Visual Effect**:
+- **Current page**: 100% opacity (fully visible)
+- **Background pages**: 34% opacity (dimmed)
+- **Transition**: Smooth fade when navigating
+
+#### Global Style Application
+
+The `getLayer()` function is also used in **global style definitions**:
+
+```view
+style(PageContainer, {
+  alpha: 1 - iir(clamp(getLayer(), 0, 1), 4) * 0.9;
+});
+```
+
+**Purpose**:
+- Applies to all widgets with `PageContainer` style
+- Provides consistent dimming across all page types
+- Speed 4 (faster than playfield) for responsive feel
+- 90% dimming (more aggressive than playfield)
+
+**Usage in Pages**:
+```view
+// In any page view file
+widget(container_y, {
+  style: "PageContainer";
+  // This container will automatically dim when page is in background
+});
+```
+
+#### Advanced Layer-Based Effects
+
+**Blur Background Pages**:
+```view
+widget(backdrop, {
+  blur: getLayer() > 0 ? 5 : 0;
+  source: $self.model.metadata.background;
+});
+```
+
+**Scale Background Pages**:
+```view
+widget(container_z, {
+  scale: 1 - getLayer() * 0.1;  // Shrink background pages by 10%
+});
+```
+
+**Disable Interaction on Background Pages**:
+```view
+widget(container_y, {
+  focusable: getLayer() == 0;  // Only current page is focusable
+  clickable: getLayer() == 0;
+});
+```
+
+**Conditional Rendering**:
+```view
+widget(loader, {
+  // Only load expensive components for current page
+  source: getLayer() == 0 ? "detailed-view.view" : "simple-view.view";
+});
+```
+
 ### Key Components
 
 #### Layer Widget
 
-**Purpose**: Manages z-order and page stacking
+**Purpose**: Manages z-order and page stacking at the container level
 
 **Attributes**:
 - `filterConstraintY: true` - Constrains layout calculations for performance
-- `alpha` - Fades out during screensaver
+  - Prevents layout recalculation propagation
+  - Improves rendering performance for page stack
+- `alpha: iir(1 - $ui.screensaverActive, 8)` - Fades out during screensaver
+  - Smooth transition when screensaver activates
+  - Speed 8 for quick but smooth fade
+
+**Responsibilities**:
+- Contains the entire page system
+- Manages screensaver integration
+- Provides performance optimization boundary
 
 #### Playfield Widget
 
@@ -273,18 +645,19 @@ widget(layer, {
 
 **Attributes**:
 - `effect: blend` - Smooth blending between pages
+  - Cross-fade animation during navigation
+  - Hardware-accelerated transitions
 - `noInitialTransform: true` - Prevents initial animation
-- `alpha` - Dims background pages based on layer depth
+  - Pages appear instantly on first load
+  - Improves perceived performance
+- `alpha: 1 - iir(clamp(getLayer(), 0, 1), 7) * 0.66` - Dims background pages
+  - Creates visual hierarchy
+  - Focuses attention on current page
 
-**Layer Depth Calculation**:
-```view
-alpha: 1 - iir(clamp(getLayer(), 0, 1), 7) * 0.66;
-```
-
-- `getLayer()` - Returns current page's depth in navigation stack
-- `clamp(value, 0, 1)` - Limits to 0-1 range
-- `iir()` - Smooth interpolation
-- Result: Background pages dimmed by 66%
+**Responsibilities**:
+- Manages page transition animations
+- Applies visual effects to page stack
+- Handles navigation gestures (swipe, etc.)
 
 ### Page Types and Organization
 
