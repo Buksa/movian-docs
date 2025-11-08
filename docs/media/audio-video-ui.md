@@ -668,20 +668,188 @@ $core.media.current.metadata.icon        // Media icon
 $core.media.current.radioinfo       // Current radio stream information
 ```
 
+### Media Type Detection and Adaptive UI
+
+**Media Type Property:**
+
+The `$core.media.current.type` property identifies the current media type and drives UI adaptation:
+
+```view
+$core.media.current.type            // Media type: "tracks", "radio", "video", etc.
+```
+
+**Automatic Playdeck Selection:**
+
+The playdeck system uses media type detection to load appropriate controls:
+
+```view
+widget(loader, {
+  autohide: true;
+  source: translate($core.media.current.type,
+    "tracks", "playdecks/" + $ui.orientation + "/tracks.view",
+    "radio", "playdecks/" + $ui.orientation + "/radio.view"
+  );
+});
+```
+
+**Media Type Values:**
+
+| Type | Description | UI Adaptation |
+|------|-------------|---------------|
+| `"tracks"` | Music tracks or video files | Full controls with seek bar, track navigation |
+| `"radio"` | Radio streams | Simplified controls, no seek bar, radio info display |
+| `"video"` | Video playback | Video-specific controls, OSD integration |
+| (empty) | No media playing | Playdeck hidden via `autohide: true` |
+
+**Conditional UI Elements Based on Media Type:**
+
+```view
+// Hide seek controls for radio streams
+widget(container_x, {
+  hidden: translate($core.media.current.type, true,
+                    "tracks", false,
+                    "radio", true);
+  
+  // Seek bar implementation...
+});
+
+// Show radio-specific information
+widget(label, {
+  hidden: $core.media.current.type != "radio";
+  caption: $core.media.current.radioinfo;
+});
+
+// Show track-specific metadata
+widget(label, {
+  hidden: $core.media.current.type != "tracks";
+  caption: join(" • ",
+                $core.media.current.metadata.artist,
+                $core.media.current.metadata.title);
+});
+```
+
+**Media Control Visibility:**
+
+```view
+// Show playback controls only when media is active
+widget(container_z, {
+  hidden: translate($core.media.current.type, true,
+                    "tracks", false,
+                    "radio", false);
+  
+  // Media controls...
+});
+```
+
+### Screen Orientation Adaptation
+
+**Orientation Detection:**
+
+The `$ui.orientation` property automatically detects screen orientation:
+
+```view
+$ui.orientation = select($ui.aspect > 1, "landscape", "portrait");
+```
+
+**Calculation Logic:**
+- `$ui.aspect` - Screen aspect ratio (width / height)
+- `$ui.aspect > 1` - Landscape (wider than tall)
+- `$ui.aspect <= 1` - Portrait (taller than wide)
+
+**Orientation Values:**
+
+| Value | Condition | Typical Devices |
+|-------|-----------|-----------------|
+| `"landscape"` | `$ui.aspect > 1` | TVs, desktop monitors, tablets in horizontal mode |
+| `"portrait"` | `$ui.aspect <= 1` | Phones, tablets in vertical mode |
+
+**Automatic Layout Selection:**
+
+The playdeck system uses orientation to select appropriate layout:
+
+```view
+widget(loader, {
+  autohide: true;
+  source: translate($core.media.current.type,
+    "tracks", "playdecks/" + $ui.orientation + "/tracks.view",
+    "radio", "playdecks/" + $ui.orientation + "/radio.view"
+  );
+});
+```
+
+**Path Resolution Examples:**
+- Landscape tracks: `"playdecks/landscape/tracks.view"`
+- Portrait tracks: `"playdecks/portrait/tracks.view"`
+- Landscape radio: `"playdecks/landscape/radio.view"`
+- Portrait radio: `"playdecks/portrait/radio.view"`
+
+**Orientation-Specific Styling:**
+
+```view
+// Adjust padding based on orientation
+widget(container_x, {
+  padding: select($ui.orientation == "landscape",
+                  [0.5em, 1em],      // Landscape: more horizontal padding
+                  [1em, 0.5em]);     // Portrait: more vertical padding
+});
+
+// Adjust button size for touch interfaces
+style(playdeckButtonIcon, {
+  size: select($ui.orientation == "portrait",
+               1.5em,                // Larger for portrait/touch
+               1.2em);               // Smaller for landscape/remote
+});
+
+// Conditional layout direction
+widget(select($ui.orientation == "landscape",
+              container_x,           // Horizontal for landscape
+              container_y), {        // Vertical for portrait
+  // Content...
+});
+```
+
+**Responsive Margins:**
+
+```view
+$ui.xmargin = select($ui.aspect > 1, $ui.width / 100, 0.2em);
+```
+
+This creates adaptive horizontal margins:
+- Landscape: 1% of screen width
+- Portrait: Fixed 0.2em margin
+
+**Orientation Change Handling:**
+
+The UI automatically adapts when orientation changes:
+
+1. `$ui.orientation` updates based on new aspect ratio
+2. Playdeck loader detects change and loads new layout
+3. `autohide: true` ensures smooth transition
+4. Previous layout is unloaded automatically
+
 ### Audio System Integration
 
-**Volume Control:**
+**Volume Control Properties:**
+
 ```view
 $core.audio.mastervolume            // Master volume level (-75 to 12 dB)
 $core.audio.mastermute              // Mute state (boolean)
 ```
 
-**Volume Display Example:**
+**Volume Range:**
+- Minimum: -75 dB (near silence)
+- Maximum: +12 dB (amplification)
+- Default: 0 dB (unity gain)
+
+**Volume Bar Implementation:**
+
 ```view
 widget(container_x, {
+  // Show volume bar when volume changes
   alpha: iir(changed($core.audio.mastervolume, 2, true), 7);
   
   widget(bar, {
+    // Convert dB range (-75 to 12) to 0-1 fill percentage
     fill: ($core.audio.mastervolume + 75) / 87;
     color1: $ui.color1;
     color2: $ui.color2;
@@ -689,13 +857,174 @@ widget(container_x, {
 });
 ```
 
+**Volume Bar Calculation:**
+- Range: -75 dB to +12 dB = 87 dB total
+- Formula: `(volume + 75) / 87`
+- Example: 0 dB → (0 + 75) / 87 = 0.86 (86% full)
+- Example: -75 dB → (-75 + 75) / 87 = 0.0 (0% full)
+- Example: +12 dB → (12 + 75) / 87 = 1.0 (100% full)
+
+**Volume Display with Percentage:**
+
+```view
+widget(container_y, {
+  alpha: iir(changed($core.audio.mastervolume, 2, true), 7);
+  
+  widget(label, {
+    caption: fmt(_("Volume: %d%%"), 
+                 ($core.audio.mastervolume + 75) * 100 / 87);
+    align: center;
+  });
+  
+  widget(container_x, {
+    widget(bar, {
+      fill: ($core.audio.mastervolume + 75) / 87;
+      color1: $ui.color1;
+      color2: $ui.color2;
+    });
+  });
+});
+```
+
+**Volume Control in OSD:**
+
+From `sidebar_common.view`:
+
+```view
+SIDEBAR_INTEGER(_("Master volume"), "skin://icons/ic_speaker_48px.svg",
+                -75, 12, 1, $core.audio.mastervolume, _("dB"));
+```
+
+This creates an interactive slider:
+- Min: -75 dB
+- Max: +12 dB
+- Step: 1 dB
+- Bound to: `$core.audio.mastervolume`
+- Unit: "dB"
+
 **Mute Indicator:**
+
 ```view
 widget(container_x, {
+  // Show mute indicator when audio is muted
   alpha: iir($core.audio.mastermute, 7);
+  
+  widget(icon, {
+    source: "skin://icons/ic_volume_off_48px.svg";
+  });
   
   widget(label, {
     caption: _("Audio muted");
+  });
+});
+```
+
+**Mute Toggle Button:**
+
+```view
+widget(container_z, {
+  focusable: true;
+  onEvent(activate, {
+    toggle($core.audio.mastermute);
+  });
+  
+  widget(icon, {
+    source: select($core.audio.mastermute,
+                   "skin://icons/ic_volume_off_48px.svg",
+                   "skin://icons/ic_volume_up_48px.svg");
+    color: select($core.audio.mastermute, [1, 0.3, 0.3], 1);
+  });
+});
+```
+
+**Volume Change Animation:**
+
+The `changed()` function detects volume changes:
+
+```view
+changed($core.audio.mastervolume, 2, true)
+```
+
+Parameters:
+- Variable: `$core.audio.mastervolume`
+- Timeout: 2 seconds (returns true for 2 seconds after change)
+- Initial: `true` (returns true on first evaluation)
+
+Combined with `iir()` for smooth fade:
+
+```view
+alpha: iir(changed($core.audio.mastervolume, 2, true), 7);
+```
+
+This creates a volume indicator that:
+1. Appears when volume changes
+2. Stays visible for 2 seconds
+3. Fades out smoothly over 7 frames
+
+**Complete Volume Overlay Example:**
+
+```view
+widget(container_z, {
+  // Position in top-right corner
+  align: topRight;
+  padding: 2em;
+  
+  widget(container_y, {
+    // Show for 2 seconds after volume change
+    alpha: iir(changed($core.audio.mastervolume, 2, true), 7);
+    width: 15em;
+    spacing: 0.5em;
+    
+    // Background
+    widget(quad, {
+      color: 0;
+      alpha: 0.8;
+      padding: 1em;
+    });
+    
+    // Volume icon and label
+    widget(container_x, {
+      spacing: 0.5em;
+      padding: 1em;
+      
+      widget(icon, {
+        source: select($core.audio.mastermute,
+                       "skin://icons/ic_volume_off_48px.svg",
+                       "skin://icons/ic_volume_up_48px.svg");
+        size: 2em;
+      });
+      
+      widget(label, {
+        caption: select($core.audio.mastermute,
+                        _("Muted"),
+                        fmt(_("Volume: %d dB"), $core.audio.mastervolume));
+        size: 1.2em;
+      });
+    });
+    
+    // Volume bar
+    widget(container_x, {
+      padding: [0, 1em];
+      height: 0.5em;
+      
+      widget(container_z, {
+        // Background track
+        widget(quad, {
+          color: 0.3;
+          alpha: 0.5;
+        });
+        
+        // Fill bar
+        widget(container_x, {
+          widget(quad, {
+            width: ($core.audio.mastervolume + 75) / 87;
+            color: $ui.color1;
+            alpha: select($core.audio.mastermute, 0.3, 1.0);
+          });
+          space(1);
+        });
+      });
+    });
   });
 });
 ```
