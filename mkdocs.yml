@@ -29,13 +29,26 @@ theme:
     - navigation.sections
     - navigation.expand
     - navigation.top
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tracking
     - search.highlight
     - search.share
+    - search.suggest
     - content.code.copy
     - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+    - toc.integrate
 
 plugins:
-  - search
+  - search:
+      lang: en
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+      pipeline:
+        - stemmer
+        - stopWordFilter
+        - trimmer
 
 markdown_extensions:
   - admonition
@@ -58,21 +71,21 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Getting Started:
+    - Overview: installation/README.md
+    - Linux Installation: installation/linux.md
+    - macOS Installation: installation/macos.md
+    - Build System: installation/build-system.md
+    - Troubleshooting: installation/troubleshooting.md
   - Architecture:
     - Overview: architecture/overview.md
     - Components: architecture/components.md
     - Lifecycle: architecture/lifecycle.md
     - Threading: architecture/threading.md
-  - Installation:
-    - Overview: installation/README.md
-    - Linux: installation/linux.md
-    - macOS: installation/macos.md
-    - Build System: installation/build-system.md
-    - Troubleshooting: installation/troubleshooting.md
   - Plugin Development:
     - Overview: plugins/README.md
-    - Architecture: plugins/architecture.md
-    - Lifecycle: plugins/lifecycle.md
+    - Getting Started: plugins/architecture.md
+    - Plugin Lifecycle: plugins/lifecycle.md
     - Manifest Reference: plugins/manifest-reference.md
     - Best Practices: plugins/best-practices.md
     - API Reference:
@@ -86,19 +99,56 @@ nav:
       - Search Plugin: plugins/examples/search-plugin/README.md
       - Configurable Plugin: plugins/examples/configurable-plugin/README.md
       - Advanced UI Plugin: plugins/examples/advanced-ui-plugin/README.md
-  - UI System:
+  - UI & Theming:
     - Overview: ui/README.md
+    - GLW Architecture: ui/glw-architecture.md
+    - Rendering Pipeline: ui/rendering-pipeline.md
+    - View Files:
+      - Syntax Reference: ui/view-files/syntax-reference.md
+      - Elements Reference: ui/view-files/elements-reference.md
+      - Attributes Reference: ui/view-files/attributes-reference.md
+      - Expressions: ui/view-files/expressions.md
+    - Widgets:
+      - Container Widgets: ui/widgets/container.md
+      - Text Widgets: ui/widgets/text.md
+      - Image Widgets: ui/widgets/image.md
+      - List Widgets: ui/widgets/list.md
+      - Grid Widgets: ui/widgets/grid.md
+    - Theming:
+      - Skin Structure: ui/theming/skin-structure.md
+      - Theme Variables: ui/theming/theme-variables.md
+      - Macro Reference: ui/theming/macro-reference.md
+      - Global Configuration: ui/theming/global-configuration.md
+      - Skin Architecture: ui/theming/skin-architecture.md
     - Examples: ui/examples/README.md
     - Source Analysis: ui/source-analysis/README.md
+  - Media System:
+    - OSD System: media/osd-system.md
+    - Audio & Video UI: media/audio-video-ui.md
+    - Playdeck System: media/playdeck-system.md
+    - OSD View Files Reference: media/osd-view-files-reference.md
   - Guides:
     - Overview: guides/README.md
     - Debugging View Files: guides/debugging-view-files.md
+    - Performance Optimization: guides/performance-optimization.md
     - Skin Template Generator: guides/skin-template-generator.md
     - Skin Performance Best Practices: guides/skin-performance-best-practices.md
   - Reference:
+    - API Index: reference/api-index.md
+    - Element Index: reference/element-index.md
+    - Attribute Index: reference/attribute-index.md
     - Glossary: reference/glossary.md
-  - Testing:
+    - FAQ: reference/faq.md
+    - Troubleshooting: reference/troubleshooting.md
+  - Examples & Templates:
+    - Overview: examples-templates/README.md
+    - Project Templates: examples-templates/INDEX.md
+  - Testing & Quality:
     - Overview: tests/README.md
+  - Meta:
+    - Documentation Standards: meta/documentation-standards.md
+    - Accuracy Tracking: meta/accuracy-tracking.md
+    - Source References: meta/source-references.md
 
 extra:
   social:
