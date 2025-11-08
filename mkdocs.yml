@@ -88,6 +88,8 @@ nav:
     - Getting Started: plugins/architecture.md
     - Plugin Lifecycle: plugins/lifecycle.md
     - Manifest Reference: plugins/manifest-reference.md
+    - API Versions: plugins/api-versions.md
+    - API Differences: plugins/api-differences.md
     - Best Practices: plugins/best-practices.md
     - API Reference:
       - Core APIs: plugins/api/core-api.md
@@ -96,6 +98,7 @@ nav:
       - Storage APIs: plugins/api/storage-api.md
       - Settings APIs: plugins/api/settings-api.md
     - Examples:
+      - Overview: plugins/examples/README.md
       - Content Provider: plugins/examples/content-provider/README.md
       - Search Plugin: plugins/examples/search-plugin/README.md
       - Configurable Plugin: plugins/examples/configurable-plugin/README.md
@@ -130,6 +133,7 @@ nav:
     - OSD View Files Reference: media/osd-view-files-reference.md
   - Guides:
     - Overview: guides/README.md
+    - API v1→v2 Migration: guides/api-v1-to-v2-migration.md
     - Command-Line Options: guides/command-line-options.md
     - Debugging View Files: guides/debugging-view-files.md
     - Performance Optimization: guides/performance-optimization.md

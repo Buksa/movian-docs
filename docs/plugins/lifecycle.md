@@ -397,3 +397,46 @@ ECMAScript contexts can be reused for efficiency:
 4. **Monitor Resources**: Track memory and resource usage
 
 This comprehensive lifecycle management ensures plugins integrate seamlessly with Movian while maintaining system stability and performance.
+
+## API Version Impact
+
+The plugin lifecycle differs slightly based on API version:
+
+### API v2 (Modern)
+
+```javascript
+// Immediate execution with CommonJS modules
+var service = require('movian/service');
+var page = require('movian/page');
+
+service.create("My Service", "myservice:", "video", true);
+
+new page.Route("myservice:start", function(page) {
+  // Page handler
+});
+```
+
+**Characteristics**:
+- Module system with `require()`
+- Global `Plugin` and `Core` objects
+- Native performance
+- Modern ECMAScript features
+
+### API v1 (Legacy - Emulated)
+
+```javascript
+// Global objects available immediately
+var service = plugin.createService("My Service", "myservice:", "video", true);
+
+plugin.addURI("myservice:start", function(page) {
+  // Page handler
+});
+```
+
+**Characteristics**:
+- Global `showtime` and `plugin` objects
+- No module system
+- Emulation layer overhead
+- Deprecated (but still supported)
+
+**Recommendation**: Use API v2 for new plugins. See [API Versions](api-versions.md) and [Migration Guide](../guides/api-v1-to-v2-migration.md) for more information.

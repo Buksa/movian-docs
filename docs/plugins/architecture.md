@@ -4,6 +4,19 @@
 
 Movian's plugin system provides a powerful and flexible framework for extending the media player's functionality through JavaScript-based plugins. The architecture is built around a secure ECMAScript runtime that allows plugins to interact with Movian's core systems while maintaining isolation and security.
 
+## API Versions
+
+Movian plugins can use one of two API versions:
+
+- **API v2** (Recommended): Modern CommonJS-based API with modules
+- **API v1** (Legacy): Deprecated API with global showtime/plugin objects
+
+**For new plugins, always use API v2.** See [API Versions](api-versions.md) for details and [Migration Guide](../guides/api-v1-to-v2-migration.md) to upgrade existing plugins.
+
+The rest of this document describes the **API v2** architecture.
+
+---
+
 ## Core Components
 
 ### Plugin Manager (`src/plugins.c`)

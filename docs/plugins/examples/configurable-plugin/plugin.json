@@ -2,6 +2,7 @@
   "id": "configurable-example",
   "version": "1.0.0",
   "type": "ecmascript",
+  "apiversion": 2,
   "author": "Movian Documentation Team",
   "title": "Configurable Plugin Example",
   "synopsis": "Demonstrates comprehensive settings and configuration management",
