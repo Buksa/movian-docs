@@ -1,6 +1,9 @@
 // Advanced Skin - Main Entry Point
 // This is the root view file with extended global configuration
 
+// Import macro definitions
+#import "theme.view"
+
 // ============================================================================
 // GLOBAL CONFIGURATION
 // ============================================================================

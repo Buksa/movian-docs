@@ -11,8 +11,14 @@
     "test:verbose": "bash run-tests.sh --verbose",
     "test:view-syntax": "bash run-view-syntax-tests.sh",
     "test:view-syntax:verbose": "bash run-view-syntax-tests.sh --verbose",
+    "test:macros": "bash run-macro-validation.sh",
+    "test:macros:verbose": "bash run-macro-validation.sh --verbose",
+    "test:skin-structure": "bash run-skin-structure-validation.sh",
+    "test:skin-structure:verbose": "bash run-skin-structure-validation.sh --verbose",
     "validate": "node plugin-integration-tests.js",
     "validate:view-syntax": "node view-syntax-validator.js",
+    "validate:macros": "node macro-validator.js",
+    "validate:skin-structure": "node skin-structure-validator.js",
     "install-deps": "npm install vm2"
   },
   "keywords": [

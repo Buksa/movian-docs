@@ -1,6 +1,9 @@
 // Minimal Skin - Main Entry Point
 // This is the root view file that sets up the entire skin
 
+// Import macro definitions
+#import "theme.view"
+
 // Global Configuration
 // -------------------
 

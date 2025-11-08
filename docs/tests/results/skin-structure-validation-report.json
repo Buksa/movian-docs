@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-11-08T07:48:57.892Z",
+  "summary": {
+    "total": 32,
+    "passed": 32,
+    "failed": 0,
+    "warnings": 2,
+    "passRate": 100
+  },
+  "skins": [
+    {
+      "name": "advanced-skin",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\ui\\theming\\examples\\advanced-skin",
+      "level": "advanced",
+      "tests": {
+        "total": 17,
+        "passed": 17,
+        "failed": 0
+      }
+    },
+    {
+      "name": "minimal-skin",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\ui\\theming\\examples\\minimal-skin",
+      "level": "standard",
+      "tests": {
+        "total": 15,
+        "passed": 15,
+        "failed": 0
+      }
+    }
+  ],
+  "errors": []
+}

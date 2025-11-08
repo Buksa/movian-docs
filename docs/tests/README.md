@@ -61,6 +61,42 @@ GLW view file syntax validation test runner that validates documented syntax.
 ./run-view-syntax-tests.sh --no-report
 ```
 
+### `run-macro-validation.sh`
+GLW macro usage validation test runner that validates macro definitions and usage patterns.
+
+**Usage:**
+```bash
+# Run macro validation tests
+./run-macro-validation.sh
+
+# Verbose output
+./run-macro-validation.sh --verbose
+
+# Validate specific skin
+./run-macro-validation.sh --skin-path=../ui/theming/examples/minimal-skin
+
+# Skip HTML report generation
+./run-macro-validation.sh --no-report
+```
+
+### `run-skin-structure-validation.sh`
+GLW skin structure validation test runner that validates skin directory organization.
+
+**Usage:**
+```bash
+# Run skin structure validation tests
+./run-skin-structure-validation.sh
+
+# Verbose output
+./run-skin-structure-validation.sh --verbose
+
+# Validate specific skin
+./run-skin-structure-validation.sh --skin-path=../ui/theming/examples/advanced-skin
+
+# Skip HTML report generation
+./run-skin-structure-validation.sh --no-report
+```
+
 ### `plugin-integration-tests.js`
 Node.js script that performs comprehensive integration testing of plugin examples.
 
@@ -106,6 +142,56 @@ node view-syntax-validator.js --verbose
 
 # Or use npm script
 npm run validate:view-syntax
+```
+
+### `macro-validator.js`
+Node.js script that validates macro definitions and usage in view files.
+
+**Features:**
+- Macro definition syntax validation
+- Parameter naming convention checking (UPPER_CASE)
+- Macro naming convention checking (PascalCase)
+- Required vs optional parameter ordering validation
+- Macro invocation validation
+- Category-based macro organization checking
+- Cross-file macro usage validation
+- Comprehensive JSON and HTML reporting
+
+**Usage:**
+```bash
+# Run macro validation directly
+node macro-validator.js
+
+# With verbose output
+node macro-validator.js --verbose
+
+# Validate specific skin
+node macro-validator.js --skin-path=../ui/theming/examples/minimal-skin
+```
+
+### `skin-structure-validator.js`
+Node.js script that validates skin directory structure and organization.
+
+**Features:**
+- Automatic skin complexity level detection (minimal/standard/advanced)
+- Required file validation (universe.view, theme.view, README.md)
+- Recommended file checking
+- Directory organization validation
+- View file syntax checking
+- Structure analysis and reporting
+- Size and organization recommendations
+- Comprehensive JSON and HTML reporting
+
+**Usage:**
+```bash
+# Run skin structure validation directly
+node skin-structure-validator.js
+
+# With verbose output
+node skin-structure-validator.js --verbose
+
+# Validate specific skin
+node skin-structure-validator.js --skin-path=../ui/theming/examples/advanced-skin
 ```
 
 ### `dependency-check.py`
