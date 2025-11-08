@@ -3758,6 +3758,637 @@ widget(container_y, {
 });
 ```
 
+## Notification Systems
+
+### Overview
+
+Movian's notification system provides **non-intrusive, temporary user feedback** for system events, background operations, and status updates. Unlike modal popups that require user interaction, notifications appear briefly to inform users of events and automatically disappear, maintaining workflow continuity.
+
+The notification system consists of two primary components:
+
+1. **User Notifications** - General system messages and event notifications
+2. **Progress Indicators** - Visual feedback for long-running operations
+
+**Source Reference**: `movian/glwskins/flat/universe.view` (lines 114-145)
+
+### Architecture and Integration
+
+#### Location in UI Hierarchy
+
+Notifications are positioned in the bottom section of the screen, above the playdeck but below popups:
+
+```view
+widget(container_y, {
+  space(1);
+  widget(container_y, {
+    delta($ui.universeBottomHeight, getHeight());
+    expediteSubscriptions: true;
+    
+    // Playdeck system
+    widget(loader, {
+      autohide: true;
+      source: translate($core.media.current.type, ...);
+    });
+    
+    // User notifications
+    cloner($core.notifications.nodes, container_z, {
+      // Notification UI...
+    });
+    
+    // Progress indicators
+    cloner($core.clipboard.copyprogress, container_z, {
+      // Progress UI...
+    });
+  });
+});
+```
+
+**Positioning Strategy**:
+- **Bottom Alignment**: Notifications appear at bottom of screen
+- **Above Playdeck**: Visible even during media playback
+- **Below Popups**: Don't interfere with modal dialogs
+- **Dynamic Height**: `delta($ui.universeBottomHeight, getHeight())` tracks total height
+
+**Z-Order Hierarchy** (bottom to top):
+```
+1. Background
+2. Pages
+3. Playdeck
+4. Notifications ← Here
+5. Popups
+6. System Overlays (volume, clock)
+```
+
+### User Notifications: `cloner($core.notifications.nodes, ...)`
+
+#### Purpose and Functionality
+
+User notifications provide **temporary, non-modal messages** for system events, plugin notifications, and status updates.
+
+**Source Reference**: `movian/glwskins/flat/universe.view` (lines 114-123)
+
+#### Implementation
+
+```view
+cloner($core.notifications.nodes, container_z, {
+  widget(quad, {
+    color: 0;
+    alpha: 0.6;
+  });
+
+  widget(label, {
+    padding: [2em, 0.5em];
+    caption: $self.text;
+  });
+});
+```
+
+#### How It Works
+
+**Data Source**: `$core.notifications.nodes`
+- **Type**: Array of notification objects managed by Movian core
+- **Content**: Each element represents an active notification
+- **Lifecycle**: Notifications added when triggered, automatically removed after timeout
+- **Automatic Management**: Core handles creation, display duration, and removal
+
+**Notification Object Properties**:
+```view
+$self.text              // Notification message text
+$self.type              // Notification type (info, warning, error)
+$self.timeout           // Display duration (managed by core)
+$self.icon              // Optional icon (if supported)
+```
+
+**Visual Structure**:
+
+1. **Background Layer**:
+   ```view
+   widget(quad, {
+     color: 0;      // Black background
+     alpha: 0.6;    // 60% opacity
+   });
+   ```
+   - Semi-transparent black backdrop
+   - Ensures text readability
+   - Consistent with other overlay elements
+
+2. **Message Text**:
+   ```view
+   widget(label, {
+     padding: [2em, 0.5em];    // Vertical: 2em, Horizontal: 0.5em
+     caption: $self.text;
+   });
+   ```
+   - Generous padding for readability
+   - Simple text display
+   - No interaction required
+
+#### Notification Lifecycle
+
+**Timeline Example**:
+```
+t=0.0s: Event occurs (e.g., file saved, download complete)
+        Core creates notification object
+        Object added to $core.notifications.nodes array
+        Cloner creates notification widget
+        Notification appears at bottom of screen
+
+t=0.1s: Notification fully visible
+        User continues working (no interaction required)
+
+t=3.0s: Timeout expires (typical duration)
+        Core removes notification from array
+        Cloner automatically destroys widget
+        Notification fades out and disappears
+```
+
+**State Diagram**:
+```mermaid
+stateDiagram-v2
+    [*] --> Created: Event triggers
+    Created --> Visible: Added to array
+    Visible --> Visible: Display duration
+    Visible --> Removed: Timeout expires
+    Removed --> [*]: Widget destroyed
+```
+
+#### Notification Types and Use Cases
+
+**System Notifications**:
+- **File Operations**: "File saved", "File deleted", "Copy complete"
+- **Network Events**: "Connected to network", "Connection lost"
+- **Plugin Events**: "Plugin loaded", "Plugin error"
+- **Settings Changes**: "Settings saved", "Configuration updated"
+
+**User Feedback**:
+- **Action Confirmation**: "Item added to favorites", "Bookmark created"
+- **Status Updates**: "Scanning library", "Updating metadata"
+- **Warnings**: "Low disk space", "Unsupported format"
+- **Errors**: "Failed to load", "Network error"
+
+**Plugin Notifications** (from JavaScript):
+```javascript
+// JavaScript plugin code
+showNotification("Download complete: " + filename, 3000);
+showNotification("Error: " + errorMessage, 5000, "error");
+```
+
+#### Multiple Notification Handling
+
+When multiple notifications are active, they stack vertically:
+
+```view
+cloner($core.notifications.nodes, container_z, {
+  // Each notification is a separate container_z
+  // Stacked vertically by parent container_y
+});
+```
+
+**Stacking Behavior**:
+- **Newest on Top**: Latest notifications appear above older ones
+- **Automatic Layout**: Parent `container_y` handles vertical spacing
+- **Independent Lifecycle**: Each notification has its own timeout
+- **Smooth Transitions**: Notifications fade in/out independently
+
+**Visual Example**:
+```
+┌─────────────────────────────────┐
+│ Download complete: video.mp4    │  ← Newest (3s remaining)
+└─────────────────────────────────┘
+┌─────────────────────────────────┐
+│ File saved successfully         │  ← Older (1s remaining)
+└─────────────────────────────────┘
+┌─────────────────────────────────┐
+│ Connected to network            │  ← Oldest (about to disappear)
+└─────────────────────────────────┘
+```
+
+### Progress Indicators: `cloner($core.clipboard.copyprogress, ...)`
+
+#### Purpose and Functionality
+
+Progress indicators provide **visual feedback for long-running operations**, showing both progress percentage and operation details. Unlike simple notifications, progress indicators remain visible until the operation completes.
+
+**Source Reference**: `movian/glwskins/flat/universe.view` (lines 125-145)
+
+#### Implementation
+
+```view
+cloner($core.clipboard.copyprogress, container_z, {
+  quad({
+    color: 0;
+    alpha: 0.6;
+  });
+
+  hbox({
+    margin: [2em, 0.5em];
+    spacing: 2em;
+
+    label({
+      caption: fmt(_("Copying %d files"), $self.files);
+    });
+
+    vbox({
+      space(1);
+      zbox({
+        quad({
+          color: 0;
+        });
+        bar({
+          fill: $self.completed / $self.total;
+          color1: 1;
+          color2: 1;
+        });
+      });
+      space(1);
+    });
+  });
+});
+```
+
+#### How It Works
+
+**Data Source**: `$core.clipboard.copyprogress`
+- **Type**: Array of progress operation objects
+- **Content**: Each element represents an active long-running operation
+- **Lifecycle**: Added when operation starts, removed when complete
+- **Real-time Updates**: Progress values update continuously
+
+**Progress Object Properties**:
+```view
+$self.files             // Number of files being processed
+$self.completed         // Number of bytes/items completed
+$self.total             // Total bytes/items to process
+$self.operation         // Operation type (copy, move, delete, etc.)
+$self.currentFile       // Current file being processed (optional)
+```
+
+**Visual Structure**:
+
+1. **Background Layer**:
+   ```view
+   quad({
+     color: 0;      // Black background
+     alpha: 0.6;    // 60% opacity
+   });
+   ```
+   - Consistent with notification styling
+   - Semi-transparent backdrop
+
+2. **Horizontal Layout** (`hbox`):
+   ```view
+   hbox({
+     margin: [2em, 0.5em];
+     spacing: 2em;
+     // ...
+   });
+   ```
+   - Left side: Operation description
+   - Right side: Progress bar
+   - 2em spacing between elements
+
+3. **Operation Description**:
+   ```view
+   label({
+     caption: fmt(_("Copying %d files"), $self.files);
+   });
+   ```
+   - Localized text with file count
+   - `fmt()` function for string formatting
+   - `_()` function for translation
+
+4. **Progress Bar Container** (`vbox`):
+   ```view
+   vbox({
+     space(1);
+     zbox({
+       // Progress bar...
+     });
+     space(1);
+   });
+   ```
+   - Vertical centering with `space(1)` above and below
+   - `zbox` for layered progress bar
+
+5. **Progress Bar**:
+   ```view
+   zbox({
+     quad({
+       color: 0;    // Background track
+     });
+     bar({
+       fill: $self.completed / $self.total;
+       color1: 1;
+       color2: 1;
+     });
+   });
+   ```
+   - **Background Track**: Black quad for unfilled portion
+   - **Fill Bar**: White bar showing progress
+   - **Fill Calculation**: `completed / total` (0.0 to 1.0)
+   - **Dynamic Update**: Automatically updates as progress changes
+
+#### Progress Calculation
+
+**Fill Value**:
+```view
+fill: $self.completed / $self.total;
+```
+
+**Examples**:
+- 0 bytes of 1000 bytes → `0 / 1000 = 0.0` → 0% filled
+- 250 bytes of 1000 bytes → `250 / 1000 = 0.25` → 25% filled
+- 500 bytes of 1000 bytes → `500 / 1000 = 0.5` → 50% filled
+- 1000 bytes of 1000 bytes → `1000 / 1000 = 1.0` → 100% filled
+
+**Real-time Updates**:
+- `$self.completed` updates continuously during operation
+- Bar widget automatically re-renders with new fill value
+- Smooth visual progress indication
+
+#### Progress Indicator Lifecycle
+
+**Timeline Example**:
+```
+t=0.0s: User initiates file copy operation
+        Core creates progress object
+        Object added to $core.clipboard.copyprogress array
+        Cloner creates progress indicator widget
+        Progress bar appears at 0%
+
+t=0.5s: Copy operation in progress
+        $self.completed = 100, $self.total = 1000
+        Progress bar shows 10%
+
+t=2.0s: Copy operation continuing
+        $self.completed = 500, $self.total = 1000
+        Progress bar shows 50%
+
+t=4.0s: Copy operation nearly complete
+        $self.completed = 950, $self.total = 1000
+        Progress bar shows 95%
+
+t=4.5s: Copy operation complete
+        $self.completed = 1000, $self.total = 1000
+        Progress bar shows 100%
+        Core removes object from array
+        Progress indicator disappears
+```
+
+**State Diagram**:
+```mermaid
+stateDiagram-v2
+    [*] --> Started: Operation begins
+    Started --> InProgress: 0% < progress < 100%
+    InProgress --> InProgress: Progress updates
+    InProgress --> Complete: progress = 100%
+    Complete --> [*]: Widget removed
+```
+
+#### Use Cases
+
+**File Operations**:
+- **Copy**: Copying files between directories
+- **Move**: Moving files to new location
+- **Delete**: Deleting multiple files
+- **Download**: Downloading files from network
+
+**Media Operations**:
+- **Transcoding**: Converting media formats
+- **Scanning**: Scanning media library
+- **Indexing**: Building search indexes
+
+**Network Operations**:
+- **Upload**: Uploading files to server
+- **Sync**: Synchronizing with remote service
+- **Backup**: Creating backups
+
+#### Multiple Progress Indicators
+
+Like notifications, multiple progress indicators can be active simultaneously:
+
+```view
+cloner($core.clipboard.copyprogress, container_z, {
+  // Each operation is a separate container_z
+  // Stacked vertically by parent container_y
+});
+```
+
+**Stacking Behavior**:
+- **Independent Operations**: Each has its own progress tracking
+- **Vertical Stacking**: Newest operations appear on top
+- **Simultaneous Display**: Multiple operations visible at once
+- **Individual Completion**: Each disappears when its operation completes
+
+**Visual Example**:
+```
+┌────────────────────────────────────────────┐
+│ Copying 5 files  [████████░░░░░░] 60%     │  ← Operation 1
+└────────────────────────────────────────────┘
+┌────────────────────────────────────────────┐
+│ Copying 3 files  [██████████████] 95%     │  ← Operation 2
+└────────────────────────────────────────────┘
+```
+
+### Notification System Characteristics
+
+#### Design Principles
+
+1. **Non-Intrusive**: Don't block user workflow
+2. **Temporary**: Automatically disappear after timeout
+3. **Informative**: Provide clear, concise messages
+4. **Consistent**: Use standard styling and positioning
+5. **Stackable**: Support multiple simultaneous notifications
+
+#### Visual Consistency
+
+**Shared Styling**:
+- **Background**: Black quad with 60% opacity
+- **Text Color**: White (default)
+- **Padding**: Generous spacing for readability
+- **Position**: Bottom of screen, above playdeck
+- **Z-Order**: Below popups, above content
+
+**Differentiation**:
+- **Notifications**: Simple text message
+- **Progress**: Text + progress bar
+
+#### Performance Considerations
+
+**Efficient Rendering**:
+```view
+expediteSubscriptions: true;
+```
+- Applied to parent container
+- Optimizes data binding updates
+- Reduces rendering overhead for frequent updates
+
+**Automatic Cleanup**:
+- Core manages notification lifecycle
+- Widgets automatically destroyed when removed from array
+- No manual cleanup required
+- Memory efficient
+
+#### Integration with Core System
+
+**Core Responsibilities**:
+- Create notification/progress objects
+- Add to appropriate array (`$core.notifications.nodes` or `$core.clipboard.copyprogress`)
+- Update progress values in real-time
+- Remove objects after timeout or completion
+- Manage display duration and timing
+
+**Skin Responsibilities**:
+- Define visual appearance
+- Layout and positioning
+- Text formatting and styling
+- Progress bar visualization
+- Stacking and spacing
+
+### Customization Patterns
+
+#### Custom Notification Styling
+
+**Color-Coded Notifications** (by type):
+```view
+cloner($core.notifications.nodes, container_z, {
+  widget(quad, {
+    color: translate($self.type, 0,
+                     "info", 0,
+                     "warning", [1, 0.5, 0],
+                     "error", [1, 0, 0]);
+    alpha: 0.6;
+  });
+  
+  widget(label, {
+    padding: [2em, 0.5em];
+    caption: $self.text;
+  });
+});
+```
+
+**With Icons**:
+```view
+cloner($core.notifications.nodes, container_z, {
+  widget(quad, {
+    color: 0;
+    alpha: 0.6;
+  });
+  
+  widget(container_x, {
+    padding: [2em, 0.5em];
+    spacing: 1em;
+    
+    widget(icon, {
+      source: translate($self.type, "",
+                        "info", "skin://icons/ic_info_48px.svg",
+                        "warning", "skin://icons/ic_warning_48px.svg",
+                        "error", "skin://icons/ic_error_48px.svg");
+      size: 1.5em;
+    });
+    
+    widget(label, {
+      caption: $self.text;
+    });
+  });
+});
+```
+
+#### Enhanced Progress Indicators
+
+**With Percentage Display**:
+```view
+cloner($core.clipboard.copyprogress, container_z, {
+  quad({ color: 0; alpha: 0.6; });
+  
+  hbox({
+    margin: [2em, 0.5em];
+    spacing: 2em;
+    
+    label({
+      caption: fmt(_("Copying %d files"), $self.files);
+    });
+    
+    vbox({
+      space(1);
+      zbox({
+        quad({ color: 0; });
+        bar({
+          fill: $self.completed / $self.total;
+          color1: $ui.color1;
+          color2: $ui.color2;
+        });
+      });
+      space(1);
+    });
+    
+    label({
+      caption: fmt("%d%%", ($self.completed / $self.total) * 100);
+      width: 3em;
+      align: right;
+    });
+  });
+});
+```
+
+**With Current File Display**:
+```view
+cloner($core.clipboard.copyprogress, container_z, {
+  quad({ color: 0; alpha: 0.6; });
+  
+  vbox({
+    margin: [2em, 0.5em];
+    spacing: 0.5em;
+    
+    label({
+      caption: fmt(_("Copying %d files"), $self.files);
+    });
+    
+    label({
+      caption: $self.currentFile;
+      alpha: 0.7;
+      size: 0.8em;
+      maxlines: 1;
+      ellipsize: true;
+    });
+    
+    zbox({
+      quad({ color: 0; });
+      bar({
+        fill: $self.completed / $self.total;
+        color1: 1;
+        color2: 1;
+      });
+    });
+  });
+});
+```
+
+### Best Practices
+
+#### Notification Design
+
+1. **Keep Messages Brief**: Short, clear text
+2. **Use Localization**: Wrap text in `_()` for translation
+3. **Provide Context**: Include relevant details (file count, operation type)
+4. **Avoid Overuse**: Don't spam users with notifications
+5. **Appropriate Duration**: 3-5 seconds for most notifications
+
+#### Progress Indicator Design
+
+1. **Show Progress**: Always include visual progress bar
+2. **Provide Details**: Show operation type and item count
+3. **Update Frequently**: Ensure smooth progress updates
+4. **Complete Feedback**: Brief notification when operation completes
+5. **Error Handling**: Show error notifications if operation fails
+
+#### Performance
+
+1. **Optimize Bindings**: Use `expediteSubscriptions: true`
+2. **Minimize Complexity**: Keep notification UI simple
+3. **Efficient Updates**: Avoid expensive operations in notification widgets
+4. **Automatic Cleanup**: Rely on core for lifecycle management
+
 ## Summary
 
 Movian's skin architecture provides a powerful, flexible system for complete UI customization:
@@ -3767,7 +4398,7 @@ Movian's skin architecture provides a powerful, flexible system for complete UI 
 - **Page system** enables dynamic, type-based content display
 - **Popup system** provides modal dialogs and user interaction
 - **Playdeck system** adapts media controls to orientation and media type
-- **Notification system** offers non-intrusive user feedback
+- **Notification system** offers non-intrusive user feedback through temporary messages and progress indicators
 - **System overlays** provide audio, info, and status displays
 - **Performance patterns** ensure smooth, responsive UI
 
