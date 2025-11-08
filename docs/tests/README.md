@@ -97,6 +97,27 @@ GLW skin structure validation test runner that validates skin directory organiza
 ./run-skin-structure-validation.sh --no-report
 ```
 
+### `run-qa-validation.sh`
+Comprehensive quality assurance validation runner that executes all validation checks.
+
+**Usage:**
+```bash
+# Run all QA validation checks
+./run-qa-validation.sh
+
+# Verbose output
+./run-qa-validation.sh --verbose
+
+# Skip dependency installation
+./run-qa-validation.sh --skip-install
+
+# Check external links (slower)
+./run-qa-validation.sh --check-external
+
+# Skip HTML report generation
+./run-qa-validation.sh --no-report
+```
+
 ### `plugin-integration-tests.js`
 Node.js script that performs comprehensive integration testing of plugin examples.
 
@@ -194,6 +215,70 @@ node skin-structure-validator.js --verbose
 node skin-structure-validator.js --skin-path=../ui/theming/examples/advanced-skin
 ```
 
+### `file-reference-validator.js`
+Node.js script that validates file references and line numbers in documentation.
+
+**Features:**
+- Extracts file references from markdown documentation
+- Validates file existence in Movian repository
+- Checks line number validity and ranges
+- Supports multiple reference formats
+- Comprehensive JSON reporting
+
+**Usage:**
+```bash
+# Run file reference validation
+node file-reference-validator.js
+
+# With verbose output
+node file-reference-validator.js --verbose
+
+# Specify custom Movian source location
+node file-reference-validator.js --movian-root=/path/to/movian
+```
+
+### `link-validator.js`
+Node.js script that validates internal and external links in documentation.
+
+**Features:**
+- Validates markdown links, reference-style links, and HTML links
+- Checks internal file references
+- Validates anchor links to headers
+- Optional external link checking
+- Identifies broken links with location information
+- Comprehensive JSON reporting
+
+**Usage:**
+```bash
+# Run link validation
+node link-validator.js
+
+# With verbose output
+node link-validator.js --verbose
+
+# Check external links (slower)
+node link-validator.js --check-external
+```
+
+### `cross-reference-validator.js`
+Node.js script that validates cross-references between related documentation sections.
+
+**Features:**
+- Validates expected cross-references between related docs
+- Checks API documentation completeness
+- Identifies orphaned files not referenced by other docs
+- Ensures documentation consistency
+- Comprehensive JSON reporting
+
+**Usage:**
+```bash
+# Run cross-reference validation
+node cross-reference-validator.js
+
+# With verbose output
+node cross-reference-validator.js --verbose
+```
+
 ### `dependency-check.py`
 Python script that validates all required dependencies are available for building Movian.
 
@@ -254,6 +339,57 @@ The `.github/workflows/build-validation.yml` workflow automatically runs these t
 | **Fedora** | Latest | ✅ Automated |
 | **macOS** | 11, 12, 13 | ✅ Automated |
 | **Cross-compilation** | ARM | ✅ Limited testing |
+
+## Quality Assurance Validation
+
+The comprehensive QA validation system ensures documentation accuracy and consistency through multiple validation checks:
+
+### Validation Checks
+
+| Check | Purpose | Validator |
+|-------|---------|-----------|
+| **File References** | Validates source code file references and line numbers | `file-reference-validator.js` |
+| **Links** | Checks internal and external links | `link-validator.js` |
+| **Cross-References** | Validates cross-references between docs | `cross-reference-validator.js` |
+| **Plugin Integration** | Tests plugin examples | `plugin-integration-tests.js` |
+| **View Syntax** | Validates GLW view file syntax | `view-syntax-validator.js` |
+| **Macros** | Validates macro definitions and usage | `macro-validator.js` |
+| **Skin Structure** | Validates skin directory organization | `skin-structure-validator.js` |
+
+### Running QA Validation
+
+```bash
+# Run all QA validation checks
+./run-qa-validation.sh
+
+# With verbose output
+./run-qa-validation.sh --verbose
+
+# Check external links (slower)
+./run-qa-validation.sh --check-external
+```
+
+### QA Validation Results
+
+Results are generated in multiple formats:
+
+- **Console Output**: Real-time validation progress and summary
+- **JSON Reports**: Machine-readable detailed results in `results/` directory
+- **HTML Report**: Consolidated visual report (`results/qa-validation-report.html`)
+
+### Accuracy Tracking
+
+The QA system supports comprehensive accuracy tracking:
+
+- **Source Reference Validation**: Ensures file references point to existing files
+- **Line Number Validation**: Verifies line numbers are within valid ranges
+- **Link Integrity**: Checks all internal and external links
+- **Cross-Reference Consistency**: Validates related documentation sections reference each other
+- **Version Compatibility**: Tracks Movian version compatibility
+
+For more information, see:
+- [Source Reference Tracking](../meta/source-references.md)
+- [Accuracy Tracking System](../meta/accuracy-tracking.md)
 
 ## Plugin Integration Testing
 

@@ -15,10 +15,15 @@
     "test:macros:verbose": "bash run-macro-validation.sh --verbose",
     "test:skin-structure": "bash run-skin-structure-validation.sh",
     "test:skin-structure:verbose": "bash run-skin-structure-validation.sh --verbose",
+    "test:qa": "bash run-qa-validation.sh",
+    "test:qa:verbose": "bash run-qa-validation.sh --verbose",
     "validate": "node plugin-integration-tests.js",
     "validate:view-syntax": "node view-syntax-validator.js",
     "validate:macros": "node macro-validator.js",
     "validate:skin-structure": "node skin-structure-validator.js",
+    "validate:file-refs": "node file-reference-validator.js",
+    "validate:links": "node link-validator.js",
+    "validate:cross-refs": "node cross-reference-validator.js",
     "install-deps": "npm install vm2"
   },
   "keywords": [
