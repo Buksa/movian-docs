@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-11-08T10:04:19.104Z",
+  "summary": {
+    "totalChecks": 28,
+    "passed": 13,
+    "failed": 7,
+    "warnings": 21
+  },
+  "missingReferences": [
+    {
+      "source": "plugins/api/core-api.md",
+      "target": "plugins/architecture.md"
+    },
+    {
+      "source": "plugins/api/core-api.md",
+      "target": "plugins/lifecycle.md"
+    },
+    {
+      "source": "plugins/api/core-api.md",
+      "target": "reference/glossary.md"
+    },
+    {
+      "source": "plugins/api/http-api.md",
+      "target": "plugins/best-practices.md"
+    },
+    {
+      "source": "plugins/api/http-api.md",
+      "target": "reference/glossary.md"
+    },
+    {
+      "source": "ui/view-files/syntax-reference.md",
+      "target": "reference/glossary.md"
+    },
+    {
+      "source": "ui/widgets/container.md",
+      "target": "ui/examples/basic-layout.view"
+    }
+  ],
+  "errors": [
+    "Missing cross-reference: plugins/api/core-api.md should reference plugins/architecture.md",
+    "Missing cross-reference: plugins/api/core-api.md should reference plugins/lifecycle.md",
+    "Missing cross-reference: plugins/api/core-api.md should reference reference/glossary.md",
+    "Missing cross-reference: plugins/api/http-api.md should reference plugins/best-practices.md",
+    "Missing cross-reference: plugins/api/http-api.md should reference reference/glossary.md",
+    "Missing cross-reference: ui/view-files/syntax-reference.md should reference reference/glossary.md",
+    "Missing cross-reference: ui/widgets/container.md should reference ui/examples/basic-layout.view"
+  ]
+}
