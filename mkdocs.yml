@@ -73,6 +73,7 @@ nav:
   - Home: index.md
   - Getting Started:
     - Overview: installation/README.md
+    - System Requirements: installation/requirements.md
     - Linux Installation: installation/linux.md
     - macOS Installation: installation/macos.md
     - Build System: installation/build-system.md

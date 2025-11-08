@@ -20,9 +20,11 @@ Before starting, ensure you have:
 
 - **Git** - For cloning the repository
 - **Build tools** - Platform-specific compilers and build systems
-- **Dependencies** - Required libraries (see platform guides)
+- **Dependencies** - Required libraries (see [System Requirements](requirements.md))
 - **Disk space** - At least 2GB free space for build
 - **Internet connection** - For downloading dependencies
+
+For detailed system requirements and dependency information, see the **[System Requirements](requirements.md)** guide.
 
 ## Installation Overview
 
@@ -134,8 +136,8 @@ Advanced cross-compilation for:
 ## Build System Documentation
 
 For detailed information about Movian's build system:
+- [System Requirements](requirements.md) - Hardware, software, and dependency requirements
 - [Build System Overview](build-system.md) - Architecture and configuration
-- [Dependencies Reference](dependencies.md) - Complete library requirements
 - [Troubleshooting Guide](troubleshooting.md) - Common issues and solutions
 
 ## Development Environment Setup
