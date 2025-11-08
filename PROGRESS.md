@@ -1915,3 +1915,118 @@ This progress document is updated after each task completion. For questions or s
 
 **Last Updated**: 2024-11-08  
 **Next Update**: After Task 8.5 completion
+
+
+### Task 8.5 - Implement FAQ Documentation ✅
+
+- **Completed**: 2024-11-08
+- **Duration**: ~2 hours
+- **Deliverables**:
+  - `docs/reference/faq.md` - Comprehensive FAQ documentation (700+ lines, 62KB)
+  - **8 Major Categories** covering all developer concerns:
+    - General Questions (3 questions)
+    - Getting Started (3 questions)
+    - Plugin Development (7 questions)
+    - View Files & UI (5 questions)
+    - Build & Installation (3 questions)
+    - Platform-Specific (4 questions)
+    - Performance & Optimization (3 questions)
+    - Architecture & Design (4 questions)
+  - **40+ Frequently Asked Questions** with detailed answers
+  - **30+ Code Examples** demonstrating best practices
+  - **Platform-Specific Guidance**:
+    - Linux: libvdpau issues and dependency installation
+    - macOS: Xcode Command Line Tools setup
+    - Windows: MinGW vs Visual Studio explanation
+    - Android: NDK version compatibility
+    - Raspberry Pi: Performance optimization techniques
+  - **Architecture Explanations**:
+    - Plugin system internals with Mermaid diagram
+    - Property system reactive data binding
+    - GLW rendering pipeline with Mermaid diagram
+    - Media playback architecture with Mermaid diagram
+  - **Quick Start Guides**:
+    - 5-minute plugin creation
+    - Minimal skin structure
+    - Development workflow
+  - **Debugging and Troubleshooting**:
+    - Plugin debugging techniques
+    - View file debugging
+    - Performance profiling
+    - Common issues and solutions
+  - **API Usage Examples**:
+    - HTTP requests (GET, POST, error handling)
+    - HTML/XML/JSON parsing
+    - Persistent data storage (store, SQLite, settings)
+    - Page creation and navigation
+    - Event handling and animations
+  - **Build System Guidance**:
+    - System requirements
+    - Build times and optimization
+    - Configure failures and solutions
+    - Cross-compilation support
+  - **Performance Optimization**:
+    - Plugin performance best practices
+    - View file optimization
+    - Common performance issues
+    - Profiling techniques
+- **Key Features**:
+  - **Comprehensive Coverage**: 40+ questions across 8 categories
+  - **Practical Examples**: 30+ code snippets with explanations
+  - **Platform-Specific**: Detailed guidance for all platforms
+  - **Architecture Insights**: Deep dives into system internals
+  - **Quick Navigation**: Table of contents with anchor links
+  - **Cross-References**: Links to 15+ other documentation pages
+  - **Complementary**: Works with troubleshooting.md without duplication
+- **Documentation Quality**:
+  - 700+ lines of comprehensive documentation
+  - 62KB file size with rich content
+  - 3 Mermaid architecture diagrams
+  - Side-by-side correct vs incorrect code examples
+  - Clear question-answer format
+  - Consistent formatting throughout
+  - Status indicators and version information
+- **Complementary to Existing Docs**:
+  - **vs troubleshooting.md**: Conceptual vs error-specific
+  - **vs best-practices.md**: General guidance vs detailed patterns
+  - **vs API docs**: Usage examples vs complete reference
+  - **Cross-referencing**: Points to detailed docs for deep dives
+- **Content Highlights**:
+  - **Getting Started**: Fastest path to first plugin
+  - **JavaScript Support**: ES5 features and limitations
+  - **Debugging**: Console logging, try-catch, property inspection
+  - **HTTP Requests**: Complete examples with error handling
+  - **Parsing**: HTML, XML, JSON with code examples
+  - **Storage**: store, SQLite, settings with usage patterns
+  - **View Files**: Syntax, variables, events, animations
+  - **Skins**: Minimal structure and macro system
+  - **Build Issues**: Configure failures and solutions
+  - **Platform Issues**: Specific gotchas for each platform
+  - **Performance**: Optimization techniques and profiling
+  - **Architecture**: Internal system explanations
+  - **Contributing**: How to contribute to Movian
+- **Platform-Specific Gotchas**:
+  - **Linux**: VDPAU installation and alternatives
+  - **macOS**: Xcode tools and Homebrew setup
+  - **Windows**: MinGW requirement (not Visual Studio)
+  - **Android**: NDK version compatibility (r19c-r25)
+  - **Raspberry Pi**: GPU memory, overclocking, hardware acceleration
+- **Architecture Explanations**:
+  - **Plugin System**: Lifecycle, ECMAScript runtime, sandboxing
+  - **Property System**: Reactive data binding, subscriptions, UI updates
+  - **GLW Pipeline**: Parsing, layout, rendering, composition
+  - **Media Playback**: Backends, demuxers, decoders, renderers
+- **Impact**:
+  - Central resource for common developer questions
+  - Reduces support burden with self-service answers
+  - Complements troubleshooting guide effectively
+  - Provides quick start paths for new developers
+  - Explains architecture and design decisions
+  - Platform-specific guidance for all supported platforms
+  - Performance optimization guidance
+  - Contributing guidelines
+- **Report**: [Task 8.5 Report](task-reports/task-8.5-report.md)
+- **Requirements Addressed**: 6.3 (troubleshooting guidance for common build issues)
+
+**Last Updated**: 2024-11-08  
+**Next Update**: After next task completion
