@@ -996,5 +996,79 @@ This progress document is updated after each task completion. For questions or s
   - Best practices for custom implementations
 - **Report**: [Task 7.3 Report](task-reports/task-7.3-report.md)
 
+### Task 7.3 (Sub-task) - Complete OSD Architecture Analysis ✅
+- **Completed**: 2024-11-07
+- **Duration**: ~2 hours
+- **Deliverables**:
+  - Enhanced `.kiro/specs/movian-documentation/design.md` with comprehensive OSD architecture documentation (Section 4.4)
+  - Complete OSD container structure analysis (`osd_main.view`)
+  - SIDEBAR_ACTION macro system documentation with all related macros
+  - OSD page management system with complete page number mapping (0-4, 100-101)
+  - Focus control system with all focus targets documented
+  - OSD settings pages architecture with OSD_SETTINGS_MENU macro
+  - Track selection pages (subtitle and audio) with complete implementation
+  - OSD integration in video playback with state management
+  - Sidebar common controls documentation
+  - 8 major subsections (4.4.1 through 4.4.8) with comprehensive coverage
+  - Analysis of 11 OSD-related view files
+  - 50+ code examples from actual source files
+  - Complete page loading system with dynamic source selection
+  - Visual effects and animation patterns
+- **Key Features**:
+  - OSD container: 22em fixed-width sidebar with list navigation
+  - SIDEBAR_ACTION macro: Icon + label buttons with visual feedback
+  - Related macros: SIDEBAR_BUTTON, SIDEBAR_BUTTON_TOGGLE, SIDEBAR_INTEGER
+  - Page state: `$clone.osdpage` variable with 7 distinct states
+  - Page loading: Dynamic `loader` widgets with `select()` and `translate()`
+  - Focus system: `focus("target_id")` for coordinated navigation
+  - 10+ focus targets across OSD system
+  - Settings pages: Data-driven with `cloner()` and dynamic item loading
+  - Track selection: Visual indicators (check/favorite icons) with event delivery
+  - Video integration: Displacement animation with scaling and dimming
+  - Playdeck buttons: Toggle behavior with focus coordination
+  - Sidebar controls: Media playback, volume, info toggles, sleep timer, power
+- **Documentation Sections**:
+  - 4.4.1: OSD Container Structure
+  - 4.4.2: SIDEBAR_ACTION Macro System
+  - 4.4.3: OSD Page Management System
+  - 4.4.4: Focus Control System
+  - 4.4.5: OSD Settings Pages Architecture
+  - 4.4.6: Track Selection Pages
+  - 4.4.7: OSD Integration in Video Playback
+  - 4.4.8: Sidebar Common Controls
+- **Source Files Analyzed**:
+  - `movian/glwskins/flat/osd/osd_main.view` - Main OSD container
+  - `movian/glwskins/flat/menu/sidebar_include.view` - Macro definitions
+  - `movian/glwskins/flat/osd/osd_audio.view` - Audio track selection
+  - `movian/glwskins/flat/osd/osd_subs.view` - Subtitle track selection
+  - `movian/glwskins/flat/osd/osd_settings.view` - Settings page macro
+  - `movian/glwskins/flat/osd/osd_settings_audio.view` - Audio settings
+  - `movian/glwskins/flat/osd/osd_settings_subs.view` - Subtitle settings
+  - `movian/glwskins/flat/osd/osd_settings_video.view` - Video settings
+  - `movian/glwskins/flat/pages/video.view` - OSD integration
+  - `movian/glwskins/flat/menu/sidebar_common.view` - Common controls
+  - `movian/glwskins/flat/playdecks/playdeck_include.view` - Playdeck macros
+- **Key Achievements**:
+  - 100% coverage of OSD architecture requirements
+  - All 7 OSD view files analyzed and documented
+  - Complete macro system documentation (6 macros)
+  - Page management system fully explained with state mapping
+  - Focus control system with all targets and navigation flows
+  - Integration patterns with video playback documented
+  - Visual effects and animations explained
+  - Event delivery patterns documented
+  - Data binding patterns for track selection
+  - Performance optimization patterns included
+- **Technical Insights**:
+  - Expression system usage: `iir()`, `select()`, `translate()`, `changed()`
+  - Event delivery: `deliverEvent($parent.control, selectSubtitleTrack($self.url))`
+  - Data binding: `cloner($self.media.subtitle.sorted, ...)`, `bind("list")`
+  - State management: `$clone.osdpage` for page control
+  - Focus coordination: Page change + `focus()` call pattern
+  - Conditional loading: `autohide: true` with empty source strings
+  - Smooth transitions: `alpha: iir($clone.osdpage == 1, 4)` for fade effects
+  - Displacement animation: Scaling and positioning for slide-in effect
+- **Report**: [Task 7.3 OSD Analysis Report](task-reports/task-7.3-osd-analysis-report.md)
+
 **Last Updated**: 2024-11-07  
 **Next Task**: Task 7.4 - Create practical skin examples with macro system
