@@ -1,0 +1,14 @@
+{
+  "id": "com.example.basicplugin",
+  "version": "1.0.0",
+  "title": "Basic Plugin Template",
+  "synopsis": "A minimal plugin template for Movian",
+  "description": "This is a basic plugin template that demonstrates the essential structure needed for any Movian plugin. Customize this template to create your own plugins.",
+  "author": "Your Name",
+  "homepage": "https://github.com/yourusername/your-plugin",
+  "icon": "logo.png",
+  "category": "video",
+  "apiversion": 1,
+  "type": "ecmascript",
+  "file": "main.js"
+}

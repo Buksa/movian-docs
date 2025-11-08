@@ -1,0 +1,264 @@
+/**
+ * Playback Controls Component
+ * 
+ * Complete media playback control bar with play/pause, seek, and volume.
+ * Suitable for video and audio players.
+ * 
+ * Features:
+ * - Play/Pause toggle
+ * - Seek bar with progress
+ * - Time display
+ * - Volume control
+ * - Fullscreen toggle
+ * 
+ * Usage:
+ *   #import "components/playback-controls.view"
+ *   PlaybackControls();
+ */
+
+#define PlayButton(MEDIA) {
+  widget(container_z, {
+    width: 3em;
+    height: 3em;
+    focusable: true;
+    onEvent(activate, deliverEvent(MEDIA, "playpause"));
+    
+    // Background
+    widget(quad, {
+      color: "#4192ff";
+      alpha: 0.2 + 0.3 * isNavFocused();
+      additive: true;
+    });
+    
+    // Icon
+    widget(icon, {
+      source: select(MEDIA.canPause, 
+                     "skin://icons/ic_pause_48px.svg",
+                     "skin://icons/ic_play_arrow_48px.svg");
+      color: 1;
+    });
+  });
+}
+
+#define SeekBar(MEDIA) {
+  widget(container_z, {
+    height: 3em;
+    filterConstraintX: true;
+    focusable: true;
+    
+    // Background track
+    widget(container_y, {
+      align: center;
+      
+      widget(quad, {
+        height: 0.3em;
+        color: "#666666";
+      });
+    });
+    
+    // Progress bar
+    widget(container_x, {
+      // Played portion
+      widget(container_y, {
+        width: MEDIA.currenttime / MEDIA.duration;
+        align: center;
+        
+        widget(quad, {
+          height: 0.3em;
+          color: "#4192ff";
+        });
+      });
+      
+      // Seek handle
+      widget(container_y, {
+        width: 0;
+        align: center;
+        
+        widget(quad, {
+          width: 1em;
+          height: 1em;
+          color: "#4192ff";
+          alpha: 0.5 + 0.5 * isNavFocused();
+        });
+      });
+    });
+    
+    // Seek on click/drag
+    onEvent(activate, {
+      var pos = getMouseX() / getWidth();
+      deliverEvent(MEDIA, "seek", MEDIA.duration * pos);
+    });
+  });
+}
+
+#define TimeDisplay(MEDIA) {
+  widget(container_x, {
+    spacing: 0.5em;
+    
+    widget(label, {
+      caption: formatTime(MEDIA.currenttime);
+      size: 0.9em;
+      alpha: 0.8;
+    });
+    
+    widget(label, {
+      caption: "/";
+      size: 0.9em;
+      alpha: 0.5;
+    });
+    
+    widget(label, {
+      caption: formatTime(MEDIA.duration);
+      size: 0.9em;
+      alpha: 0.8;
+    });
+  });
+}
+
+#define VolumeControl(MEDIA) {
+  widget(container_x, {
+    spacing: 0.5em;
+    width: 8em;
+    
+    // Mute button
+    widget(container_z, {
+      width: 2em;
+      height: 2em;
+      focusable: true;
+      onEvent(activate, deliverEvent(MEDIA, "volumeToggleMute"));
+      
+      widget(icon, {
+        source: select(MEDIA.audio.muted,
+                      "skin://icons/ic_volume_off_48px.svg",
+                      "skin://icons/ic_volume_up_48px.svg");
+        color: select(isNavFocused(), 1, 0.8);
+      });
+    });
+    
+    // Volume slider
+    widget(container_z, {
+      filterConstraintX: true;
+      height: 2em;
+      focusable: true;
+      
+      // Background
+      widget(container_y, {
+        align: center;
+        
+        widget(quad, {
+          height: 0.3em;
+          color: "#666666";
+        });
+      });
+      
+      // Volume level
+      widget(container_x, {
+        widget(container_y, {
+          width: MEDIA.audio.volume;
+          align: center;
+          
+          widget(quad, {
+            height: 0.3em;
+            color: "#4192ff";
+          });
+        });
+      });
+      
+      // Adjust volume on click
+      onEvent(activate, {
+        var vol = getMouseX() / getWidth();
+        deliverEvent(MEDIA, "volumeSet", vol);
+      });
+    });
+  });
+}
+
+#define FullscreenButton(MEDIA) {
+  widget(container_z, {
+    width: 2.5em;
+    height: 2.5em;
+    focusable: true;
+    onEvent(activate, deliverEvent(MEDIA, "fullscreenToggle"));
+    
+    widget(icon, {
+      source: select(MEDIA.fullscreen,
+                    "skin://icons/ic_fullscreen_exit_48px.svg",
+                    "skin://icons/ic_fullscreen_48px.svg");
+      color: select(isNavFocused(), 1, 0.8);
+    });
+  });
+}
+
+#define PlaybackControls(MEDIA=$self.media) {
+  widget(container_z, {
+    height: 5em;
+    
+    // Semi-transparent background
+    widget(quad, {
+      color: "#000000";
+      alpha: 0.8;
+    });
+    
+    // Controls layout
+    widget(container_y, {
+      padding: [0.5em, 1em];
+      spacing: 0.5em;
+      
+      // Seek bar
+      SeekBar(MEDIA);
+      
+      // Bottom controls
+      widget(container_x, {
+        spacing: 1em;
+        
+        // Play button
+        PlayButton(MEDIA);
+        
+        // Time display
+        TimeDisplay(MEDIA);
+        
+        // Spacer
+        widget(container_x, {
+          filterConstraintX: true;
+        });
+        
+        // Volume control
+        VolumeControl(MEDIA);
+        
+        // Fullscreen button
+        FullscreenButton(MEDIA);
+      });
+    });
+  });
+}
+
+// Helper function to format time
+#define formatTime(seconds) {
+  var h = Math.floor(seconds / 3600);
+  var m = Math.floor((seconds % 3600) / 60);
+  var s = Math.floor(seconds % 60);
+  
+  if (h > 0) {
+    return h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+  }
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+// Standalone usage example
+widget(container_z, {
+  // Video player area
+  widget(container_y, {
+    widget(label, {
+      caption: "Video Player";
+      align: center;
+      size: 2em;
+    });
+  });
+  
+  // Playback controls overlay
+  widget(container_y, {
+    valign: bottom;
+    
+    PlaybackControls($self.media);
+  });
+});

@@ -1,0 +1,265 @@
+/**
+ * Scrollable List Component
+ * 
+ * A vertical scrollable list with items, perfect for displaying
+ * collections of content with consistent formatting.
+ * 
+ * Features:
+ * - Smooth scrolling
+ * - Focus highlighting
+ * - Item templates
+ * - Scrollbar indicator
+ * - Data binding
+ * 
+ * Usage:
+ *   #import "components/scrollable-list.view"
+ *   ScrollableList($data.items);
+ */
+
+#define ListItemSimple(TITLE, SUBTITLE, ICON, ACTION) {
+  widget(container_z, {
+    height: 4em;
+    focusable: true;
+    onEvent(activate, ACTION);
+    
+    // Highlight on focus/hover
+    widget(quad, {
+      color: "#4192ff";
+      alpha: 0.1 * isHovered() + 0.2 * iir(isNavFocused(), 4, true);
+      additive: true;
+    });
+    
+    // Subtle border
+    widget(container_y, {
+      valign: bottom;
+      
+      widget(quad, {
+        height: 1;
+        color: "#333333";
+        alpha: 0.5;
+      });
+    });
+    
+    // Content
+    widget(container_x, {
+      padding: [0.5em, 1em];
+      spacing: 1em;
+      
+      // Icon
+      widget(icon, {
+        source: ICON;
+        width: 3em;
+        height: 3em;
+        color: select(isNavFocused(), 1, 0.9);
+      });
+      
+      // Text content
+      widget(container_y, {
+        filterConstraintX: true;
+        spacing: 0.2em;
+        
+        // Title
+        widget(label, {
+          caption: TITLE;
+          size: 1.1em;
+          color: select(isNavFocused(), 1, 0.95);
+          filterConstraintX: true;
+        });
+        
+        // Subtitle
+        widget(label, {
+          caption: SUBTITLE;
+          size: 0.9em;
+          alpha: 0.7;
+          filterConstraintX: true;
+        });
+      });
+      
+      // Chevron indicator
+      widget(icon, {
+        source: "skin://icons/ic_chevron_right_48px.svg";
+        width: 1.5em;
+        height: 1.5em;
+        alpha: 0.5;
+      });
+    });
+  });
+}
+
+#define ListItemDetailed(ITEM) {
+  widget(container_z, {
+    height: 6em;
+    focusable: true;
+    onEvent(activate, navOpen(ITEM.url));
+    
+    // Highlight
+    widget(quad, {
+      color: "#4192ff";
+      alpha: 0.1 * isHovered() + 0.2 * iir(isNavFocused(), 4, true);
+      additive: true;
+    });
+    
+    // Border
+    widget(container_y, {
+      valign: bottom;
+      widget(quad, {
+        height: 1;
+        color: "#333333";
+        alpha: 0.5;
+      });
+    });
+    
+    // Content
+    widget(container_x, {
+      padding: [0.5em, 1em];
+      spacing: 1em;
+      
+      // Thumbnail
+      widget(image, {
+        source: ITEM.icon;
+        width: 8em;
+        height: 5em;
+        aspectConstraint: true;
+      });
+      
+      // Info
+      widget(container_y, {
+        filterConstraintX: true;
+        spacing: 0.3em;
+        
+        // Title
+        widget(label, {
+          caption: ITEM.title;
+          size: 1.2em;
+          color: select(isNavFocused(), 1, 0.95);
+          filterConstraintX: true;
+        });
+        
+        // Metadata
+        widget(container_x, {
+          spacing: 1em;
+          
+          widget(label, {
+            caption: ITEM.year;
+            size: 0.9em;
+            alpha: 0.7;
+          });
+          
+          widget(label, {
+            caption: ITEM.duration;
+            size: 0.9em;
+            alpha: 0.7;
+          });
+          
+          widget(label, {
+            caption: "★ " + ITEM.rating;
+            size: 0.9em;
+            alpha: 0.7;
+          });
+        });
+        
+        // Description
+        widget(label, {
+          caption: ITEM.description;
+          size: 0.85em;
+          alpha: 0.6;
+          maxlines: 2;
+          filterConstraintX: true;
+        });
+      });
+    });
+  });
+}
+
+#define ScrollableList(ITEMS, ITEM_TEMPLATE="simple") {
+  widget(container_x, {
+    // List container
+    widget(list_y, {
+      id: "scrollable_list";
+      filterConstraintX: true;
+      navWrap: false;
+      
+      // Clone items from data source
+      cloner(ITEMS, container_z, {
+        // Use simple or detailed template
+        select(ITEM_TEMPLATE == "detailed",
+          ListItemDetailed($self),
+          ListItemSimple($self.title, $self.subtitle, $self.icon, navOpen($self.url))
+        );
+      });
+      
+      // Empty state
+      widget(container_y, {
+        hidden: count(ITEMS) > 0;
+        padding: [2em, 1em];
+        
+        widget(label, {
+          caption: "No items to display";
+          align: center;
+          size: 1.2em;
+          alpha: 0.5;
+        });
+      });
+    });
+    
+    // Scrollbar
+    widget(slider_y, {
+      bind("scrollable_list");
+      width: 4;
+      focusable: canScroll();
+      alpha: iir(canScroll(), 16);
+      
+      widget(quad, {
+        color: "#4192ff";
+        alpha: 0.8;
+      });
+    });
+  });
+}
+
+#define ScrollableListWithHeader(TITLE, ITEMS) {
+  widget(container_y, {
+    // Header
+    widget(container_z, {
+      height: 3em;
+      
+      widget(quad, {
+        color: "#1a1a1a";
+      });
+      
+      widget(label, {
+        caption: TITLE;
+        size: 1.3em;
+        padding: [0, 1em];
+        align: left;
+      });
+    });
+    
+    // List
+    ScrollableList(ITEMS);
+  });
+}
+
+// Standalone usage example with sample data
+widget(container_y, {
+  ScrollableListWithHeader("My List", [
+    {
+      title: "Item 1",
+      subtitle: "Description for item 1",
+      icon: "skin://icons/ic_videocam_48px.svg",
+      url: "page:item1"
+    },
+    {
+      title: "Item 2",
+      subtitle: "Description for item 2",
+      icon: "skin://icons/ic_music_note_48px.svg",
+      url: "page:item2"
+    },
+    {
+      title: "Item 3",
+      subtitle: "Description for item 3",
+      icon: "skin://icons/ic_photo_48px.svg",
+      url: "page:item3"
+    }
+  ]);
+});

@@ -1,0 +1,50 @@
+{
+  "templates": [
+    {
+      "name": "basic-plugin",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\examples-templates\\project-templates\\basic-plugin",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "name": "content-provider",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\examples-templates\\project-templates\\content-provider",
+      "valid": true,
+      "issues": []
+    }
+  ],
+  "components": [
+    {
+      "name": "dialogs-popups\\modal-dialog.view",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\examples-templates\\ui-components\\dialogs-popups\\modal-dialog.view",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "name": "forms-inputs\\button-components.view",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\examples-templates\\ui-components\\forms-inputs\\button-components.view",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "name": "lists-grids\\scrollable-list.view",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\examples-templates\\ui-components\\lists-grids\\scrollable-list.view",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "name": "media-controls\\playback-controls.view",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\examples-templates\\ui-components\\media-controls\\playback-controls.view",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "name": "navigation\\sidebar-menu.view",
+      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\examples-templates\\ui-components\\navigation\\sidebar-menu.view",
+      "valid": true,
+      "issues": []
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

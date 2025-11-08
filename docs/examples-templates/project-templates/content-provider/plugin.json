@@ -1,0 +1,47 @@
+{
+  "id": "com.example.contentprovider",
+  "version": "1.0.0",
+  "title": "Content Provider Template",
+  "synopsis": "Media content provider plugin template",
+  "description": "A complete template for creating media content provider plugins that fetch and display content from external APIs.",
+  "author": "Your Name",
+  "homepage": "https://github.com/yourusername/your-plugin",
+  "icon": "logo.png",
+  "category": "video",
+  "apiversion": 1,
+  "type": "ecmascript",
+  "file": "main.js",
+  "settings": [
+    {
+      "id": "apiKey",
+      "title": "API Key",
+      "description": "Your API key for the content service",
+      "type": "string",
+      "defaultValue": ""
+    },
+    {
+      "id": "itemsPerPage",
+      "title": "Items Per Page",
+      "description": "Number of items to load per page",
+      "type": "integer",
+      "defaultValue": 20,
+      "min": 10,
+      "max": 100
+    },
+    {
+      "id": "enableCache",
+      "title": "Enable Caching",
+      "description": "Cache API responses for better performance",
+      "type": "bool",
+      "defaultValue": true
+    },
+    {
+      "id": "quality",
+      "title": "Preferred Quality",
+      "description": "Preferred video quality",
+      "type": "multiopt",
+      "options": ["480p", "720p", "1080p", "4K"],
+      "defaultValue": "1080p"
+    }
+  ]
+}

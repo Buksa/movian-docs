@@ -1,0 +1,300 @@
+/**
+ * Button Components
+ * 
+ * Various button styles and types for user interaction.
+ * 
+ * Features:
+ * - Primary, secondary, and text buttons
+ * - Icon buttons
+ * - Toggle buttons
+ * - Button groups
+ * - Disabled states
+ * - Loading states
+ * 
+ * Usage:
+ *   #import "components/button-components.view"
+ *   PrimaryButton("Click Me", myAction);
+ */
+
+#define PrimaryButton(LABEL, ACTION, ENABLED=true) {
+  widget(container_z, {
+    height: 2.5em;
+    width: 10em;
+    focusable: ENABLED;
+    onEvent(activate, ACTION, ENABLED);
+    
+    // Background
+    widget(quad, {
+      color: select(ENABLED, "#4192ff", "#666666");
+      alpha: select(ENABLED, 
+                   0.8 + 0.2 * iir(isNavFocused(), 4, true),
+                   0.3);
+    });
+    
+    // Label
+    widget(label, {
+      caption: LABEL;
+      align: center;
+      size: 1em;
+      color: 1;
+      alpha: select(ENABLED, 1, 0.5);
+    });
+    
+    // Focus ring
+    widget(container_y, {
+      hidden: !isNavFocused();
+      
+      widget(quad, {
+        height: 2;
+        color: "#ffffff";
+        alpha: 0.5;
+      });
+    });
+  });
+}
+
+#define SecondaryButton(LABEL, ACTION, ENABLED=true) {
+  widget(container_z, {
+    height: 2.5em;
+    width: 10em;
+    focusable: ENABLED;
+    onEvent(activate, ACTION, ENABLED);
+    
+    // Border
+    widget(quad, {
+      color: select(ENABLED, "#4192ff", "#666666");
+      alpha: select(ENABLED, 0.3 + 0.3 * isNavFocused(), 0.2);
+    });
+    
+    // Inner background
+    widget(container_y, {
+      padding: [2, 2];
+      
+      widget(quad, {
+        color: "#1a1a1a";
+        alpha: 0.8;
+      });
+    });
+    
+    // Label
+    widget(label, {
+      caption: LABEL;
+      align: center;
+      size: 1em;
+      color: select(ENABLED, "#4192ff", "#666666");
+      alpha: select(ENABLED, 1, 0.5);
+    });
+  });
+}
+
+#define TextButton(LABEL, ACTION, ENABLED=true) {
+  widget(container_z, {
+    height: 2em;
+    focusable: ENABLED;
+    onEvent(activate, ACTION, ENABLED);
+    
+    // Subtle background on focus
+    widget(quad, {
+      color: "#4192ff";
+      alpha: 0.2 * isNavFocused();
+    });
+    
+    // Label
+    widget(label, {
+      caption: LABEL;
+      align: center;
+      size: 1em;
+      color: select(ENABLED, "#4192ff", "#666666");
+      alpha: select(ENABLED, 0.8 + 0.2 * isNavFocused(), 0.5);
+    });
+  });
+}
+
+#define IconButton(ICON, ACTION, ENABLED=true, SIZE=2.5em) {
+  widget(container_z, {
+    width: SIZE;
+    height: SIZE;
+    focusable: ENABLED;
+    onEvent(activate, ACTION, ENABLED);
+    
+    // Background circle
+    widget(quad, {
+      color: "#4192ff";
+      alpha: select(ENABLED, 0.2 * isHovered() + 0.3 * isNavFocused(), 0.1);
+      additive: true;
+    });
+    
+    // Icon
+    widget(icon, {
+      source: ICON;
+      color: select(ENABLED, 1, 0.5);
+      alpha: select(ENABLED, 0.8 + 0.2 * isNavFocused(), 0.5);
+    });
+  });
+}
+
+#define ToggleButton(LABEL, VALUE, ON_TOGGLE, ENABLED=true) {
+  widget(container_z, {
+    height: 2.5em;
+    width: 10em;
+    focusable: ENABLED;
+    onEvent(activate, ON_TOGGLE, ENABLED);
+    
+    // Background
+    widget(quad, {
+      color: select(VALUE, "#4192ff", "#2a2a2a");
+      alpha: select(ENABLED, 0.8 + 0.2 * isNavFocused(), 0.3);
+    });
+    
+    // Label
+    widget(label, {
+      caption: LABEL;
+      align: center;
+      size: 1em;
+      color: select(VALUE, 1, 0.7);
+      alpha: select(ENABLED, 1, 0.5);
+    });
+    
+    // Checkmark when active
+    widget(container_x, {
+      hidden: !VALUE;
+      padding: [0, 0.5em];
+      align: right;
+      
+      widget(icon, {
+        source: "skin://icons/ic_check_48px.svg";
+        width: 1.5em;
+        height: 1.5em;
+        color: 1;
+      });
+    });
+  });
+}
+
+#define LoadingButton(LABEL, IS_LOADING) {
+  widget(container_z, {
+    height: 2.5em;
+    width: 10em;
+    focusable: !IS_LOADING;
+    
+    // Background
+    widget(quad, {
+      color: "#4192ff";
+      alpha: select(IS_LOADING, 0.5, 0.8 + 0.2 * isNavFocused());
+    });
+    
+    // Label (hidden when loading)
+    widget(label, {
+      hidden: IS_LOADING;
+      caption: LABEL;
+      align: center;
+      size: 1em;
+      color: 1;
+    });
+    
+    // Loading spinner
+    widget(container_x, {
+      hidden: !IS_LOADING;
+      align: center;
+      
+      widget(icon, {
+        source: "skin://icons/ic_refresh_48px.svg";
+        width: 1.5em;
+        height: 1.5em;
+        color: 1;
+        angle: time() * 360;  // Rotating animation
+      });
+      
+      widget(label, {
+        caption: "Loading...";
+        size: 1em;
+        color: 1;
+        padding: [0, 0.5em];
+      });
+    });
+  });
+}
+
+#define ButtonGroup(BUTTONS) {
+  widget(container_x, {
+    spacing: 0.5em;
+    
+    cloner(BUTTONS, container_z, {
+      PrimaryButton($self.label, $self.action, $self.enabled);
+    });
+  });
+}
+
+#define IconButtonGroup(BUTTONS) {
+  widget(container_x, {
+    spacing: 0.5em;
+    
+    cloner(BUTTONS, container_z, {
+      IconButton($self.icon, $self.action, $self.enabled);
+    });
+  });
+}
+
+// Standalone usage examples
+widget(container_y, {
+  padding: [2em, 2em];
+  spacing: 1em;
+  
+  // Primary button
+  widget(container_x, {
+    spacing: 1em;
+    
+    PrimaryButton("Primary", { console.log("Primary clicked"); });
+    PrimaryButton("Disabled", {}, false);
+  });
+  
+  // Secondary button
+  widget(container_x, {
+    spacing: 1em;
+    
+    SecondaryButton("Secondary", { console.log("Secondary clicked"); });
+    SecondaryButton("Disabled", {}, false);
+  });
+  
+  // Text button
+  widget(container_x, {
+    spacing: 1em;
+    
+    TextButton("Text Button", { console.log("Text clicked"); });
+    TextButton("Disabled", {}, false);
+  });
+  
+  // Icon buttons
+  widget(container_x, {
+    spacing: 1em;
+    
+    IconButton("skin://icons/ic_play_arrow_48px.svg", 
+               { console.log("Play"); });
+    IconButton("skin://icons/ic_pause_48px.svg", 
+               { console.log("Pause"); });
+    IconButton("skin://icons/ic_stop_48px.svg", 
+               { console.log("Stop"); }, false);
+  });
+  
+  // Toggle button
+  widget(container_x, {
+    spacing: 1em;
+    
+    ToggleButton("Toggle Me", $ui.toggleState, 
+                 { toggle($ui.toggleState); });
+  });
+  
+  // Loading button
+  widget(container_x, {
+    spacing: 1em;
+    
+    LoadingButton("Submit", $ui.isLoading);
+  });
+  
+  // Button group
+  ButtonGroup([
+    { label: "Option 1", action: { console.log("1"); }, enabled: true },
+    { label: "Option 2", action: { console.log("2"); }, enabled: true },
+    { label: "Option 3", action: { console.log("3"); }, enabled: false }
+  ]);
+});

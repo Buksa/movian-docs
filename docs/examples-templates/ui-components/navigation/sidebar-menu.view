@@ -1,0 +1,137 @@
+/**
+ * Sidebar Menu Component
+ * 
+ * A vertical navigation menu with icons and labels.
+ * Commonly used for main navigation in media applications.
+ * 
+ * Features:
+ * - Icon + label layout
+ * - Focus highlighting
+ * - Smooth transitions
+ * - Customizable items
+ * 
+ * Usage:
+ *   #import "components/sidebar-menu.view"
+ *   SidebarMenu();
+ */
+
+#define SidebarMenuItem(ICON, LABEL, ACTION, HIDDEN=false) {
+  widget(container_z, {
+    hidden: HIDDEN;
+    height: 3em;
+    focusable: true;
+    onEvent(activate, ACTION);
+    
+    // Highlight background
+    widget(quad, {
+      color: "#4192ff";
+      alpha: 0.1 * isHovered() + 0.2 * isNavFocused();
+      additive: true;
+    });
+    
+    // Content container
+    widget(container_x, {
+      padding: [0, 1em];
+      spacing: 1em;
+      align: left;
+      
+      // Icon
+      widget(icon, {
+        source: ICON;
+        width: 2em;
+        height: 2em;
+        color: select(isNavFocused(), 1, 0.8);
+      });
+      
+      // Label
+      widget(label, {
+        caption: LABEL;
+        size: 1em;
+        color: select(isNavFocused(), 1, 0.8);
+        filterConstraintX: true;
+      });
+    });
+  });
+}
+
+#define SidebarSeparator(TITLE) {
+  widget(container_y, {
+    height: 2em;
+    padding: [0.5em, 1em];
+    
+    widget(label, {
+      caption: TITLE;
+      size: 0.8em;
+      alpha: 0.5;
+      align: left;
+    });
+  });
+}
+
+#define SidebarMenu() {
+  widget(container_y, {
+    width: 15em;
+    
+    // Header
+    widget(container_z, {
+      height: 4em;
+      
+      widget(quad, {
+        color: "#1a1a1a";
+      });
+      
+      widget(label, {
+        caption: "Menu";
+        size: 1.5em;
+        align: center;
+        padding: [0, 1em];
+      });
+    });
+    
+    // Menu items
+    widget(list_y, {
+      navWrap: true;
+      
+      SidebarMenuItem("skin://icons/ic_home_48px.svg", "Home", 
+                      navOpen("page:home"));
+      
+      SidebarMenuItem("skin://icons/ic_search_48px.svg", "Search", 
+                      navOpen("page:search"));
+      
+      SidebarMenuItem("skin://icons/ic_favorite_48px.svg", "Favorites", 
+                      navOpen("page:favorites"));
+      
+      SidebarSeparator("Library");
+      
+      SidebarMenuItem("skin://icons/ic_videocam_48px.svg", "Videos", 
+                      navOpen("page:videos"));
+      
+      SidebarMenuItem("skin://icons/ic_music_note_48px.svg", "Music", 
+                      navOpen("page:music"));
+      
+      SidebarMenuItem("skin://icons/ic_photo_48px.svg", "Photos", 
+                      navOpen("page:photos"));
+      
+      SidebarSeparator("Settings");
+      
+      SidebarMenuItem("skin://icons/ic_settings_48px.svg", "Settings", 
+                      navOpen("settings:"));
+    });
+  });
+}
+
+// Standalone usage example
+widget(container_x, {
+  SidebarMenu();
+  
+  // Main content area
+  widget(container_y, {
+    filterConstraintX: true;
+    
+    widget(label, {
+      caption: "Main Content Area";
+      align: center;
+      size: 2em;
+    });
+  });
+});

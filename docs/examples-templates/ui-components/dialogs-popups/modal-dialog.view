@@ -1,0 +1,443 @@
+/**
+ * Modal Dialog Components
+ * 
+ * Various modal dialog types for user interaction and feedback.
+ * 
+ * Features:
+ * - Alert dialogs
+ * - Confirmation dialogs
+ * - Input dialogs
+ * - Custom content dialogs
+ * - Backdrop overlay
+ * - Smooth animations
+ * 
+ * Usage:
+ *   #import "components/modal-dialog.view"
+ *   AlertDialog("Title", "Message");
+ */
+
+#define DialogBackdrop(VISIBLE) {
+  widget(quad, {
+    hidden: !VISIBLE;
+    color: "#000000";
+    alpha: iir(VISIBLE, 4) * 0.7;
+  });
+}
+
+#define AlertDialog(TITLE, MESSAGE, ON_CLOSE) {
+  widget(container_z, {
+    // Backdrop
+    DialogBackdrop(true);
+    
+    // Dialog container
+    widget(container_x, {
+      align: center;
+      
+      widget(container_y, {
+        valign: middle;
+        width: 30em;
+        
+        // Dialog box
+        widget(container_z, {
+          // Shadow
+          widget(displacement, {
+            padding: [0.5em, 0.5em];
+            
+            widget(quad, {
+              color: "#000000";
+              alpha: 0.5;
+            });
+          });
+          
+          // Dialog content
+          widget(container_y, {
+            // Background
+            widget(quad, {
+              color: "#2a2a2a";
+            });
+            
+            // Title bar
+            widget(container_z, {
+              height: 3em;
+              
+              widget(quad, {
+                color: "#1a1a1a";
+              });
+              
+              widget(label, {
+                caption: TITLE;
+                size: 1.3em;
+                padding: [0, 1em];
+                align: left;
+              });
+            });
+            
+            // Message content
+            widget(container_y, {
+              padding: [1.5em, 1.5em];
+              
+              widget(label, {
+                caption: MESSAGE;
+                size: 1em;
+                align: left;
+                maxlines: 10;
+                filterConstraintX: true;
+              });
+            });
+            
+            // Button area
+            widget(container_x, {
+              height: 3em;
+              padding: [0, 1em];
+              align: right;
+              spacing: 0.5em;
+              
+              widget(container_z, {
+                width: 8em;
+                height: 2.5em;
+                focusable: true;
+                onEvent(activate, ON_CLOSE);
+                
+                widget(quad, {
+                  color: "#4192ff";
+                  alpha: 0.8 + 0.2 * isNavFocused();
+                });
+                
+                widget(label, {
+                  caption: "OK";
+                  align: center;
+                  size: 1em;
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+}
+
+#define ConfirmDialog(TITLE, MESSAGE, ON_CONFIRM, ON_CANCEL) {
+  widget(container_z, {
+    // Backdrop
+    DialogBackdrop(true);
+    
+    // Dialog container
+    widget(container_x, {
+      align: center;
+      
+      widget(container_y, {
+        valign: middle;
+        width: 30em;
+        
+        widget(container_z, {
+          // Shadow
+          widget(displacement, {
+            padding: [0.5em, 0.5em];
+            widget(quad, {
+              color: "#000000";
+              alpha: 0.5;
+            });
+          });
+          
+          // Dialog content
+          widget(container_y, {
+            widget(quad, {
+              color: "#2a2a2a";
+            });
+            
+            // Title
+            widget(container_z, {
+              height: 3em;
+              widget(quad, {
+                color: "#1a1a1a";
+              });
+              widget(label, {
+                caption: TITLE;
+                size: 1.3em;
+                padding: [0, 1em];
+                align: left;
+              });
+            });
+            
+            // Message
+            widget(container_y, {
+              padding: [1.5em, 1.5em];
+              widget(label, {
+                caption: MESSAGE;
+                size: 1em;
+                align: left;
+                maxlines: 10;
+                filterConstraintX: true;
+              });
+            });
+            
+            // Buttons
+            widget(container_x, {
+              height: 3em;
+              padding: [0, 1em];
+              align: right;
+              spacing: 0.5em;
+              
+              // Cancel button
+              widget(container_z, {
+                width: 8em;
+                height: 2.5em;
+                focusable: true;
+                onEvent(activate, ON_CANCEL);
+                
+                widget(quad, {
+                  color: "#666666";
+                  alpha: 0.5 + 0.3 * isNavFocused();
+                });
+                
+                widget(label, {
+                  caption: "Cancel";
+                  align: center;
+                  size: 1em;
+                });
+              });
+              
+              // Confirm button
+              widget(container_z, {
+                width: 8em;
+                height: 2.5em;
+                focusable: true;
+                onEvent(activate, ON_CONFIRM);
+                
+                widget(quad, {
+                  color: "#4192ff";
+                  alpha: 0.8 + 0.2 * isNavFocused();
+                });
+                
+                widget(label, {
+                  caption: "Confirm";
+                  align: center;
+                  size: 1em;
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+}
+
+#define InputDialog(TITLE, PLACEHOLDER, ON_SUBMIT, ON_CANCEL) {
+  widget(container_z, {
+    // Backdrop
+    DialogBackdrop(true);
+    
+    // Dialog container
+    widget(container_x, {
+      align: center;
+      
+      widget(container_y, {
+        valign: middle;
+        width: 30em;
+        
+        widget(container_z, {
+          // Shadow
+          widget(displacement, {
+            padding: [0.5em, 0.5em];
+            widget(quad, {
+              color: "#000000";
+              alpha: 0.5;
+            });
+          });
+          
+          // Dialog content
+          widget(container_y, {
+            widget(quad, {
+              color: "#2a2a2a";
+            });
+            
+            // Title
+            widget(container_z, {
+              height: 3em;
+              widget(quad, {
+                color: "#1a1a1a";
+              });
+              widget(label, {
+                caption: TITLE;
+                size: 1.3em;
+                padding: [0, 1em];
+                align: left;
+              });
+            });
+            
+            // Input field
+            widget(container_y, {
+              padding: [1.5em, 1.5em];
+              
+              widget(container_z, {
+                height: 2.5em;
+                
+                widget(quad, {
+                  color: "#1a1a1a";
+                });
+                
+                widget(text, {
+                  id: "input_field";
+                  description: PLACEHOLDER;
+                  focusable: true;
+                  padding: [0, 0.5em];
+                  size: 1em;
+                });
+              });
+            });
+            
+            // Buttons
+            widget(container_x, {
+              height: 3em;
+              padding: [0, 1em];
+              align: right;
+              spacing: 0.5em;
+              
+              // Cancel
+              widget(container_z, {
+                width: 8em;
+                height: 2.5em;
+                focusable: true;
+                onEvent(activate, ON_CANCEL);
+                
+                widget(quad, {
+                  color: "#666666";
+                  alpha: 0.5 + 0.3 * isNavFocused();
+                });
+                
+                widget(label, {
+                  caption: "Cancel";
+                  align: center;
+                  size: 1em;
+                });
+              });
+              
+              // Submit
+              widget(container_z, {
+                width: 8em;
+                height: 2.5em;
+                focusable: true;
+                onEvent(activate, {
+                  ON_SUBMIT(getTextValue("input_field"));
+                });
+                
+                widget(quad, {
+                  color: "#4192ff";
+                  alpha: 0.8 + 0.2 * isNavFocused();
+                });
+                
+                widget(label, {
+                  caption: "Submit";
+                  align: center;
+                  size: 1em;
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+}
+
+#define LoadingOverlay(MESSAGE, VISIBLE) {
+  widget(container_z, {
+    hidden: !VISIBLE;
+    
+    // Backdrop
+    widget(quad, {
+      color: "#000000";
+      alpha: iir(VISIBLE, 4) * 0.8;
+    });
+    
+    // Loading content
+    widget(container_x, {
+      align: center;
+      
+      widget(container_y, {
+        valign: middle;
+        
+        widget(container_y, {
+          spacing: 1em;
+          
+          // Spinner
+          widget(icon, {
+            source: "skin://icons/ic_refresh_48px.svg";
+            width: 4em;
+            height: 4em;
+            color: "#4192ff";
+            angle: time() * 360;
+          });
+          
+          // Message
+          widget(label, {
+            caption: MESSAGE;
+            size: 1.2em;
+            align: center;
+          });
+        });
+      });
+    });
+  });
+}
+
+#define ToastNotification(MESSAGE, VISIBLE, DURATION=3) {
+  widget(container_y, {
+    hidden: !VISIBLE;
+    valign: bottom;
+    padding: [0, 0, 2em, 0];
+    
+    widget(container_x, {
+      align: center;
+      
+      widget(container_z, {
+        // Background
+        widget(quad, {
+          color: "#2a2a2a";
+          alpha: 0.95;
+        });
+        
+        // Content
+        widget(container_y, {
+          padding: [1em, 2em];
+          
+          widget(label, {
+            caption: MESSAGE;
+            size: 1em;
+            align: center;
+          });
+        });
+      });
+    });
+  });
+}
+
+// Standalone usage examples
+widget(container_z, {
+  // Main content
+  widget(container_y, {
+    padding: [2em, 2em];
+    
+    widget(label, {
+      caption: "Dialog Examples";
+      size: 2em;
+    });
+  });
+  
+  // Show alert dialog
+  AlertDialog("Alert", "This is an alert message", 
+              { $ui.showAlert = false; });
+  
+  // Show confirm dialog
+  // ConfirmDialog("Confirm", "Are you sure?",
+  //               { console.log("Confirmed"); },
+  //               { console.log("Cancelled"); });
+  
+  // Show loading overlay
+  // LoadingOverlay("Loading...", $ui.isLoading);
+  
+  // Show toast
+  // ToastNotification("Action completed!", $ui.showToast);
+});
