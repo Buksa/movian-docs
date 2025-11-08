@@ -1891,9 +1891,15 @@ Playdecks typically include:
 
 ## Notification System
 
-### Notification Architecture
+### Overview
 
-Notifications provide non-intrusive user feedback:
+The notification system provides **non-intrusive, temporary user feedback** through toast-style messages that appear at the bottom of the screen. Notifications are managed by the core system and automatically appear/disappear based on application events.
+
+**Source Reference**: `movian/glwskins/flat/universe.view` (lines 114-127)
+
+### Notification Architecture: `cloner($core.notifications.nodes, container_z, { ... })`
+
+#### Core Implementation
 
 ```view
 cloner($core.notifications.nodes, container_z, {
@@ -1909,30 +1915,245 @@ cloner($core.notifications.nodes, container_z, {
 });
 ```
 
-### Notification Characteristics
+#### How the Notification System Works
 
-**Visual Design**:
-- Semi-transparent black background (`alpha: 0.6`)
-- White text with padding
-- Bottom of screen placement
-- Auto-dismiss after timeout
+**Data Source**: `$core.notifications.nodes`
+- **Type**: Array of notification objects managed by Movian core
+- **Content**: Each element represents an active notification message
+- **Lifecycle**: Notifications automatically added by system events, removed after timeout
+- **Z-Order**: Rendered above main content but below critical system overlays
+- **Location**: Positioned at bottom of screen within underscan area
 
-**Data-Driven**:
-- `$core.notifications.nodes` - Array of active notifications
-- Each notification has `$self.text` property
-- Automatically added/removed by core system
+**Container Type**: `container_z`
+- **Purpose**: Stacks multiple notifications vertically
+- **Behavior**: Multiple notifications can be visible simultaneously
+- **Ordering**: Newer notifications appear on top of older ones
+- **Auto-Layout**: Vertical stacking with automatic spacing
 
-**Use Cases**:
-- Status messages ("Saved successfully")
-- Error notifications
-- System alerts
-- Progress updates
+#### Notification Context Variables
+
+Within the notification cloner template, the `$self` variable provides access to notification data:
+
+**`$self` - Current Notification Object**:
+```view
+$self.text              // Notification message text (string)
+$self.icon              // Optional icon identifier (string, may be undefined)
+$self.timeout           // Display duration in seconds (number, managed by core)
+$self.type              // Notification type: "info", "warning", "error" (string, optional)
+```
+
+**Primary Property**: `$self.text`
+- Contains the notification message to display
+- Supports localized strings
+- Can include dynamic content (file names, counts, etc.)
+
+#### Visual Design and Styling
+
+**Background Layer**:
+```view
+widget(quad, {
+  color: 0;        // Black background
+  alpha: 0.6;      // 60% opacity for semi-transparency
+});
+```
+
+**Design Rationale**:
+- **Semi-transparent**: Allows underlying content to remain partially visible
+- **Dark background**: Ensures text readability on any content
+- **Subtle presence**: Non-intrusive, doesn't block important UI elements
+
+**Text Layer**:
+```view
+widget(label, {
+  padding: [2em, 0.5em];    // [vertical, horizontal] padding
+  caption: $self.text;       // Notification message
+});
+```
+
+**Text Characteristics**:
+- **Padding**: Generous padding for readability and touch targets
+- **Alignment**: Default left alignment (can be customized)
+- **Color**: Inherits default text color (typically white)
+- **Font**: Uses default UI font
+- **Wrapping**: Automatically wraps long messages
+
+#### Notification Lifecycle
+
+**Creation Flow**:
+```mermaid
+sequenceDiagram
+    participant Core as Movian Core
+    participant Array as $core.notifications.nodes
+    participant Cloner as Notification Cloner
+    participant UI as Screen Display
+    
+    Core->>Array: Add notification object
+    Array->>Cloner: Trigger cloner update
+    Cloner->>UI: Create notification widget
+    UI->>UI: Display notification
+    Note over UI: Auto-dismiss after timeout
+    Core->>Array: Remove notification object
+    Array->>Cloner: Trigger cloner update
+    Cloner->>UI: Destroy notification widget
+```
+
+**Timeline Example**:
+```
+t=0.0s: System event occurs (e.g., file saved)
+        Core adds notification to $core.notifications.nodes
+        Cloner creates widget
+        Notification appears at bottom of screen
+
+t=0.1s: Fade-in animation (if implemented)
+        Notification fully visible
+
+t=3.0s: Display duration (typical timeout)
+        Notification remains visible
+
+t=3.0s: Core removes notification from array
+        Cloner destroys widget
+        Notification disappears (may have fade-out)
+```
+
+#### Notification Use Cases
+
+**Status Messages**:
+```
+"Settings saved successfully"
+"Playlist updated"
+"Bookmark added"
+```
+
+**Error Notifications**:
+```
+"Failed to connect to server"
+"File not found"
+"Invalid format"
+```
+
+**System Alerts**:
+```
+"Low disk space"
+"Update available"
+"Network connection lost"
+```
+
+**Progress Updates**:
+```
+"Downloading metadata..."
+"Scanning library..."
+"Processing files..."
+```
+
+#### Customization Patterns
+
+**Enhanced Notification with Icon**:
+```view
+cloner($core.notifications.nodes, container_z, {
+  widget(container_z, {
+    widget(quad, {
+      color: 0;
+      alpha: 0.6;
+    });
+    
+    widget(container_x, {
+      padding: [1em, 0.5em];
+      spacing: 1em;
+      
+      // Icon (if provided)
+      widget(icon, {
+        hidden: !$self.icon;
+        source: $self.icon;
+        size: 2em;
+        color: 1;
+      });
+      
+      // Message text
+      widget(label, {
+        padding: [1em, 0];
+        caption: $self.text;
+      });
+    });
+  });
+});
+```
+
+**Type-Based Styling**:
+```view
+cloner($core.notifications.nodes, container_z, {
+  widget(container_z, {
+    widget(quad, {
+      color: select($self.type == "error", [1, 0, 0],
+                    $self.type == "warning", [1, 1, 0],
+                    0);
+      alpha: 0.6;
+    });
+    
+    widget(label, {
+      padding: [2em, 0.5em];
+      caption: $self.text;
+    });
+  });
+});
+```
+
+**Animated Appearance**:
+```view
+cloner($core.notifications.nodes, container_z, {
+  widget(container_z, {
+    alpha: iir(1, 8);  // Smooth fade-in
+    
+    widget(quad, {
+      color: 0;
+      alpha: 0.6;
+    });
+    
+    widget(label, {
+      padding: [2em, 0.5em];
+      caption: $self.text;
+    });
+  });
+});
+```
+
+#### Integration in universe.view
+
+**Location in Hierarchy**:
+```view
+widget(underscan, {
+  widget(container_z, {
+    // Pages and main content...
+    
+    // Notifications appear above pages
+    cloner($core.notifications.nodes, container_z, {
+      // Notification implementation...
+    });
+    
+    // Clipboard progress appears after notifications
+    cloner($core.clipboard.copyprogress, container_z, {
+      // Progress implementation...
+    });
+  });
+});
+```
+
+**Z-Order Positioning**:
+- Notifications render **above page content**
+- Notifications render **below popups and critical overlays**
+- Multiple notifications stack vertically
+- Bottom-aligned within underscan area
 
 ## Progress Indicator System
 
-### Clipboard Progress
+### Overview
 
-Example of specialized progress indicators:
+The progress indicator system provides **real-time visual feedback** for long-running operations through progress bars and status messages. Unlike notifications, progress indicators remain visible throughout the operation and update dynamically as work progresses.
+
+**Source Reference**: `movian/glwskins/flat/universe.view` (lines 128-154)
+
+### Clipboard Progress: `cloner($core.clipboard.copyprogress, container_z, { ... })`
+
+#### Core Implementation
 
 ```view
 cloner($core.clipboard.copyprogress, container_z, {
@@ -1952,7 +2173,9 @@ cloner($core.clipboard.copyprogress, container_z, {
     vbox({
       space(1);
       zbox({
-        quad({ color: 0; });
+        quad({
+          color: 0;
+        });
         bar({
           fill: $self.completed / $self.total;
           color1: 1;
@@ -1965,22 +2188,373 @@ cloner($core.clipboard.copyprogress, container_z, {
 });
 ```
 
-### Progress Bar Pattern
+#### How the Progress System Works
 
-**Components**:
-1. **Background Container**: Semi-transparent backdrop
-2. **Label**: Descriptive text with dynamic values
-3. **Progress Bar**: Visual fill indicator
-4. **Data Binding**: `$self.completed / $self.total`
+**Data Source**: `$core.clipboard.copyprogress`
+- **Type**: Array of active copy/move operations managed by Movian core
+- **Content**: Each element represents an ongoing file operation
+- **Lifecycle**: Added when operation starts, removed when operation completes
+- **Updates**: Progress values updated in real-time as operation proceeds
+- **Z-Order**: Rendered above notifications but below critical system overlays
 
-**Calculation**:
+**Container Type**: `container_z`
+- **Purpose**: Stacks multiple progress indicators if multiple operations are active
+- **Behavior**: Each operation gets its own progress bar
+- **Ordering**: Newer operations appear on top
+- **Auto-Layout**: Vertical stacking with automatic spacing
+
+#### Progress Context Variables
+
+Within the progress cloner template, the `$self` variable provides access to operation data:
+
+**`$self` - Current Progress Object**:
+```view
+$self.files             // Total number of files to copy (integer)
+$self.completed         // Number of files completed (integer)
+$self.total             // Total bytes to copy (integer, bytes)
+$self.bytesCompleted    // Bytes copied so far (integer, bytes)
+$self.currentFile       // Name of file currently being copied (string, optional)
+$self.speed             // Transfer speed in bytes/second (number, optional)
+$self.timeRemaining     // Estimated time remaining in seconds (number, optional)
+```
+
+**Primary Properties**:
+- **`$self.files`**: Used for status message ("Copying X files")
+- **`$self.completed`**: Numerator for progress calculation
+- **`$self.total`**: Denominator for progress calculation
+
+#### Visual Structure and Components
+
+**1. Background Container**:
+```view
+quad({
+  color: 0;        // Black background
+  alpha: 0.6;      // 60% opacity
+});
+```
+
+**Purpose**: Provides contrast for text and progress bar visibility
+
+**2. Horizontal Layout Container**:
+```view
+hbox({
+  margin: [2em, 0.5em];    // [vertical, horizontal] margin
+  spacing: 2em;             // Space between label and progress bar
+  // ...
+});
+```
+
+**Layout**:
+- **Left side**: Status label with file count
+- **Right side**: Progress bar
+- **Spacing**: 2em gap between components
+
+**3. Status Label**:
+```view
+label({
+  caption: fmt(_("Copying %d files"), $self.files);
+});
+```
+
+**Features**:
+- **Localization**: `_()` function for translation support
+- **Dynamic Content**: `fmt()` function for string formatting
+- **File Count**: Shows total number of files being copied
+- **Updates**: Automatically updates if `$self.files` changes
+
+**4. Progress Bar Container**:
+```view
+vbox({
+  space(1);              // Vertical centering (top spacer)
+  zbox({
+    quad({ color: 0; }); // Progress bar background
+    bar({
+      fill: $self.completed / $self.total;
+      color1: 1;
+      color2: 1;
+    });
+  });
+  space(1);              // Vertical centering (bottom spacer)
+});
+```
+
+**Structure**:
+- **Vertical box**: Centers progress bar vertically
+- **Z-box**: Layers background and fill bar
+- **Background quad**: Dark background for unfilled portion
+- **Bar widget**: Animated fill indicator
+
+#### Progress Bar Calculation
+
+**Fill Formula**:
 ```view
 fill: $self.completed / $self.total;
 ```
 
-- `fill` - Bar fill percentage (0.0 to 1.0)
-- `$self.completed` - Items completed
-- `$self.total` - Total items
+**Calculation Details**:
+- **`fill`**: Bar fill percentage (0.0 to 1.0)
+- **`$self.completed`**: Number of bytes copied so far
+- **`$self.total`**: Total number of bytes to copy
+- **Result**: Decimal value representing completion percentage
+
+**Example Calculations**:
+```
+Scenario 1: 50 MB of 100 MB copied
+  fill = 50 / 100 = 0.5 (50% filled)
+
+Scenario 2: 750 MB of 1000 MB copied
+  fill = 750 / 1000 = 0.75 (75% filled)
+
+Scenario 3: Just started (1 MB of 500 MB)
+  fill = 1 / 500 = 0.002 (0.2% filled)
+
+Scenario 4: Nearly complete (999 MB of 1000 MB)
+  fill = 999 / 1000 = 0.999 (99.9% filled)
+```
+
+**Bar Colors**:
+```view
+color1: 1;    // Start color (white)
+color2: 1;    // End color (white)
+```
+
+- Solid white fill (no gradient)
+- Can be customized to use theme colors: `color1: $ui.color1; color2: $ui.color2;`
+
+#### Progress Lifecycle
+
+**Operation Flow**:
+```mermaid
+sequenceDiagram
+    participant User as User Action
+    participant Core as Movian Core
+    participant Array as $core.clipboard.copyprogress
+    participant Cloner as Progress Cloner
+    participant UI as Screen Display
+    
+    User->>Core: Initiate copy operation
+    Core->>Array: Add progress object
+    Array->>Cloner: Trigger cloner update
+    Cloner->>UI: Create progress widget
+    UI->>UI: Display progress bar (0%)
+    
+    loop File Copy Loop
+        Core->>Array: Update $self.completed
+        Array->>UI: Update progress bar fill
+        UI->>UI: Animate bar fill
+    end
+    
+    Core->>Array: Remove progress object (complete)
+    Array->>Cloner: Trigger cloner update
+    Cloner->>UI: Destroy progress widget
+```
+
+**Timeline Example**:
+```
+t=0.0s: User initiates file copy
+        Core adds progress object to array
+        Progress bar appears: "Copying 10 files" [0%]
+
+t=0.5s: First file copied (10 MB of 100 MB)
+        $self.completed = 10000000
+        $self.total = 100000000
+        Progress bar: [10%]
+
+t=2.0s: Half complete (50 MB of 100 MB)
+        $self.completed = 50000000
+        Progress bar: [50%]
+
+t=4.0s: Nearly complete (95 MB of 100 MB)
+        $self.completed = 95000000
+        Progress bar: [95%]
+
+t=4.5s: Operation complete
+        Core removes progress object
+        Progress bar disappears
+```
+
+#### Customization Patterns
+
+**Enhanced Progress with Speed and Time**:
+```view
+cloner($core.clipboard.copyprogress, container_z, {
+  widget(container_z, {
+    widget(quad, { color: 0; alpha: 0.6; });
+    
+    widget(container_y, {
+      padding: [1em, 2em];
+      spacing: 0.5em;
+      
+      // Status line
+      widget(label, {
+        caption: fmt(_("Copying %d files"), $self.files);
+      });
+      
+      // Progress bar
+      widget(container_z, {
+        height: 1em;
+        widget(quad, { color: 0; });
+        widget(bar, {
+          fill: $self.completed / $self.total;
+          color1: $ui.color1;
+          color2: $ui.color2;
+        });
+      });
+      
+      // Details line
+      widget(container_x, {
+        spacing: 2em;
+        
+        widget(label, {
+          caption: fmt(_("%d of %d MB"), 
+                      $self.completed / 1048576,
+                      $self.total / 1048576);
+        });
+        
+        widget(label, {
+          caption: fmt(_("Speed: %d MB/s"), $self.speed / 1048576);
+          hidden: !$self.speed;
+        });
+        
+        widget(label, {
+          caption: fmt(_("Time remaining: %d:%02d"),
+                      $self.timeRemaining / 60,
+                      $self.timeRemaining % 60);
+          hidden: !$self.timeRemaining;
+        });
+      });
+    });
+  });
+});
+```
+
+**Themed Progress Bar**:
+```view
+cloner($core.clipboard.copyprogress, container_z, {
+  widget(container_z, {
+    widget(quad, { color: 0; alpha: 0.8; });
+    
+    widget(container_x, {
+      padding: [1em, 2em];
+      spacing: 2em;
+      
+      widget(label, {
+        caption: fmt(_("Copying %d files"), $self.files);
+      });
+      
+      widget(container_z, {
+        filterConstraintX: true;
+        height: 1.5em;
+        
+        widget(quad, { color: 0.2; });  // Dark background
+        
+        widget(bar, {
+          fill: $self.completed / $self.total;
+          color1: $ui.color1;  // Theme primary color
+          color2: $ui.color2;  // Theme secondary color
+        });
+        
+        widget(border, {
+          color: $ui.color3;  // Theme accent color
+          border: 1;
+        });
+      });
+    });
+  });
+});
+```
+
+**Percentage Display**:
+```view
+cloner($core.clipboard.copyprogress, container_z, {
+  widget(container_z, {
+    widget(quad, { color: 0; alpha: 0.6; });
+    
+    widget(container_x, {
+      padding: [1em, 2em];
+      spacing: 2em;
+      
+      widget(label, {
+        caption: fmt(_("Copying %d files"), $self.files);
+      });
+      
+      widget(container_z, {
+        filterConstraintX: true;
+        
+        widget(quad, { color: 0; });
+        widget(bar, {
+          fill: $self.completed / $self.total;
+          color1: 1;
+          color2: 1;
+        });
+        
+        // Percentage overlay
+        widget(label, {
+          align: center;
+          caption: fmt("%d%%", ($self.completed * 100) / $self.total);
+          shadow: true;
+        });
+      });
+    });
+  });
+});
+```
+
+#### Integration in universe.view
+
+**Location in Hierarchy**:
+```view
+widget(underscan, {
+  widget(container_z, {
+    // Pages and main content...
+    
+    // Notifications
+    cloner($core.notifications.nodes, container_z, {
+      // ...
+    });
+    
+    // Progress indicators appear after notifications
+    cloner($core.clipboard.copyprogress, container_z, {
+      // Progress implementation...
+    });
+  });
+});
+```
+
+**Z-Order Positioning**:
+- Progress indicators render **above notifications**
+- Progress indicators render **above page content**
+- Progress indicators render **below popups and critical overlays**
+- Multiple progress bars stack vertically if multiple operations are active
+
+#### Other Progress Indicator Use Cases
+
+The same pattern can be applied to other long-running operations:
+
+**Download Progress**:
+```view
+cloner($core.downloads.active, container_z, {
+  // Similar structure with download-specific variables
+  label({ caption: fmt(_("Downloading: %s"), $self.filename); });
+  bar({ fill: $self.bytesReceived / $self.totalBytes; });
+});
+```
+
+**Library Scan Progress**:
+```view
+cloner($core.library.scanProgress, container_z, {
+  label({ caption: fmt(_("Scanning: %d items"), $self.itemsScanned); });
+  bar({ fill: $self.itemsScanned / $self.totalItems; });
+});
+```
+
+**Upload Progress**:
+```view
+cloner($core.uploads.active, container_z, {
+  label({ caption: fmt(_("Uploading: %s"), $self.filename); });
+  bar({ fill: $self.bytesSent / $self.totalBytes; });
+});
+```
 
 ## System Overlays
 
