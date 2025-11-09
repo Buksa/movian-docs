@@ -146,22 +146,23 @@ cd my-plugin
 }
 ```
 
-3. **Create plugin.js**:
+3. **Create plugin.js** (API v2):
 ```javascript
-(function(plugin) {
-  plugin.createService("My Service", "myservice:start", "video", true, 
-    require('showtime/richtext').imageFromPlugin("logo.png"));
+var service = require('movian/service');
+var page = require('movian/page');
+
+service.create("My Service", "myservice:start", "video", true, 
+  Plugin.path + "logo.png");
+
+new page.Route("myservice:start", function(page) {
+  page.type = "directory";
+  page.contents = "items";
+  page.metadata.title = "My Plugin";
   
-  new page.Route("myservice:start", function(page) {
-    page.type = "directory";
-    page.contents = "items";
-    page.metadata.title = "My Plugin";
-    
-    page.appendItem("myservice:video:1", "directory", {
-      title: "Sample Video"
-    });
+  page.appendItem("myservice:video:1", "directory", {
+    title: "Sample Video"
   });
-})(this);
+});
 ```
 
 4. **Install and test**: Copy to Movian plugins directory
@@ -503,10 +504,12 @@ new page.Route("myplugin:start", function(page) {
 });
 ```
 
-**Service Registration** (adds to main menu):
+**Service Registration** (adds to main menu - API v2):
 ```javascript
-plugin.createService("My Service", "myplugin:start", "video", true,
-  require('showtime/richtext').imageFromPlugin("logo.png"));
+var service = require('movian/service');
+
+service.create("My Service", "myplugin:start", "video", true,
+  Plugin.path + "logo.png");
 ```
 
 **Navigation Patterns**:

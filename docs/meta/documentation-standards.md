@@ -738,26 +738,27 @@ In `index.js`, register your content provider:
 
 ```javascript
 /**
- * Register the video service
+ * Register the video service (API v2)
  */
-(function(plugin) {
-  // Create service
-  var service = plugin.createService("My Videos", "myvideos:start", "video", true,
-    "skin://icons/ic_videocam_48px.svg");
+var service = require('movian/service');
+var page = require('movian/page');
+
+// Create service
+service.create("My Videos", "myvideos:start", "video", true,
+  "skin://icons/ic_videocam_48px.svg");
+
+// Handle service start
+new page.Route("myvideos:start", function(page) {
+  page.type = "directory";
+  page.contents = "items";
+  page.metadata.title = "My Videos";
   
-  // Handle service start
-  service.addURI("myvideos:start", function(page) {
-    page.type = "directory";
-    page.contents = "items";
-    page.metadata.title = "My Videos";
-    
-    // Add video items
-    page.appendItem("myvideos:video:1", "directory", {
-      title: "Sample Video 1",
-      icon: "https://example.com/thumb1.jpg"
-    });
+  // Add video items
+  page.appendItem("myvideos:video:1", "directory", {
+    title: "Sample Video 1",
+    icon: "https://example.com/thumb1.jpg"
   });
-})(this);
+});
 ```
 
 ### Step 4: Test Plugin

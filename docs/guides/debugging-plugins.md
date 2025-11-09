@@ -67,11 +67,14 @@ try {
 
 ### HTTP Request Failures
 
-**Debug HTTP requests:**
+**Debug HTTP requests (API v2):**
 
 ```javascript
+var http = require('movian/http');
+
 try {
-  var response = showtime.httpReq(url, {
+  var response = http.request(url, {
+    method: 'GET',
     debug: true  // Enable HTTP debugging
   });
   console.log("Response:", response.toString());
@@ -151,13 +154,15 @@ console.log("Execution time:", (endTime - startTime) + "ms");
 ### Network Debugging
 
 ```javascript
+var http = require('movian/http');
+
 function debugHttpRequest(url, options) {
   console.log("HTTP Request:", url);
   console.log("Options:", JSON.stringify(options));
   
   var start = Date.now();
   try {
-    var response = showtime.httpReq(url, options);
+    var response = http.request(url, options);
     var duration = Date.now() - start;
     
     console.log("Response received in", duration + "ms");
@@ -364,6 +369,7 @@ function createObject() {
 ### Request Optimization
 
 ```javascript
+var http = require('movian/http');
 var requestCache = {};
 
 function cachedRequest(url) {
@@ -373,7 +379,7 @@ function cachedRequest(url) {
   }
   
   console.log("Cache miss:", url);
-  var response = showtime.httpReq(url);
+  var response = http.request(url);
   requestCache[url] = response;
   return response;
 }

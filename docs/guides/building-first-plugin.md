@@ -25,6 +25,7 @@ cd my-first-plugin
 {
     "id": "my.first.plugin",
     "version": "1.0.0",
+    "apiversion": 2,
     "title": "My First Plugin",
     "synopsis": "A simple video content plugin",
     "description": "This plugin demonstrates basic Movian plugin functionality",
@@ -36,6 +37,8 @@ cd my-first-plugin
 }
 ```
 
+**Important**: The `"apiversion": 2` field enables modern API v2 modules.
+
 ## Step 3: Create plugin.js
 
 ```javascript
@@ -44,42 +47,37 @@ cd my-first-plugin
  * A simple content provider
  */
 
-(function(plugin) {
-    var service = require('movian/service');
-    var page = require('movian/page');
-    var http = require('movian/http');
+// Import required modules (API v2)
+var service = require('movian/service');
+var page = require('movian/page');
+var http = require('movian/http');
+
+// Register service (adds to main menu)
+// Note: Plugin is a global object, no need to require it
+service.create("My Service", "myfirst:start", "video", true, 
+               Plugin.path + "logo.png");
+
+// Handle page requests
+new page.Route("^myfirst:(.*)$", function(page, action) {
+    page.type = "directory";
+    page.metadata.title = "My First Plugin";
+    page.metadata.icon = Plugin.path + "logo.png";
     
-    // Plugin metadata
-    plugin.title = "My First Plugin";
-    plugin.synopsis = "A simple video content plugin";
-    
-    // Register service
-    service.create("My Service", "myfirst:start", "video", true, 
-                   plugin.path + "logo.png");
-    
-    // Handle page requests
-    page.Route("^myfirst:(.*)$", function(page, action) {
-        page.type = "directory";
-        page.metadata.title = "My First Plugin";
-        page.metadata.icon = plugin.path + "logo.png";
-        
-        // Add some sample items
-        page.appendItem("video", "Sample Video 1", {
-            url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            icon: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
-            description: "Big Buck Bunny sample video"
-        });
-        
-        page.appendItem("video", "Sample Video 2", {
-            url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            icon: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
-            description: "Elephants Dream sample video"
-        });
-        
-        page.loading = false;
+    // Add some sample items
+    page.appendItem("video", "Sample Video 1", {
+        url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        icon: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
+        description: "Big Buck Bunny sample video"
     });
     
-})(this);
+    page.appendItem("video", "Sample Video 2", {
+        url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        icon: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+        description: "Elephants Dream sample video"
+    });
+    
+    page.loading = false;
+});
 ```
 
 ## Step 4: Add Logo
@@ -119,7 +117,11 @@ zip -r my-first-plugin.zip my-first-plugin/
 ```javascript
 var settings = require('movian/settings');
 
-settings.createString('apiKey', 'API Key', '', function(v) {
+// Note: Plugin is a global object
+var mySettings = new settings.globalSettings('My Plugin Settings', 
+    Plugin.path + 'logo.png', 'Configuration');
+
+mySettings.createString('apiKey', 'API Key', '', function(v) {
     // Handle API key change
 });
 ```
@@ -127,43 +129,61 @@ settings.createString('apiKey', 'API Key', '', function(v) {
 ### Fetch Real Data
 
 ```javascript
-page.loading = true;
+var http = require('movian/http');
 
-http.request('https://api.example.com/videos', function(err, response) {
-    page.loading = false;
+new page.Route("^myfirst:browse$", function(page) {
+    page.type = "directory";
+    page.metadata.title = "Browse Videos";
+    page.loading = true;
     
-    if (err) {
-        page.error("Failed to load: " + err);
-        return;
-    }
-    
-    var data = JSON.parse(response.toString());
-    
-    data.videos.forEach(function(video) {
-        page.appendItem("video", video.title, {
-            url: video.url,
-            icon: video.thumbnail,
-            description: video.description
+    try {
+        var response = http.request('https://api.example.com/videos', {
+            method: 'GET'
         });
-    });
+        
+        var data = JSON.parse(response.toString());
+        
+        data.videos.forEach(function(video) {
+            page.appendItem("video", video.title, {
+                url: video.url,
+                icon: video.thumbnail,
+                description: video.description
+            });
+        });
+    } catch (err) {
+        page.error("Failed to load: " + err);
+    } finally {
+        page.loading = false;
+    }
 });
 ```
 
 ### Add Search
 
 ```javascript
-page.Route("^myfirst:search:(.*)$", function(page, query) {
+var page = require('movian/page');
+var http = require('movian/http');
+
+new page.Route("^myfirst:search:(.*)$", function(page, query) {
     page.type = "directory";
     page.metadata.title = "Search: " + query;
+    page.loading = true;
     
-    // Perform search
-    searchVideos(query, function(results) {
+    try {
+        var response = http.request('https://api.example.com/search?q=' + encodeURIComponent(query));
+        var results = JSON.parse(response.toString());
+        
         results.forEach(function(video) {
             page.appendItem("video", video.title, {
-                url: video.url
+                url: video.url,
+                icon: video.thumbnail
             });
         });
-    });
+    } catch (err) {
+        page.error("Search failed: " + err);
+    } finally {
+        page.loading = false;
+    }
 });
 ```
 

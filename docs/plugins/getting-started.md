@@ -41,6 +41,7 @@ The `plugin.json` file is the manifest that describes your plugin:
 {
   "id": "com.example.myfirstplugin",
   "version": "1.0.0",
+  "apiversion": 2,
   "title": "My First Plugin",
   "synopsis": "A simple example plugin",
   "description": "This is my first Movian plugin",
@@ -51,33 +52,38 @@ The `plugin.json` file is the manifest that describes your plugin:
 }
 ```
 
+**Note**: The `"apiversion": 2` field is required for using modern API v2 modules.
+
 ### 3. Create main.js
 
 The main JavaScript file contains your plugin logic:
 
 ```javascript
-(function(plugin) {
-  // Plugin metadata
-  plugin.createService("My First Plugin", "myfirstplugin:start", "video", true, 
-    plugin.path + "icon.png");
+// Import required modules
+var service = require('movian/service');
+var page = require('movian/page');
 
-  // Route handler
-  new page.Route("myfirstplugin:start", function(page) {
-    page.type = "directory";
-    page.contents = "items";
-    page.metadata.title = "My First Plugin";
-    
-    page.appendItem("", "separator", {
-      title: "Welcome to My First Plugin!"
-    });
-    
-    page.appendItem("", "label", {
-      title: "This is a simple example plugin"
-    });
-    
-    page.loading = false;
+// Create service (adds to main menu)
+// Note: Plugin is a global object, no need to require it
+service.create("My First Plugin", "myfirstplugin:start", "video", true, 
+  Plugin.path + "icon.png");
+
+// Route handler
+new page.Route("myfirstplugin:start", function(page) {
+  page.type = "directory";
+  page.contents = "items";
+  page.metadata.title = "My First Plugin";
+  
+  page.appendItem("", "separator", {
+    title: "Welcome to My First Plugin!"
   });
-})(this);
+  
+  page.appendItem("", "label", {
+    title: "This is a simple example plugin"
+  });
+  
+  page.loading = false;
+});
 ```
 
 ### 4. Install Your Plugin
@@ -105,10 +111,13 @@ Now that you've created your first plugin, explore these topics:
 ### Adding a Settings Page
 
 ```javascript
-var settings = plugin.createSettings("My Plugin Settings", 
-  plugin.path + "icon.png", "My Plugin Configuration");
+var settings = require('movian/settings');
 
-settings.createString("apikey", "API Key", "", function(v) {
+// Note: Plugin is a global object
+var mySettings = new settings.globalSettings("My Plugin Settings", 
+  Plugin.path + "icon.png", "My Plugin Configuration");
+
+mySettings.createString("apikey", "API Key", "", function(v) {
   // Handle setting change
 });
 ```
@@ -116,7 +125,9 @@ settings.createString("apikey", "API Key", "", function(v) {
 ### Making HTTP Requests
 
 ```javascript
-var response = showtime.httpReq("https://api.example.com/data", {
+var http = require('movian/http');
+
+var response = http.request("https://api.example.com/data", {
   method: "GET",
   headers: {
     "User-Agent": "Movian Plugin"
@@ -129,6 +140,8 @@ var data = JSON.parse(response.toString());
 ### Creating Pages
 
 ```javascript
+var page = require('movian/page');
+
 new page.Route("myplugin:page:(.*)", function(page, id) {
   page.type = "directory";
   page.metadata.title = "Page " + id;

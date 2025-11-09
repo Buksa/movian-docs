@@ -97,12 +97,14 @@ var page = require('movian/page');
 var http = require('movian/http');
 var store = require('movian/store');
 
+// Note: Plugin is a global object, no need to require it
+
 // Register service
 service.create("My Service", "myservice:start", "video", true, 
-               plugin.path + "logo.png");
+               Plugin.path + "logo.png");
 
 // Handle page requests
-page.Route("^myservice:(.*)$", function(page, action) {
+new page.Route("^myservice:(.*)$", function(page, action) {
     page.type = "directory";
     page.metadata.title = "My Service";
     

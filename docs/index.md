@@ -9,16 +9,17 @@
 
 Movian is a powerful, extensible media player that combines:
 
-- **Native Performance**: Written in C/C++ for optimal performance on resource-constrained devices
+- **Cross-Platform**: Runs on Linux, macOS, Windows, Android, PlayStation 3, and Raspberry Pi
 - **Plugin Architecture**: JavaScript-based plugin system for content providers and extensions  
-- **Custom UI Engine**: GLW (OpenGL Widget) system for creating responsive, themeable inter[plugin system](reference/glossary.md#plugin-system)ss-Platform**: Runs on Linux, macOS, Windows, Android, PlayStati[GLW](reference/glossary.md#glw-opengl-widget)3,[OpenGL](reference/glossary.md#opengl)a[Widget](reference/glossary.md#widget)y Pi
 - **Media Focus**: Optimized for video playback with support for numerous codecs and formats
+- **Native Performance**: Written in C/C++ for optimal performance on resource-constrained devices
+- **Custom UI Engine**: GLW (OpenGL Widget) system for creating responsive, themeable interfaces
 
 ### Target Audiences
 
 This documentation serves four primary developer audiences:
 
-| Audience | Primary Goals | Key Document[codecs](reference/glossary.md#codec)|
+| Audience | Primary Goals | Key Document |
 |----------|---------------|-------------------|
 | **Plugin Developers** | Create content providers, scrapers, and extensions | [Plugin Development Guide](plugins/README.md) |
 | **UI Designers** | Customize themes, skins, and user interfaces | [UI & Theming Guide](ui/README.md) |
