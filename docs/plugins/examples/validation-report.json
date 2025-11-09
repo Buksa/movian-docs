@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-05T06:35:38.618Z",
+  "timestamp": "2025-11-08T23:53:31.697Z",
   "summary": {
     "totalExamples": 5,
     "passedExamples": 5,
@@ -11,15 +11,19 @@
     "Using console.log - consider using proper logging in production",
     "Consider using named constants for large numbers",
     "Consider adding a logo.png file for better presentation",
-    "Long line at 657 (138 chars) - consider breaking it up",
+    "Long line at 657 (137 chars) - consider breaking it up",
     "Using console.log - consider using proper logging in production",
+    "Consider setting page.loading = false when page is ready",
     "Consider using named constants for large numbers",
     "Consider adding a logo.png file for better presentation",
-    "Long line at 629 (129 chars) - consider breaking it up",
+    "Possible unterminated string on line 128",
+    "Possible unterminated string on line 128",
+    "Possible unterminated string on line 133",
+    "Possible unterminated string on line 134",
     "Using console.log - consider using proper logging in production",
     "Consider using named constants for large numbers",
-    "Consider adding a logo.png file for better presentation",
-    "Long line at 379 (172 chars) - consider breaking it up",
+    "main.js is quite long - consider splitting into modules",
+    "Long line at 659 (171 chars) - consider breaking it up",
     "Possible unterminated string on line 109",
     "Using console.log - consider using proper logging in production",
     "Consider setting page.loading = false when page is ready",
@@ -28,7 +32,7 @@
     "Using console.log - consider using proper logging in production",
     "Consider using named constants for large numbers",
     "Consider adding a logo.png file for better presentation",
-    "Long line at 148 (126 chars) - consider breaking it up",
-    "Long line at 641 (133 chars) - consider breaking it up"
+    "Long line at 148 (125 chars) - consider breaking it up",
+    "Long line at 641 (132 chars) - consider breaking it up"
   ]
 }

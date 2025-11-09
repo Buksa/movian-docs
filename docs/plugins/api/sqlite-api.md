@@ -31,25 +31,28 @@ var sqlite = require('movian/sqlite');
 
 ```javascript
 /**
- * Open or create a SQLite database
- * @param {string} path - Database file path (relative to plugin storage)
+ * Create or open a SQLite database
+ * @param {string} dbname - Database filename (stored in plugin's databases directory)
  * @returns {Database} Database object
  */
-var db = sqlite.open(plugin.path + 'data.db');
+var db = new sqlite.DB('data.db');
 ```
 
 **Example**:
 ```javascript
-// Open database in plugin directory
-var db = sqlite.open(plugin.path + 'cache.db');
+// Create/open database in plugin's databases directory
+// Database will be stored at: {plugin_storage}/databases/cache.db
+var db = new sqlite.DB('cache.db');
 
 // Create tables if they don't exist
-db.exec("CREATE TABLE IF NOT EXISTS cache (" +
-        "  key TEXT PRIMARY KEY," +
-        "  value TEXT," +
-        "  timestamp INTEGER" +
-        ")");
+db.query("CREATE TABLE IF NOT EXISTS cache (" +
+         "  key TEXT PRIMARY KEY," +
+         "  value TEXT," +
+         "  timestamp INTEGER" +
+         ")");
 ```
+
+**Note**: The database file is automatically stored in the plugin's `databases/` subdirectory. You only need to provide the filename, not the full path.
 
 ### Closing a Database
 
@@ -62,88 +65,82 @@ db.close();
 
 ## SQL Execution
 
-### Execute Statement
+### Execute SQL Statements
 
 ```javascript
 /**
- * Execute SQL statement without returning results
+ * Execute SQL statement (INSERT, UPDATE, DELETE, CREATE, etc.)
  * @param {string} sql - SQL statement
- * @returns {number} Number of affected rows
+ * @param {...*} params - Optional parameters for ? placeholders
  */
-var affected = db.exec(sql);
+db.query(sql, param1, param2, ...);
 ```
 
 **Example**:
 ```javascript
 // Create table
-db.exec("CREATE TABLE users (" +
-        "  id INTEGER PRIMARY KEY," +
-        "  name TEXT NOT NULL," +
-        "  email TEXT UNIQUE" +
-        ")");
+db.query("CREATE TABLE users (" +
+         "  id INTEGER PRIMARY KEY," +
+         "  name TEXT NOT NULL," +
+         "  email TEXT UNIQUE" +
+         ")");
 
-// Insert data
-db.exec("INSERT INTO users (name, email) VALUES ('John', 'john@example.com')");
+// Insert data with parameters
+db.query("INSERT INTO users (name, email) VALUES (?, ?)", "John", "john@example.com");
 
 // Update data
-var rows = db.exec("UPDATE users SET name = 'Jane' WHERE id = 1");
-console.log("Updated " + rows + " rows");
+db.query("UPDATE users SET name = ? WHERE id = ?", "Jane", 1);
 
 // Delete data
-db.exec("DELETE FROM users WHERE id = 1");
+db.query("DELETE FROM users WHERE id = ?", 1);
 ```
 
 ### Query with Results
 
 ```javascript
 /**
- * Execute SELECT query and return results
- * @param {string} sql - SELECT statement
- * @returns {Array} Array of result objects
+ * Execute SELECT query and iterate through results
+ * Use db.step() to get each row
  */
-var results = db.query(sql);
+db.query("SELECT * FROM users");
+var row;
+while ((row = db.step()) !== undefined) {
+    console.log(row.name + " <" + row.email + ">");
+}
 ```
 
 **Example**:
 ```javascript
-// Simple query
-var users = db.query("SELECT * FROM users");
-users.forEach(function(user) {
-    console.log(user.name + " <" + user.email + ">");
-});
-
-// Query with WHERE clause
-var active = db.query("SELECT * FROM users WHERE active = 1");
+// Query with parameters
+db.query("SELECT * FROM users WHERE active = ?", 1);
+var row;
+while ((row = db.step()) !== undefined) {
+    console.log(row.name);
+}
 
 // Query with ORDER BY
-var sorted = db.query("SELECT * FROM users ORDER BY name ASC");
+db.query("SELECT * FROM users ORDER BY name ASC");
+while ((row = db.step()) !== undefined) {
+    // Process row...
+}
 
 // Query with LIMIT
-var recent = db.query("SELECT * FROM history ORDER BY timestamp DESC LIMIT 10");
+db.query("SELECT * FROM history ORDER BY timestamp DESC LIMIT ?", 10);
+while ((row = db.step()) !== undefined) {
+    // Process row...
+}
 ```
 
-## Prepared Statements
+## Parameterized Queries
 
-### Creating Prepared Statements
+### Using Parameters
 
 ```javascript
 /**
- * Prepare SQL statement for repeated execution
- * @param {string} sql - SQL statement with ? placeholders
- * @returns {Statement} Prepared statement object
+ * Use ? placeholders for parameters to prevent SQL injection
+ * Parameters are passed as additional arguments to db.query()
  */
-var stmt = db.prepare(sql);
-```
-
-### Binding Parameters
-
-```javascript
-/**
- * Bind parameters to prepared statement
- * @param {...*} params - Parameters to bind (in order)
- * @returns {Statement} Statement object for chaining
- */
-stmt.bind(param1, param2, ...);
+db.query(sql, param1, param2, ...);
 ```
 
 **Parameter Types**:
@@ -152,115 +149,104 @@ stmt.bind(param1, param2, ...);
 - `string` - TEXT
 - `boolean` - INTEGER (0 or 1)
 
-### Executing Prepared Statements
-
-```javascript
-/**
- * Execute prepared statement
- * @returns {Array} Query results (for SELECT) or affected rows (for INSERT/UPDATE/DELETE)
- */
-var results = stmt.execute();
-```
-
 **Example**:
 ```javascript
-// Prepare INSERT statement
-var insertStmt = db.prepare("INSERT INTO users (name, email, age) VALUES (?, ?, ?)");
+// INSERT with parameters
+db.query("INSERT INTO users (name, email, age) VALUES (?, ?, ?)", 
+         "Alice", "alice@example.com", 25);
+db.query("INSERT INTO users (name, email, age) VALUES (?, ?, ?)", 
+         "Bob", "bob@example.com", 30);
+db.query("INSERT INTO users (name, email, age) VALUES (?, ?, ?)", 
+         "Charlie", "charlie@example.com", 35);
 
-// Insert multiple rows efficiently
-insertStmt.bind("Alice", "alice@example.com", 25).execute();
-insertStmt.bind("Bob", "bob@example.com", 30).execute();
-insertStmt.bind("Charlie", "charlie@example.com", 35).execute();
+// SELECT with parameters
+db.query("SELECT * FROM users WHERE age > ?", 25);
+var row;
+while ((row = db.step()) !== undefined) {
+    console.log(row.name + " is " + row.age + " years old");
+}
 
-// Prepare SELECT statement
-var selectStmt = db.prepare("SELECT * FROM users WHERE age > ?");
+// UPDATE with parameters
+db.query("UPDATE users SET email = ? WHERE name = ?", 
+         "newemail@example.com", "Alice");
 
-// Execute with different parameters
-var over25 = selectStmt.bind(25).execute();
-var over30 = selectStmt.bind(30).execute();
-
-// Clean up
-insertStmt.finalize();
-selectStmt.finalize();
-```
-
-### Finalizing Statements
-
-```javascript
-/**
- * Release prepared statement resources
- */
-stmt.finalize();
+// DELETE with parameters
+db.query("DELETE FROM users WHERE age < ?", 18);
 ```
 
 ## Transactions
 
-### Manual Transactions
+### Using Transactions
 
 ```javascript
 /**
- * Begin transaction
+ * Use SQL transaction commands for atomic operations
  */
-db.begin();
-
-/**
- * Commit transaction
- */
-db.commit();
-
-/**
- * Rollback transaction
- */
-db.rollback();
+db.query("BEGIN TRANSACTION");
+try {
+    // Your operations here
+    db.query("INSERT INTO ...");
+    db.query("UPDATE ...");
+    db.query("COMMIT");
+} catch (e) {
+    db.query("ROLLBACK");
+    throw e;
+}
 ```
 
 **Example**:
 ```javascript
 try {
-    db.begin();
+    db.query("BEGIN TRANSACTION");
     
-    db.exec("INSERT INTO accounts (id, balance) VALUES (1, 1000)");
-    db.exec("INSERT INTO accounts (id, balance) VALUES (2, 500)");
+    db.query("INSERT INTO accounts (id, balance) VALUES (?, ?)", 1, 1000);
+    db.query("INSERT INTO accounts (id, balance) VALUES (?, ?)", 2, 500);
     
     // Transfer money
-    db.exec("UPDATE accounts SET balance = balance - 100 WHERE id = 1");
-    db.exec("UPDATE accounts SET balance = balance + 100 WHERE id = 2");
+    db.query("UPDATE accounts SET balance = balance - ? WHERE id = ?", 100, 1);
+    db.query("UPDATE accounts SET balance = balance + ? WHERE id = ?", 100, 2);
     
-    db.commit();
+    db.query("COMMIT");
     console.log("Transaction completed");
 } catch (e) {
-    db.rollback();
+    db.query("ROLLBACK");
     console.error("Transaction failed: " + e);
 }
 ```
 
-### Transaction Helper
+### Transaction Helper Function
 
 ```javascript
 /**
- * Execute function within transaction
- * @param {Function} func - Function to execute
- * @returns {*} Function return value
+ * Helper function to execute operations within a transaction
  */
-var result = db.transaction(function() {
-    // Operations here are atomic
-    db.exec("INSERT INTO ...");
-    db.exec("UPDATE ...");
-    return someValue;
-});
+function withTransaction(db, func) {
+    db.query("BEGIN TRANSACTION");
+    try {
+        var result = func();
+        db.query("COMMIT");
+        return result;
+    } catch (e) {
+        db.query("ROLLBACK");
+        throw e;
+    }
+}
 ```
 
 **Example**:
 ```javascript
-var success = db.transaction(function() {
-    var balance = db.query("SELECT balance FROM accounts WHERE id = 1")[0].balance;
+var success = withTransaction(db, function() {
+    // Query balance
+    db.query("SELECT balance FROM accounts WHERE id = ?", 1);
+    var row = db.step();
+    var balance = row ? row.balance : 0;
     
     if (balance < 100) {
         throw new Error("Insufficient funds");
     }
     
-    db.exec("UPDATE accounts SET balance = balance - 100 WHERE id = 1");
-    db.exec("UPDATE accounts SET balance = balance + 100 WHERE id = 2");
+    db.query("UPDATE accounts SET balance = balance - ? WHERE id = ?", 100, 1);
+    db.query("UPDATE accounts SET balance = balance + ? WHERE id = ?", 100, 2);
     
     return true;
 });
@@ -275,48 +261,42 @@ var CacheDB = {
     db: null,
     
     init: function() {
-        this.db = sqlite.open(plugin.path + 'cache.db');
-        this.db.exec(
+        this.db = new sqlite.DB('cache.db');
+        this.db.query(
             "CREATE TABLE IF NOT EXISTS cache (" +
             "  key TEXT PRIMARY KEY," +
             "  value TEXT," +
             "  timestamp INTEGER" +
             ")"
         );
-        this.db.exec("CREATE INDEX IF NOT EXISTS idx_timestamp ON cache(timestamp)");
+        this.db.query("CREATE INDEX IF NOT EXISTS idx_timestamp ON cache(timestamp)");
     },
     
     get: function(key) {
-        var stmt = this.db.prepare("SELECT value FROM cache WHERE key = ?");
-        var results = stmt.bind(key).execute();
-        stmt.finalize();
+        this.db.query("SELECT value FROM cache WHERE key = ?", key);
+        var row = this.db.step();
         
-        if (results.length > 0) {
-            return JSON.parse(results[0].value);
+        if (row !== undefined) {
+            return JSON.parse(row.value);
         }
         return null;
     },
     
     set: function(key, value) {
-        var stmt = this.db.prepare(
-            "INSERT OR REPLACE INTO cache (key, value, timestamp) VALUES (?, ?, ?)"
+        this.db.query(
+            "INSERT OR REPLACE INTO cache (key, value, timestamp) VALUES (?, ?, ?)",
+            key, JSON.stringify(value), Date.now()
         );
-        stmt.bind(key, JSON.stringify(value), Date.now()).execute();
-        stmt.finalize();
     },
     
     remove: function(key) {
-        var stmt = this.db.prepare("DELETE FROM cache WHERE key = ?");
-        stmt.bind(key).execute();
-        stmt.finalize();
+        this.db.query("DELETE FROM cache WHERE key = ?", key);
     },
     
     cleanup: function(maxAge) {
         var cutoff = Date.now() - maxAge;
-        var stmt = this.db.prepare("DELETE FROM cache WHERE timestamp < ?");
-        var deleted = stmt.bind(cutoff).execute();
-        stmt.finalize();
-        console.log("Cleaned up " + deleted + " old cache entries");
+        this.db.query("DELETE FROM cache WHERE timestamp < ?", cutoff);
+        console.log("Cleaned up old cache entries");
     }
 };
 
@@ -338,8 +318,8 @@ var HistoryDB = {
     db: null,
     
     init: function() {
-        this.db = sqlite.open(plugin.path + 'history.db');
-        this.db.exec(
+        this.db = new sqlite.DB('history.db');
+        this.db.query(
             "CREATE TABLE IF NOT EXISTS history (" +
             "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
             "  url TEXT NOT NULL," +
@@ -349,51 +329,46 @@ var HistoryDB = {
             "  position INTEGER" +
             ")"
         );
-        this.db.exec("CREATE INDEX IF NOT EXISTS idx_url ON history(url)");
-        this.db.exec("CREATE INDEX IF NOT EXISTS idx_timestamp ON history(timestamp)");
+        this.db.query("CREATE INDEX IF NOT EXISTS idx_url ON history(url)");
+        this.db.query("CREATE INDEX IF NOT EXISTS idx_timestamp ON history(timestamp)");
     },
     
     add: function(url, title) {
-        var stmt = this.db.prepare(
+        this.db.query(
             "INSERT INTO history (url, title, timestamp, duration, position) " +
-            "VALUES (?, ?, ?, 0, 0)"
+            "VALUES (?, ?, ?, 0, 0)",
+            url, title, Date.now()
         );
-        stmt.bind(url, title, Date.now()).execute();
-        stmt.finalize();
     },
     
     updatePosition: function(url, position, duration) {
-        var stmt = this.db.prepare(
-            "UPDATE history SET position = ?, duration = ? WHERE url = ?"
+        this.db.query(
+            "UPDATE history SET position = ?, duration = ? WHERE url = ?",
+            position, duration, url
         );
-        stmt.bind(position, duration, url).execute();
-        stmt.finalize();
     },
     
     getRecent: function(limit) {
-        var stmt = this.db.prepare(
-            "SELECT * FROM history ORDER BY timestamp DESC LIMIT ?"
-        );
-        var results = stmt.bind(limit || 20).execute();
-        stmt.finalize();
+        this.db.query("SELECT * FROM history ORDER BY timestamp DESC LIMIT ?", limit || 20);
+        var results = [];
+        var row;
+        while ((row = this.db.step()) !== undefined) {
+            results.push(row);
+        }
         return results;
     },
     
     getPosition: function(url) {
-        var stmt = this.db.prepare(
-            "SELECT position, duration FROM history WHERE url = ? ORDER BY timestamp DESC LIMIT 1"
+        this.db.query(
+            "SELECT position, duration FROM history WHERE url = ? ORDER BY timestamp DESC LIMIT 1",
+            url
         );
-        var results = stmt.bind(url).execute();
-        stmt.finalize();
-        
-        if (results.length > 0) {
-            return results[0];
-        }
-        return null;
+        var row = this.db.step();
+        return row !== undefined ? row : null;
     },
     
     clear: function() {
-        this.db.exec("DELETE FROM history");
+        this.db.query("DELETE FROM history");
     }
 };
 ```
@@ -405,52 +380,55 @@ var SearchIndex = {
     db: null,
     
     init: function() {
-        this.db = sqlite.open(plugin.path + 'search.db');
-        this.db.exec(
+        this.db = new sqlite.DB('search.db');
+        this.db.query(
             "CREATE VIRTUAL TABLE IF NOT EXISTS search_index " +
             "USING fts4(title, description, tags)"
         );
     },
     
     index: function(id, title, description, tags) {
-        var stmt = this.db.prepare(
+        this.db.query(
             "INSERT INTO search_index (docid, title, description, tags) " +
-            "VALUES (?, ?, ?, ?)"
+            "VALUES (?, ?, ?, ?)",
+            id, title, description, tags.join(' ')
         );
-        stmt.bind(id, title, description, tags.join(' ')).execute();
-        stmt.finalize();
     },
     
     search: function(query) {
-        var stmt = this.db.prepare(
+        this.db.query(
             "SELECT docid, title, description FROM search_index " +
-            "WHERE search_index MATCH ?"
+            "WHERE search_index MATCH ?",
+            query
         );
-        var results = stmt.bind(query).execute();
-        stmt.finalize();
+        var results = [];
+        var row;
+        while ((row = this.db.step()) !== undefined) {
+            results.push(row);
+        }
         return results;
     },
     
     remove: function(id) {
-        var stmt = this.db.prepare("DELETE FROM search_index WHERE docid = ?");
-        stmt.bind(id).execute();
-        stmt.finalize();
+        this.db.query("DELETE FROM search_index WHERE docid = ?", id);
     }
 };
 ```
 
 ## Best Practices
 
-### Use Prepared Statements
+### Use Parameterized Queries
 
 ```javascript
 // BAD: String concatenation (SQL injection risk)
-db.exec("SELECT * FROM users WHERE name = '" + userName + "'");
+db.query("SELECT * FROM users WHERE name = '" + userName + "'");
 
-// GOOD: Prepared statement
-var stmt = db.prepare("SELECT * FROM users WHERE name = ?");
-var results = stmt.bind(userName).execute();
-stmt.finalize();
+// GOOD: Parameterized query
+db.query("SELECT * FROM users WHERE name = ?", userName);
+var row;
+while ((row = db.step()) !== undefined) {
+    // Process row...
+}
 ```
 
 ### Use Transactions for Bulk Operations
@@ -458,43 +436,32 @@ stmt.finalize();
 ```javascript
 // BAD: Individual inserts
 for (var i = 0; i < 1000; i++) {
-    db.exec("INSERT INTO data VALUES (" + i + ")");
+    db.query("INSERT INTO data VALUES (?)", i);
 }
 
-// GOOD: Transaction with prepared statement
-db.begin();
-var stmt = db.prepare("INSERT INTO data VALUES (?)");
+// GOOD: Transaction for bulk operations
+db.query("BEGIN TRANSACTION");
 for (var i = 0; i < 1000; i++) {
-    stmt.bind(i).execute();
+    db.query("INSERT INTO data VALUES (?)", i);
 }
-stmt.finalize();
-db.commit();
+db.query("COMMIT");
 ```
 
 ### Create Indexes for Performance
 
 ```javascript
 // Create indexes on frequently queried columns
-db.exec("CREATE INDEX IF NOT EXISTS idx_user_email ON users(email)");
-db.exec("CREATE INDEX IF NOT EXISTS idx_history_timestamp ON history(timestamp)");
+db.query("CREATE INDEX IF NOT EXISTS idx_user_email ON users(email)");
+db.query("CREATE INDEX IF NOT EXISTS idx_history_timestamp ON history(timestamp)");
 
 // Composite indexes for multi-column queries
-db.exec("CREATE INDEX IF NOT EXISTS idx_user_status_date ON users(status, created_date)");
+db.query("CREATE INDEX IF NOT EXISTS idx_user_status_date ON users(status, created_date)");
 ```
 
 ### Clean Up Resources
 
 ```javascript
-// Always finalize prepared statements
-var stmt = db.prepare("SELECT * FROM users");
-try {
-    var results = stmt.execute();
-    // Process results...
-} finally {
-    stmt.finalize();  // Always clean up
-}
-
-// Close database when done
+// Close database when plugin unloads
 db.close();
 ```
 
@@ -502,17 +469,60 @@ db.close();
 
 ```javascript
 try {
-    var db = sqlite.open(plugin.path + 'data.db');
+    var db = new sqlite.DB('data.db');
     
-    db.exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)");
-    
-    var stmt = db.prepare("INSERT INTO users (name) VALUES (?)");
-    stmt.bind("John").execute();
-    stmt.finalize();
+    db.query("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)");
+    db.query("INSERT INTO users (name) VALUES (?)", "John");
     
 } catch (e) {
     console.error("Database error: " + e);
+    console.error("Error code: " + db.lastErrorCode);
+    console.error("Error message: " + db.lastErrorString);
     // Handle error appropriately
+}
+```
+
+## Database Properties
+
+### Last Insert Row ID
+
+```javascript
+/**
+ * Get the row ID of the last INSERT operation
+ * @type {number}
+ */
+var id = db.lastRowId;
+```
+
+**Example**:
+```javascript
+db.query("INSERT INTO users (name) VALUES (?)", "John");
+var userId = db.lastRowId;
+console.log("Inserted user with ID: " + userId);
+```
+
+### Error Information
+
+```javascript
+/**
+ * Get the last error code
+ * @type {number}
+ */
+var errorCode = db.lastErrorCode;
+
+/**
+ * Get the last error message
+ * @type {string}
+ */
+var errorMsg = db.lastErrorString;
+```
+
+**Example**:
+```javascript
+try {
+    db.query("INSERT INTO users (id, name) VALUES (?, ?)", 1, "John");
+} catch (e) {
+    console.error("Error " + db.lastErrorCode + ": " + db.lastErrorString);
 }
 ```
 

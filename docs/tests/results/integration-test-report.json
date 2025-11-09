@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-08T10:03:20.264Z",
+  "timestamp": "2025-11-08T23:53:31.774Z",
   "totalPlugins": 5,
   "passedPlugins": 2,
   "failedPlugins": 3,
@@ -9,7 +9,7 @@
   "plugins": {
     "advanced-ui-plugin": {
       "name": "advanced-ui-plugin",
-      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\advanced-ui-plugin",
+      "path": "/home/dietpi/workspace/movian-docs/docs/plugins/examples/advanced-ui-plugin",
       "passed": false,
       "tests": {
         "manifest_validation": {
@@ -56,7 +56,7 @@
     },
     "configurable-plugin": {
       "name": "configurable-plugin",
-      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\configurable-plugin",
+      "path": "/home/dietpi/workspace/movian-docs/docs/plugins/examples/configurable-plugin",
       "passed": false,
       "tests": {
         "manifest_validation": {
@@ -104,7 +104,7 @@
     },
     "content-provider": {
       "name": "content-provider",
-      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\content-provider",
+      "path": "/home/dietpi/workspace/movian-docs/docs/plugins/examples/content-provider",
       "passed": false,
       "tests": {
         "manifest_validation": {
@@ -149,7 +149,7 @@
     },
     "hello-world": {
       "name": "hello-world",
-      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\hello-world",
+      "path": "/home/dietpi/workspace/movian-docs/docs/plugins/examples/hello-world",
       "passed": true,
       "tests": {
         "manifest_validation": {
@@ -194,7 +194,7 @@
     },
     "search-plugin": {
       "name": "search-plugin",
-      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\plugins\\examples\\search-plugin",
+      "path": "/home/dietpi/workspace/movian-docs/docs/plugins/examples/search-plugin",
       "passed": true,
       "tests": {
         "manifest_validation": {

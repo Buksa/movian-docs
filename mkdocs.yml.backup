@@ -1,0 +1,163 @@
+﻿site_name: Movian Architecture Documentation
+site_description: Comprehensive documentation for Movian media player development
+site_author: Movian Documentation Team
+site_url: https://buksa.github.io/movian-docs/
+
+# Default docs_dir: docs
+
+repo_name: movian/movian
+repo_url: https://github.com/andoma/movian
+edit_uri: ""
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue grey
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue grey
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+    - toc.integrate
+
+plugins:
+  - search:
+      lang: en
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+      pipeline:
+        - stemmer
+        - stopWordFilter
+        - trimmer
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Overview: installation/README.md
+    - System Requirements: installation/requirements.md
+    - Linux Installation: installation/linux.md
+    - macOS Installation: installation/macos.md
+    - Build System: installation/build-system.md
+    - Troubleshooting: installation/troubleshooting.md
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Components: architecture/components.md
+    - Lifecycle: architecture/lifecycle.md
+    - Threading: architecture/threading.md
+  - Plugin Development:
+    - Overview: plugins/README.md
+    - Getting Started: plugins/architecture.md
+    - Plugin Lifecycle: plugins/lifecycle.md
+    - Manifest Reference: plugins/manifest-reference.md
+    - Best Practices: plugins/best-practices.md
+    - API Reference:
+      - Core APIs: plugins/api/core-api.md
+      - HTTP & Networking: plugins/api/http-api.md
+      - HTML Modules Comparison: plugins/api/html-modules-comparison.md
+      - Storage APIs: plugins/api/storage-api.md
+      - Settings APIs: plugins/api/settings-api.md
+    - Examples:
+      - Content Provider: plugins/examples/content-provider/README.md
+      - Search Plugin: plugins/examples/search-plugin/README.md
+      - Configurable Plugin: plugins/examples/configurable-plugin/README.md
+      - Advanced UI Plugin: plugins/examples/advanced-ui-plugin/README.md
+  - UI & Theming:
+    - Overview: ui/README.md
+    - GLW Architecture: ui/glw-architecture.md
+    - Rendering Pipeline: ui/rendering-pipeline.md
+    - View Files:
+      - Syntax Reference: ui/view-files/syntax-reference.md
+      - Elements Reference: ui/view-files/elements-reference.md
+      - Attributes Reference: ui/view-files/attributes-reference.md
+      - Expressions: ui/view-files/expressions.md
+    - Widgets:
+      - Container Widgets: ui/widgets/container.md
+      - Text Widgets: ui/widgets/text.md
+      - Image Widgets: ui/widgets/image.md
+      - List Widgets: ui/widgets/list.md
+      - Grid Widgets: ui/widgets/grid.md
+    - Theming:
+      - Skin Structure: ui/theming/skin-structure.md
+      - Theme Variables: ui/theming/theme-variables.md
+      - Macro Reference: ui/theming/macro-reference.md
+      - Global Configuration: ui/theming/global-configuration.md
+      - Skin Architecture: ui/theming/skin-architecture.md
+    - Examples: ui/examples/README.md
+    - Source Analysis: ui/source-analysis/README.md
+  - Media System:
+    - OSD System: media/osd-system.md
+    - Audio & Video UI: media/audio-video-ui.md
+    - Playdeck System: media/playdeck-system.md
+    - OSD View Files Reference: media/osd-view-files-reference.md
+  - Guides:
+    - Overview: guides/README.md
+    - Command-Line Options: guides/command-line-options.md
+    - Debugging View Files: guides/debugging-view-files.md
+    - Performance Optimization: guides/performance-optimization.md
+    - Skin Template Generator: guides/skin-template-generator.md
+    - Skin Performance Best Practices: guides/skin-performance-best-practices.md
+  - Reference:
+    - API Index: reference/api-index.md
+    - Element Index: reference/element-index.md
+    - Attribute Index: reference/attribute-index.md
+    - Glossary: reference/glossary.md
+    - FAQ: reference/faq.md
+    - Troubleshooting: reference/troubleshooting.md
+  - Examples & Templates:
+    - Overview: examples-templates/README.md
+    - Project Templates: examples-templates/INDEX.md
+  - Testing & Quality:
+    - Overview: tests/README.md
+  - Meta:
+    - Documentation Standards: meta/documentation-standards.md
+    - Update Procedures: meta/update-procedures.md
+    - Deployment Guide: meta/deployment-guide.md
+    - Deployment Checklist: meta/deployment-checklist.md
+    - Accuracy Tracking: meta/accuracy-tracking.md
+    - Source References: meta/source-references.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/andoma/movian
+  version:
+    provider: mike

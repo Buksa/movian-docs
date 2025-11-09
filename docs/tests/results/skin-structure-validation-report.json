@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-08T10:03:51.643Z",
+  "timestamp": "2025-11-08T23:57:32.942Z",
   "summary": {
     "total": 32,
     "passed": 32,
@@ -10,7 +10,7 @@
   "skins": [
     {
       "name": "advanced-skin",
-      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\ui\\theming\\examples\\advanced-skin",
+      "path": "/home/dietpi/workspace/movian-docs/docs/ui/theming/examples/advanced-skin",
       "level": "advanced",
       "tests": {
         "total": 17,
@@ -20,7 +20,7 @@
     },
     {
       "name": "minimal-skin",
-      "path": "D:\\movian_stuff\\workspace\\movian-docs\\docs\\ui\\theming\\examples\\minimal-skin",
+      "path": "/home/dietpi/workspace/movian-docs/docs/ui/theming/examples/minimal-skin",
       "level": "standard",
       "tests": {
         "total": 15,
