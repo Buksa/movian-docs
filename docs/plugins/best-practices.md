@@ -273,6 +273,79 @@ function cleanupOldCache() {
 }
 ```
 
+### ⚠️ Critical: Always Return Cached Data Asynchronously
+
+When implementing caching in API clients, **always return cached data asynchronously**, even though it's available immediately. This is critical for proper pagination behavior.
+
+```javascript
+// ❌ Bad: Synchronous cache return breaks pagination
+function apiRequest(url, callback) {
+    var cacheKey = generateCacheKey(url);
+    var cachedData = cache.get(cacheKey);
+    
+    if (cachedData !== null) {
+        callback(null, cachedData);  // ← Synchronous! Breaks pagination
+        return;
+    }
+    
+    http.request(url, function(error, response) {
+        if (!error) {
+            cache.set(cacheKey, response);
+        }
+        callback(error, response);
+    });
+}
+
+// ✅ Good: Asynchronous cache return maintains consistent behavior
+function apiRequest(url, callback) {
+    var cacheKey = generateCacheKey(url);
+    var cachedData = cache.get(cacheKey);
+    
+    if (cachedData !== null) {
+        // Return cached data asynchronously to match API behavior
+        setTimeout(function() {
+            callback(null, cachedData);
+        }, 0);
+        return;
+    }
+    
+    http.request(url, function(error, response) {
+        if (!error) {
+            cache.set(cacheKey, response);
+        }
+        callback(error, response);
+    });
+}
+```
+
+**Why this matters:**
+
+1. **Pagination breaks with synchronous cache returns**
+   - When cache returns data synchronously, the callback executes immediately
+   - `page.loading = false` is set before Movian processes the page
+   - Movian doesn't trigger `asyncPaginator` for subsequent pages
+   - Result: Only first page loads (e.g., 25 items instead of all pages)
+
+2. **Asynchronous behavior is consistent**
+   - API requests are always asynchronous
+   - Cache should behave the same way
+   - `setTimeout(fn, 0)` makes the callback asynchronous
+   - Gives Movian time to process the page and trigger pagination
+
+3. **Real-world example:**
+   ```javascript
+   // Symptom: Catalog shows only 25 items on second visit
+   // First visit: Works (no cache, async API calls)
+   // Second visit: Broken (cache returns instantly, pagination stops)
+   // Fix: Wrap cache callback in setTimeout(fn, 0)
+   ```
+
+**Testing your cache implementation:**
+- Test with `useCache: false` - should always work
+- Test with `useCache: true` on first visit - should work
+- Test with `useCache: true` on second visit - should still work (this is where synchronous cache fails)
+- If pagination only works without cache or on first visit, you have a synchronous cache callback issue
+
 ### Lazy Loading and Pagination
 
 ```javascript
