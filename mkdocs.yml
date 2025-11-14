@@ -139,6 +139,7 @@ nav:
     - Performance Optimization: guides/performance-optimization.md
     - Skin Template Generator: guides/skin-template-generator.md
     - Skin Performance Best Practices: guides/skin-performance-best-practices.md
+    - Pagination and Caching: guides/pagination-and-caching.md    
   - Reference:
     - API Index: reference/api-index.md
     - Element Index: reference/element-index.md
