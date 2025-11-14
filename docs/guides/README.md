@@ -16,6 +16,7 @@ Step-by-step tutorials and guides for Movian development.
 - [Debugging View Files](debugging-view-files.md) - UI layout debugging techniques
 - [Performance Optimization](performance-optimization.md) - Making plugins and UI faster
 - [Skin Performance Best Practices](skin-performance-best-practices.md) - Comprehensive guide to skin performance and maintainability
+- [Pagination and Caching](pagination-and-caching.md) - Best practices for async pagination with intelligent caching
 
 ## Workflow Guides
 
