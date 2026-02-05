@@ -1,4 +1,4 @@
-﻿site_name: Movian Architecture Documentation
+site_name: Movian Architecture Documentation
 site_description: Comprehensive documentation for Movian media player development
 site_author: Movian Documentation Team
 site_url: https://buksa.github.io/movian-docs/
@@ -133,6 +133,7 @@ nav:
     - OSD View Files Reference: media/osd-view-files-reference.md
   - Guides:
     - Overview: guides/README.md
+    - AI-Assisted Development (Russian): guides/ai-assisted-development.md
     - API v1→v2 Migration: guides/api-v1-to-v2-migration.md
     - Command-Line Options: guides/command-line-options.md
     - Debugging View Files: guides/debugging-view-files.md
