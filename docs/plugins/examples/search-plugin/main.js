@@ -125,172 +125,182 @@ var searchSources = {
     movies: {
         name: "Movies",
         enabled: function() { return settings.enableMovies; },
-        search: function(query, options) {
-            // Simulate movie search API
-            return new Promise(function(resolve, reject) {
-                setTimeout(function() {
-                    try {
-                        var results = [];
-                        var maxResults = options.maxResults || 20;
-                        
-                        // Generate mock movie results
-                        for (var i = 1; i <= maxResults; i++) {
-                            var relevance = Math.random();
-                            if (relevance > 0.3) { // Filter by relevance
-                                results.push({
-                                    type: 'movie',
-                                    title: query + " Movie " + i,
-                                    description: "A movie about " + query + " with exciting plot and characters.",
-                                    year: 2015 + (i % 8),
-                                    rating: (6.0 + Math.random() * 4).toFixed(1),
-                                    genre: ["Action", "Drama", "Comedy", "Thriller", "Sci-Fi"][i % 5],
-                                    poster: "https://via.placeholder.com/300x450/0066cc/ffffff?text=Movie+" + i,
-                                    url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                                    relevance: relevance,
-                                    source: "movies"
-                                });
-                            }
+        search: function(query, options, callback) {
+            // Simulate movie search API with callback
+            setTimeout(function() {
+                try {
+                    var results = [];
+                    var maxResults = options.maxResults || 20;
+                    
+                    // Generate mock movie results
+                    for (var i = 1; i <= maxResults; i++) {
+                        var relevance = Math.random();
+                        if (relevance > 0.3) { // Filter by relevance
+                            results.push({
+                                type: 'movie',
+                                title: query + " Movie " + i,
+                                description: "A movie about " + query + " with exciting plot and characters.",
+                                year: 2015 + (i % 8),
+                                rating: (6.0 + Math.random() * 4).toFixed(1),
+                                genre: ["Action", "Drama", "Comedy", "Thriller", "Sci-Fi"][i % 5],
+                                poster: "https://via.placeholder.com/300x450/0066cc/ffffff?text=Movie+" + i,
+                                url: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                                relevance: relevance,
+                                source: "movies"
+                            });
                         }
-                        
-                        resolve(results);
-                    } catch (error) {
-                        reject(error);
                     }
-                }, 800 + Math.random() * 400); // Simulate network delay
-            });
+                    
+                    callback(null, results);
+                } catch (error) {
+                    callback(error);
+                }
+            }, 800 + Math.random() * 400); // Simulate network delay
         }
     },
     
     tvshows: {
         name: "TV Shows",
         enabled: function() { return settings.enableTVShows; },
-        search: function(query, options) {
-            return new Promise(function(resolve, reject) {
-                setTimeout(function() {
-                    try {
-                        var results = [];
-                        var maxResults = options.maxResults || 20;
-                        
-                        for (var i = 1; i <= maxResults; i++) {
-                            var relevance = Math.random();
-                            if (relevance > 0.4) {
-                                results.push({
-                                    type: 'tvshow',
-                                    title: query + " Series " + i,
-                                    description: "A TV series about " + query + " spanning multiple seasons.",
-                                    year: 2010 + (i % 12),
-                                    rating: (7.0 + Math.random() * 3).toFixed(1),
-                                    seasons: 1 + (i % 6),
-                                    episodes: 10 + (i % 20),
-                                    poster: "https://via.placeholder.com/300x450/cc6600/ffffff?text=TV+" + i,
-                                    relevance: relevance,
-                                    source: "tvshows"
-                                });
-                            }
+        search: function(query, options, callback) {
+            setTimeout(function() {
+                try {
+                    var results = [];
+                    var maxResults = options.maxResults || 20;
+                    
+                    for (var i = 1; i <= maxResults; i++) {
+                        var relevance = Math.random();
+                        if (relevance > 0.4) {
+                            results.push({
+                                type: 'tvshow',
+                                title: query + " Series " + i,
+                                description: "A TV series about " + query + " spanning multiple seasons.",
+                                year: 2010 + (i % 12),
+                                rating: (7.0 + Math.random() * 3).toFixed(1),
+                                seasons: 1 + (i % 6),
+                                episodes: 10 + (i % 20),
+                                poster: "https://via.placeholder.com/300x450/cc6600/ffffff?text=TV+" + i,
+                                relevance: relevance,
+                                source: "tvshows"
+                            });
                         }
-                        
-                        resolve(results);
-                    } catch (error) {
-                        reject(error);
                     }
-                }, 600 + Math.random() * 600);
-            });
+                    
+                    callback(null, results);
+                } catch (error) {
+                    callback(error);
+                }
+            }, 600 + Math.random() * 600);
         }
     },
     
     music: {
         name: "Music",
         enabled: function() { return settings.enableMusic; },
-        search: function(query, options) {
-            return new Promise(function(resolve, reject) {
-                setTimeout(function() {
-                    try {
-                        var results = [];
-                        var maxResults = options.maxResults || 20;
-                        
-                        for (var i = 1; i <= maxResults; i++) {
-                            var relevance = Math.random();
-                            if (relevance > 0.35) {
-                                results.push({
-                                    type: 'music',
-                                    title: query + " Song " + i,
-                                    artist: "Artist " + (i % 10 + 1),
-                                    album: query + " Album",
-                                    duration: 180 + (i % 120), // 3-5 minutes
-                                    year: 2000 + (i % 23),
-                                    genre: ["Rock", "Pop", "Jazz", "Electronic", "Classical"][i % 5],
-                                    url: "http://www.lonelycoder.com/music/Hybris_Intro-remake.mp3",
-                                    relevance: relevance,
-                                    source: "music"
-                                });
-                            }
+        search: function(query, options, callback) {
+            setTimeout(function() {
+                try {
+                    var results = [];
+                    var maxResults = options.maxResults || 20;
+                    
+                    for (var i = 1; i <= maxResults; i++) {
+                        var relevance = Math.random();
+                        if (relevance > 0.35) {
+                            results.push({
+                                type: 'music',
+                                title: query + " Song " + i,
+                                artist: "Artist " + (i % 10 + 1),
+                                album: query + " Album",
+                                duration: 180 + (i % 120), // 3-5 minutes
+                                year: 2000 + (i % 23),
+                                genre: ["Rock", "Pop", "Jazz", "Electronic", "Classical"][i % 5],
+                                url: "http://www.lonelycoder.com/music/Hybris_Intro-remake.mp3",
+                                relevance: relevance,
+                                source: "music"
+                            });
                         }
-                        
-                        resolve(results);
-                    } catch (error) {
-                        reject(error);
                     }
-                }, 500 + Math.random() * 300);
-            });
+                    
+                    callback(null, results);
+                } catch (error) {
+                    callback(error);
+                }
+            }, 500 + Math.random() * 300);
         }
     }
 };
 
-// Search aggregation and sorting
-function performSearch(query, options) {
+// Search aggregation and sorting with callbacks
+function performSearch(query, options, callback) {
     options = options || {};
     var maxResults = options.maxResults || settings.maxResults || 20;
     var sortBy = options.sortBy || settings.defaultSort || 'relevance';
     
     console.log("Performing search for: '" + query + "'");
     
-    var promises = [];
     var enabledSources = [];
+    var results = [];
+    var completedCount = 0;
+    var hasError = false;
     
     // Collect enabled sources
     for (var sourceId in searchSources) {
         var source = searchSources[sourceId];
         if (source.enabled()) {
-            enabledSources.push(sourceId);
-            promises.push(source.search(query, { maxResults: maxResults }));
+            enabledSources.push({ id: sourceId, source: source });
         }
     }
     
-    if (promises.length === 0) {
-        return Promise.resolve([]);
+    if (enabledSources.length === 0) {
+        callback(null, []);
+        return;
     }
     
-    // Wait for all searches to complete
-    return Promise.all(promises).then(function(resultSets) {
-        var allResults = [];
+    // Helper function to check if all searches completed
+    function checkComplete() {
+        if (hasError) return;
         
-        // Combine results from all sources
-        resultSets.forEach(function(results, index) {
-            if (results && Array.isArray(results)) {
-                allResults = allResults.concat(results);
+        completedCount++;
+        if (completedCount === enabledSources.length) {
+            // All searches complete, sort and return results
+            results.sort(function(a, b) {
+                switch (sortBy) {
+                    case 'relevance':
+                        return (b.relevance || 0) - (a.relevance || 0);
+                    case 'year':
+                        return (b.year || 0) - (a.year || 0);
+                    case 'rating':
+                        return parseFloat(b.rating || 0) - parseFloat(a.rating || 0);
+                    case 'title':
+                        return (a.title || '').localeCompare(b.title || '');
+                    default:
+                        return (b.relevance || 0) - (a.relevance || 0);
+                }
+            });
+            
+            callback(null, results);
+        }
+    }
+    
+    // Start searches for all enabled sources
+    enabledSources.forEach(function(sourceInfo) {
+        sourceInfo.source.search(query, { maxResults: maxResults }, function(err, sourceResults) {
+            if (hasError) return;
+            
+            if (err) {
+                hasError = true;
+                console.error("Search failed for " + sourceInfo.id + ": " + err.message);
+                callback(err);
+                return;
             }
-        });
-        
-        // Sort results
-        allResults.sort(function(a, b) {
-            switch (sortBy) {
-                case 'relevance':
-                    return (b.relevance || 0) - (a.relevance || 0);
-                case 'year':
-                    return (b.year || 0) - (a.year || 0);
-                case 'rating':
-                    return parseFloat(b.rating || 0) - parseFloat(a.rating || 0);
-                case 'title':
-                    return (a.title || '').localeCompare(b.title || '');
-                default:
-                    return (b.relevance || 0) - (a.relevance || 0);
+            
+            // Add results from this source
+            if (sourceResults && Array.isArray(sourceResults)) {
+                results = results.concat(sourceResults);
             }
+            
+            checkComplete();
         });
-        
-        return allResults;
-    }).catch(function(error) {
-        console.error("Search failed: " + error.message);
-        throw error;
     });
 }
 
@@ -421,9 +431,14 @@ new page.Route(PLUGIN_PREFIX + ':results:(.*)', function(page, encodedQuery) {
     // Show loading message
     page.loading = true;
     
-    // Perform search
-    performSearch(query).then(function(results) {
+    // Perform search with callback
+    performSearch(query, {}, function(err, results) {
         page.loading = false;
+        
+        if (err) {
+            page.error("Search failed: " + err.message);
+            return;
+        }
         
         if (results.length === 0) {
             page.appendItem("", "info", {
@@ -497,10 +512,6 @@ new page.Route(PLUGIN_PREFIX + ':results:(.*)', function(page, encodedQuery) {
             description: "Re-sort results by title",
             icon: "dataroot://resources/svg/Sort.svg"
         });
-        
-    }).catch(function(error) {
-        page.loading = false;
-        page.error("Search failed: " + error.message);
     });
 });
 
@@ -512,8 +523,13 @@ new page.Route(PLUGIN_PREFIX + ':results:(.*):sort:(.*)', function(page, encoded
     
     page.loading = true;
     
-    performSearch(query, { sortBy: sortBy }).then(function(results) {
+    performSearch(query, { sortBy: sortBy }, function(err, results) {
         page.loading = false;
+        
+        if (err) {
+            page.error("Search failed: " + err.message);
+            return;
+        }
         
         if (results.length === 0) {
             page.appendItem("", "info", {
@@ -541,10 +557,6 @@ new page.Route(PLUGIN_PREFIX + ':results:(.*):sort:(.*)', function(page, encoded
                 genre: result.genre
             });
         });
-        
-    }).catch(function(error) {
-        page.loading = false;
-        page.error("Search failed: " + error.message);
     });
 });
 
@@ -586,8 +598,13 @@ new page.Route(PLUGIN_PREFIX + ':category:(.*):(.*)', function(page, category, e
         return;
     }
     
-    source.search(query, { maxResults: settings.maxResults || 20 }).then(function(results) {
+    source.search(query, { maxResults: settings.maxResults || 20 }, function(err, results) {
         page.loading = false;
+        
+        if (err) {
+            page.error("Search failed: " + err.message);
+            return;
+        }
         
         if (results.length === 0) {
             page.appendItem("", "info", {
@@ -610,10 +627,6 @@ new page.Route(PLUGIN_PREFIX + ':category:(.*):(.*)', function(page, category, e
                 genre: result.genre
             });
         });
-        
-    }).catch(function(error) {
-        page.loading = false;
-        page.error("Search failed: " + error.message);
     });
 });
 
