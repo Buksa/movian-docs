@@ -417,6 +417,8 @@ new page.Route(PREFIX + ':start', function(page) {
     page.appendItem(PREFIX + ':demo:settings', 'item', {
         title: 'Demo: Page-specific Settings'
     });
+    
+    page.loading = false;
 });
 
 // Demo routes
@@ -435,6 +437,8 @@ new page.Route(PREFIX + ':demo:favorites', function(page) {
     page.appendItem('', 'item', {
         title: 'Total favorites: ' + userStore.favorites.length
     });
+    
+    page.loading = false;
 });
 
 new page.Route(PREFIX + ':demo:watch', function(page) {
@@ -452,6 +456,8 @@ new page.Route(PREFIX + ':demo:watch', function(page) {
     page.appendItem('', 'item', {
         title: 'Total watch history: ' + Object.keys(userStore.watchHistory).length
     });
+    
+    page.loading = false;
 });
 
 new page.Route(PREFIX + ':demo:settings', function(page) {
@@ -482,6 +488,8 @@ new page.Route(PREFIX + ':demo:settings', function(page) {
     page.appendItem('', 'item', {
         title: 'Show Thumbnails: ' + showThumbnails
     });
+    
+    page.loading = false;
 });
 
 console.log(plugin.title + ' initialization complete');
