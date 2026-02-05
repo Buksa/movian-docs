@@ -24,10 +24,10 @@ var PLUGIN_PREFIX = 'search-plugin';
 var storage = store.create('search-plugin-data');
 
 // Create main service entry
-service.create("Advanced Search", PLUGIN_PREFIX + ":start", "other", true, "logo.png");
+service.create("Advanced Search", PLUGIN_PREFIX + ":start", "other", true, Plugin.path + "logo.png");
 
 // Plugin settings
-settings.globalSettings(PLUGIN_PREFIX, "Search Plugin", "logo.png", "Search Configuration");
+settings.globalSettings(PLUGIN_PREFIX, "Search Plugin", Plugin.path + "logo.png", "Search Configuration");
 
 settings.createDivider("Search Sources");
 
@@ -298,7 +298,7 @@ function performSearch(query, options) {
 new page.Route(PLUGIN_PREFIX + ':start', function(page) {
     page.type = "directory";
     page.metadata.title = "Advanced Search";
-    page.metadata.logo = "logo.png";
+    page.metadata.logo = Plugin.path + "logo.png";
     
     // Quick search options
     page.appendItem(PLUGIN_PREFIX + ":search", "directory", {

@@ -15,10 +15,10 @@ var prop = require('movian/prop');
 var PLUGIN_PREFIX = 'hello-world';
 
 // Create main service entry in Movian
-service.create("Hello World", PLUGIN_PREFIX + ":start", "video", true, "logo.png");
+service.create("Hello World", PLUGIN_PREFIX + ":start", "video", true, Plugin.path + "logo.png");
 
 // Create plugin settings
-settings.globalSettings(PLUGIN_PREFIX, "Hello World Plugin", "logo.png", "Hello World Plugin Settings");
+settings.globalSettings(PLUGIN_PREFIX, "Hello World Plugin", Plugin.path + "logo.png", "Hello World Plugin Settings");
 
 settings.createDivider("General Settings");
 
@@ -39,7 +39,7 @@ settings.createInt("itemCount", "Number of Items", 10, 1, 100, 1, "", function(v
 new page.Route(PLUGIN_PREFIX + ':start', function(page) {
     page.type = "directory";
     page.metadata.title = "Hello World Plugin";
-    page.metadata.logo = "logo.png";
+    page.metadata.logo = Plugin.path + "logo.png";
     
     // Get username from settings
     var username = settings.username || "Anonymous";
@@ -75,6 +75,8 @@ new page.Route(PLUGIN_PREFIX + ':start', function(page) {
         description: "Demonstrates asynchronous content loading",
         icon: "dataroot://resources/svg/Refresh.svg"
     });
+    
+    page.loading = false;
 });
 
 // Content page route
@@ -91,6 +93,8 @@ new page.Route(PLUGIN_PREFIX + ':content', function(page) {
             icon: "dataroot://resources/svg/Folder.svg"
         });
     }
+    
+    page.loading = false;
 });
 
 // Videos page route
@@ -124,6 +128,8 @@ new page.Route(PLUGIN_PREFIX + ':videos', function(page) {
             icon: "dataroot://resources/svg/Play.svg"
         });
     });
+    
+    page.loading = false;
 });
 
 // Search page route
@@ -147,6 +153,8 @@ new page.Route(PLUGIN_PREFIX + ':search', function(page) {
             icon: "dataroot://resources/svg/Search.svg"
         });
     });
+    
+    page.loading = false;
 });
 
 // Search results route
@@ -162,6 +170,8 @@ new page.Route(PLUGIN_PREFIX + ':search:(.*)', function(page, query) {
             icon: "dataroot://resources/svg/Movie.svg"
         });
     }
+    
+    page.loading = false;
 });
 
 // Async loading page route
@@ -199,6 +209,8 @@ new page.Route(PLUGIN_PREFIX + ':async', function(page) {
     
     // Load initial items
     loadMoreItems();
+    
+    // Note: page.loading is managed by async loading
 });
 
 // Plugin initialization

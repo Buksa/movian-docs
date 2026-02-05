@@ -30,7 +30,7 @@ var plugin = JSON.parse(Plugin.manifest);
 console.log(plugin.id + ' ' + plugin.version + ' initialized');
 
 // Create main service entry - Best Practice: Use descriptive service names
-service.create(plugin.title, PLUGIN_PREFIX + ":start", "video", true, "logo.png");
+service.create(plugin.title, PLUGIN_PREFIX + ":start", "video", true, Plugin.path + "logo.png");
 
 // HTTP Inspector setup - Best Practice: Set proper headers for all requests
 io.httpInspectorCreate('.*jsonplaceholder.*', function(ctrl) {
@@ -40,7 +40,7 @@ io.httpInspectorCreate('.*jsonplaceholder.*', function(ctrl) {
 });
 
 // Plugin settings
-settings.globalSettings(plugin.id, plugin.title, "logo.png", plugin.synopsis);
+settings.globalSettings(plugin.id, plugin.title, Plugin.path + "logo.png", plugin.synopsis);
 
 settings.createDivider("API Configuration");
 
@@ -436,7 +436,7 @@ function validateContent(content, type) {
 new page.Route(PLUGIN_PREFIX + ':start', function(page) {
     page.type = "directory";
     page.metadata.title = "Content Provider";
-    page.metadata.logo = "logo.png";
+    page.metadata.logo = Plugin.path + "logo.png";
     
     try {
         // Add navigation categories
@@ -996,8 +996,8 @@ function calculateRelevance(item, query) {
 }
 
 // Plugin searcher integration - Best Practice: Enable global search
-page.Searcher(plugin.title, "logo.png", function(page, query) {
-    page.metadata.icon = "logo.png";
+page.Searcher(plugin.title, Plugin.path + "logo.png", function(page, query) {
+    page.metadata.icon = Plugin.path + "logo.png";
     page.metadata.title = plugin.title + " - Search results for: " + query;
     page.type = 'directory';
     page.loading = true;
