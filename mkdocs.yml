@@ -99,10 +99,27 @@ nav:
       - Settings APIs: plugins/api/settings-api.md
     - Examples:
       - Overview: plugins/examples/README.md
-      - Content Provider: plugins/examples/content-provider/README.md
-      - Search Plugin: plugins/examples/search-plugin/README.md
-      - Configurable Plugin: plugins/examples/configurable-plugin/README.md
-      - Advanced UI Plugin: plugins/examples/advanced-ui-plugin/README.md
+      - Basic:
+        - Hello World: plugins/examples/01-basic/01-hello-world/README.md
+        - Simple Video: plugins/examples/01-basic/02-simple-video/README.md
+        - All Settings Types: plugins/examples/01-basic/03-all-settings-types/README.md
+      - Intermediate:
+        - HTTP JSON API: plugins/examples/02-intermediate/01-http-json-api/README.md
+        - HTML Parser: plugins/examples/02-intermediate/02-html-parser/README.md
+        - SQLite Storage: plugins/examples/02-intermediate/03-sqlite-storage/README.md
+        - Search Provider: plugins/examples/02-intermediate/04-search-provider/README.md
+        - Pagination: plugins/examples/02-intermediate/05-pagination/README.md
+      - Advanced:
+        - WebSocket Client: plugins/examples/03-advanced/01-websocket-client/README.md
+        - OAuth Authentication: plugins/examples/03-advanced/02-oauth-authentication/README.md
+        - Subtitle Provider: plugins/examples/03-advanced/03-subtitle-provider/README.md
+        - Video Scrobbler: plugins/examples/03-advanced/04-video-scrobbler/README.md
+      - Legacy Examples:
+        - Hello World (Old): plugins/examples/hello-world/README.md
+        - Content Provider: plugins/examples/content-provider/README.md
+        - Search Plugin: plugins/examples/search-plugin/README.md
+        - Configurable Plugin: plugins/examples/configurable-plugin/README.md
+        - Advanced UI Plugin: plugins/examples/advanced-ui-plugin/README.md
   - UI & Theming:
     - Overview: ui/README.md
     - GLW Architecture: ui/glw-architecture.md
