@@ -97,6 +97,12 @@ nav:
       - HTML Modules Comparison: plugins/api/html-modules-comparison.md
       - Storage APIs: plugins/api/storage-api.md
       - Settings APIs: plugins/api/settings-api.md
+      - Page APIs: plugins/api/page-api.md
+      - Property APIs: plugins/api/prop-api.md
+      - Video Scrobbler: plugins/api/videoscrobbler-api.md
+      - Subtitles: plugins/api/subtitles-api.md
+      - XML: plugins/api/xml-api.md
+      - Item Hook: plugins/api/itemhook-api.md
     - Examples:
       - Overview: plugins/examples/README.md
       - Basic:
